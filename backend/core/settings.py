@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'accounts',
 ]
+
+AUTH_USER_MODEL = "accounts.User"
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -121,3 +124,21 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+
+# This tells Django Rest Framework: For protected APIs, expect JWT Tokens for authentication, and use the JWTAuthentication class to handle that authentication. So requests must send "Authorization: Bearer <token>" header otherwise Django will reject the request as unauthorized.
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+}
+
+from datetime import timedelta
+# Access Token is short lived token sent with every request to protected APIs to authenticate the user.
+# Refresh Token is long lived token that is used to obtain new access tokens when the old access token expires, so that the user doesn't have to log in again.
+# Two tokens are used for better security. Access token is short lived so even if it gets compromised, the attacker can only use it for a short period of time. Refresh token is long lived but it is only sent to the server when the access token expires, so it is less likely to be compromised.
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}

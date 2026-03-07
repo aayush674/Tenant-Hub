@@ -20,4 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('management.urls')),  # This includes the URLs from the management app, so all API endpoints will be prefixed with /api/.
+    path('auth/', include('accounts.urls')),  # This includes the URLs from the accounts app, so all account-related endpoints will be prefixed with /accounts/.
 ]
