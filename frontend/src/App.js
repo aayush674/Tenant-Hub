@@ -4,6 +4,7 @@ import AddPG from "./components/addPG";
 import Header from "./components/header";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import PGList from "./components/pgList";
+import Login from "./components/login";
 
 function App() {
   const [showAddPG, setShowAddPG] = useState(false);
@@ -35,6 +36,7 @@ function AppWrapper() {
     <BrowserRouter>
     <Header />
       <Routes>
+        <Route path="/login" element={<Login />} />
         <Route path="/" element={<App />} />
         <Route path="/pg-list" element={<PGList />} />
       </Routes>

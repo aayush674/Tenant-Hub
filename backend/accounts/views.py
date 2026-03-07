@@ -24,5 +24,6 @@ class MeView(APIView):
         return Response(serializer.data) # This returns the data of the authenticated user in the response.
     
 
-class LoginView(APIView):
+class LoginView(TokenObtainPairView):
     serializer_class = EmailTokenObtainPairSerializer # This tells the view to use our custom EmailTokenObtainPairSerializer for handling login.
+    
