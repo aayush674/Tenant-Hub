@@ -1,0 +1,78 @@
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #bb9024;
+  color: white;
+  padding: 14px 22px;
+  border-radius: 6px;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 9999;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.pg-row{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.pg-row-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.delete-pg-button {
+  background-color: #fb5454;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  flex-shrink: 0; 
+  border: 2px solid #a31712;
+  transition: all 0.2s ease;
+}
+
+.delete-pg-button:hover {
+  background-color: #a31712;
+}
+
+.pg-name{
+  flex: 1;
+  margin-right: 15px;
+  word-break: break-word;
+}
+
+.view-pg-button {
+  background-color: #4c8caf;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  flex-shrink: 0; 
+  border: 2px solid #31627c;
+  transition: all 0.2s ease;
+}
+
+.view-pg-button:hover {
+  background-color: #31627c;
+}

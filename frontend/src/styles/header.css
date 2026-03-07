@@ -1,0 +1,43 @@
+.header{
+    background-color: #d6a760;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: rgb(255, 255, 255);
+    padding: 0 20px;
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.1);
+    /* margin: 10px; */
+}
+
+.header-logo {
+    cursor: pointer;
+    height: 60px;
+    border-radius: 5px;
+}
+
+.header-title:hover {
+    color: #9b5e03;
+    transition: color 0.2s ease;
+}
+
+.header-nav {
+    display: flex;
+    gap: 20px;
+}
+
+.header-nav button{
+    background-color: #4b4b7d;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid #2c2c5d;
+    transition: all 0.2s ease;
+
+}
+
+
+.header-nav button:hover {
+    background-color: #2c2c5d;
+}
