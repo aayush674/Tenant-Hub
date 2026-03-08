@@ -5,6 +5,7 @@ class PGpropertySerializer(serializers.ModelSerializer):
     class Meta:
         model = PGproperty
         fields = '__all__'
+        read_only_fields = ['owner']  # This ensures that the owner field is read-only and when user create PG, frontend doesn't have to send owner field, it will be automatically set to the currently authenticated user in the viewset.
 
     def validate_total_floors(self, total_floors):
         if total_floors < 1:

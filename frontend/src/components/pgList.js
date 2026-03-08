@@ -3,6 +3,7 @@ import ConfirmModal from "./confirmationModal";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/pgList.css";
+import { authFetch } from "../api/apiClient";
 
 function PGList() {
     const navigate = useNavigate();
@@ -17,7 +18,7 @@ function PGList() {
     const [showSuccessMessage, setShowSuccessMessage] = useState(location.state?.pgAdded || false);
 
     useEffect(() => {
-        fetch("http://localhost:8000/api/pgs/")
+        authFetch("http://localhost:8000/api/pgs/")
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch PGs");
@@ -43,7 +44,7 @@ function PGList() {
         }, [showSuccessMessage]);
 
         const deletePG = () => {
-        fetch(`http://localhost:8000/api/pgs/${pgToDelete}/`, {
+        authFetch(`http://localhost:8000/api/pgs/${pgToDelete}/`, {
             method: "DELETE",
         })
             .then(() => {

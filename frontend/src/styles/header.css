@@ -26,7 +26,12 @@
     gap: 20px;
 }
 
-.header-nav button{
+.nav-links {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-links button{
     background-color: #4b4b7d;
     color: white;
     padding: 8px 16px;
@@ -38,6 +43,20 @@
 }
 
 
-.header-nav button:hover {
+.nav-links button:hover {
     background-color: #2c2c5d;
+}
+
+.logout-button {
+    background-color: #8b6327;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid #8b6327;
+    transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+    background-color: #d6a760;
 }

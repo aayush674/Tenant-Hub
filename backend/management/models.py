@@ -1,6 +1,8 @@
 from django.db import models
+from django.conf import settings
 
 class PGproperty(models.Model):  # This creates a database table, django automatically creates id primary key.
+    owner=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) # This creates a foreign key relationship with the User model, and related_name allows us to access properties from a user instance. Cascade means if a user is deleted, all associated properties will also be deleted.
     name = models.CharField(max_length=100)
     address = models.TextField()
     total_floors=models.IntegerField()

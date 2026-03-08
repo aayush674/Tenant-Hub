@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 from .models import MaintenanceRequest, PGproperty, Room, Tenant, Payment
 from .serializers import MaintenanceRequestSerializer, PGpropertySerializer, RoomSerializer, TenantSerializer, PaymentSerializer
 
@@ -6,6 +7,10 @@ from .serializers import MaintenanceRequestSerializer, PGpropertySerializer, Roo
 class PGpropertyViewSet(viewsets.ModelViewSet):
     queryset = PGproperty.objects.all()
     serializer_class = PGpropertySerializer
+    def get_queryset(self):
+        return PGproperty.objects.filter(owner=self.request.user) # This ensures that users can only see their own properties.
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user) # This automatically sets the owner of the property to the currently authenticated user when a new property is created.
 
 class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.all()

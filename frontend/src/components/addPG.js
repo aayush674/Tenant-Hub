@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../styles/addPG.css";
+import { authFetch } from "../api/apiClient";
 
 function AddPG({ show, onClose, onAdd }) {
 
@@ -12,7 +13,7 @@ function AddPG({ show, onClose, onAdd }) {
     
 
     const handleAddPG = () => {
-        fetch("http://localhost:8000/api/pgs/", {
+        authFetch("http://localhost:8000/api/pgs/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
