@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/pgList.css";
 import { authFetch } from "../api/apiClient";
+import AddPG from "./addPG";
 
 function PGList() {
     const navigate = useNavigate();
@@ -15,7 +16,9 @@ function PGList() {
     const [pgToDelete, setPgToDelete] = useState(null);
     const [pgs, setPgs] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [showSuccessMessage, setShowSuccessMessage] = useState(location.state?.pgAdded || false);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const [showAddPG, setShowAddPG] = useState(false);
+
 
     useEffect(() => {
         authFetch("http://localhost:8000/api/pgs/")
@@ -41,9 +44,9 @@ function PGList() {
             }, 3000);
             return () => clearTimeout(timer);
         }
-        }, [showSuccessMessage]);
+    }, [showSuccessMessage]);
 
-        const deletePG = () => {
+    const deletePG = () => {
         authFetch(`http://localhost:8000/api/pgs/${pgToDelete}/`, {
             method: "DELETE",
         })
@@ -60,8 +63,22 @@ function PGList() {
         <div>
             {showSuccessMessage && (
                 <div className="success-message">PG added successfully!</div>
-                )}
-            
+            )}
+
+            <button onClick={() => setShowAddPG(true)} className="create-pg-btn">
+                <strong>+ Create PG</strong>
+            </button>
+
+            <AddPG
+                show={showAddPG}
+                onClose={() => setShowAddPG(false)}
+                onAdd={(newPG) => {
+                    setPgs((prev) => [...prev, newPG]);
+                    setShowAddPG(false);
+                    setShowSuccessMessage(true);
+                    // navigate("/pg-list", { state: { pgAdded: true } });
+                }} />
+
             <h1>PG List</h1>
             <div>
                 {loading ? (
@@ -69,28 +86,28 @@ function PGList() {
                 ) : pgs.length === 0 ? (
                     <p>No PGs found. Please add some PGs.</p>
                 ) : (
-                <ul>
-                    {pgs.map((pg) => (
-                        <li key={pg.id} className="pg-row">
+                    <ul>
+                        {pgs.map((pg) => (
+                            <li key={pg.id} className="pg-row">
 
-                            <div className="pg-name"><strong>Name:</strong> {pg.name} </div>
+                                <div className="pg-name"><strong>Name:</strong> {pg.name} </div>
 
-                            <div className="pg-row-actions">
-                                <button
-                                    onClick={() => {
-                                        setViewPG(pg);
-                                        setShowViewModal(true);
-                                    }} className="view-pg-button">View</button>
+                                <div className="pg-row-actions">
+                                    <button
+                                        onClick={() => {
+                                            setViewPG(pg);
+                                            setShowViewModal(true);
+                                        }} className="view-pg-button">View</button>
 
-                                <button
-                                    onClick={() => {
-                                        setPgToDelete(pg.id);
-                                        setShowConfirmModal(true);
-                                    }} className="delete-pg-button" >Delete</button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                                    <button
+                                        onClick={() => {
+                                            setPgToDelete(pg.id);
+                                            setShowConfirmModal(true);
+                                        }} className="delete-pg-button" >Delete</button>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
                 )}
 
                 <ConfirmModal
