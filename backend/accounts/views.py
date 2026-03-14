@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import EmailTokenObtainPairSerializer
+from rest_framework.decorators import api_view, permission_classes
 
 class SignupView(APIView):
     def post(self, request):
@@ -27,3 +28,19 @@ class MeView(APIView):
 class LoginView(TokenObtainPairView):
     serializer_class = EmailTokenObtainPairSerializer # This tells the view to use our custom EmailTokenObtainPairSerializer for handling login.
     
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+
+    user = request.user
+    old_password = request.data.get("old_password")
+    new_password = request.data.get("new_password")
+
+    if not user.check_password(old_password):
+        return Response({"error": "Old password incorrect"}, status=400)
+
+    user.set_password(new_password)
+    user.save()
+
+    return Response({"message": "Password updated successfully"})

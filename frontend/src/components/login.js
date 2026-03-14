@@ -2,6 +2,7 @@ import { login } from "../api/auth.js";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
+import complogo from "../assets/Tenant-Hub-Logo.png";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -41,9 +42,15 @@ function Login() {
 
     return (
         <div className="login-container">
+            <div className="login-left">
+                <img src= {complogo} alt="Tenant Hub" className="logo" />
+                <h1 className="brand-tagline">Manage Tenants. Simplify Living.</h1>
+
+            </div>  
+            <div className="login-right">
             <form className="login-card" onSubmit={handleSubmit}>
 
-                <h2 className="login-title">Login</h2>
+                <h2 className="login-title">Already a Member? Please proceed.</h2>
 
                 <input
                     type="email"
@@ -68,6 +75,7 @@ function Login() {
                 </button>
 
             </form>
+            </div>
         </div>
     );
 }

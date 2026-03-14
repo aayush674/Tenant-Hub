@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LoginView, SignupView, MeView
+from .views import LoginView, SignupView, MeView, change_password
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
@@ -10,4 +10,5 @@ urlpatterns = [
     # TokenRefreshView is another built-in view that receives a refresh token and returns a new access token if the refresh token is valid and not expired.
 
     path('me/', MeView.as_view(), name='me'),
+    path('change-password/', change_password)
 ]
