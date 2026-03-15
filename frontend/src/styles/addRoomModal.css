@@ -1,0 +1,89 @@
+.add-room-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+
+  display: flex;
+  justify-content: flex-end;
+}
+
+.add-room-modal-box {
+  width: 350px;
+  height: 100%;
+  background: white;
+  padding: 25px;
+  box-shadow: -3px 0 15px rgba(0,0,0,0.2);
+
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.add-room-modal-box form{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.add-room-modal-box form input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.add-room-modal-box input:focus {
+  outline: none;
+  border-color: #987b23;
+}
+
+.add-room-modal-box button {
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-room-modal-box button[type="submit"] {
+  background-color: #987b23;
+  color: white;
+}
+
+.add-room-modal-box button[type="button"] {
+  background-color: #ddd;
+}
+
+.modal-header{
+    color: #987b23;
+}
+
+/* When modal is open */
+.add-room-modal-box.open {
+  transform: translateX(0);
+}
+
+/* When modal is closing */
+.add-room-modal-box.close {
+  transform: translateX(100%);
+}
+
+
+.occupancy-toggle {
+  display: flex;
+  gap: 10px;
+}
+
+.occupancy-toggle button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.occupancy-toggle button.active {
+  background: #987b23;
+  color: white;
+  border-color: #987b23;
+}

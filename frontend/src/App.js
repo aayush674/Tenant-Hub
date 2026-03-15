@@ -3,6 +3,7 @@ import Header from "./components/header";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import PGList from "./components/pgList";
 import Login from "./components/login";
+import RoomsList from "./components/roomsList";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function Layout() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<App />} />
         <Route path="/pg-list" element={<PGList />} />
+        <Route path="/pg/:pgId/rooms" element={<RoomsList />} />
       </Routes>
     </>
   );

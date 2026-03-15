@@ -17,6 +17,14 @@ class Room(models.Model):
     capacity = models.IntegerField()
     rent = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
+    # is_available = models.BooleanField(default=True)
+    class Meta:
+        constraints=[
+            models.UniqueConstraint(
+                fields=["pg_property", "room_number"],
+                name="unique_room_per_pg"
+            )
+        ]
 
     def __str__(self):
         return f"{self.pg_property.name} - Room {self.room_number}"

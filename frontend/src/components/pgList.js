@@ -1,7 +1,7 @@
 import ViewPG from "./viewPG";
 import ConfirmModal from "./confirmationModal";
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import "../styles/pgList.css";
 import { authFetch } from "../api/apiClient";
 import AddPG from "./addPG";
@@ -9,7 +9,6 @@ import AddPG from "./addPG";
 function PGList() {
     const navigate = useNavigate();
     const location = useLocation();
-    console.log("Location state:", location.state);
     const [viewPG, setViewPG] = useState(null);
     const [showViewModal, setShowViewModal] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -98,6 +97,10 @@ function PGList() {
                                             setViewPG(pg);
                                             setShowViewModal(true);
                                         }} className="view-pg-button">View</button>
+
+                                    <button onClick={()=> navigate(`/pg/${pg.id}/rooms`)}>
+                                        View Rooms
+                                    </button>
 
                                     <button
                                         onClick={() => {

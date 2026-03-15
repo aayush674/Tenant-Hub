@@ -15,6 +15,14 @@ class PGpropertyViewSet(viewsets.ModelViewSet):
 class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
+    
+    def get_queryset(self):
+        queryset=Room.objects.all()
+        pg_property=self.request.query_params.get("pg_property")
+        print("PG FILTER:", pg_property)
+        if pg_property:
+            queryset=queryset.filter(pg_property__id=pg_property)
+        return queryset
 
 class TenantViewSet(viewsets.ModelViewSet):
     queryset = Tenant.objects.all()
