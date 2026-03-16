@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import PGList from "./components/pgList";
 import Login from "./components/login";
 import RoomsList from "./components/roomsList";
+import { ProtectedRoute } from "./api/protectedRoute";
 
 function App() {
   return (
@@ -21,12 +22,12 @@ function Layout() {
   // useLocation(), useNavigate() and useParams() must be used within router components else these wouldn't be identified if initialized before browser router. So we created this Layout component to render useLocation() inside the BrowserRouter.
   return (
     <>
-      {location.pathname !== "/login" && <Header />}
+      {location.pathname !== "/login" && (<ProtectedRoute><Header /></ProtectedRoute>)}
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<App />} />
-        <Route path="/pg-list" element={<PGList />} />
-        <Route path="/pg/:pgId/rooms" element={<RoomsList />} />
+        <Route path="/" element={<ProtectedRoute><App /></ProtectedRoute>} />
+        <Route path="/pg-list" element={<ProtectedRoute><PGList /></ProtectedRoute>} />
+        <Route path="/pg/:pgId/rooms" element={<ProtectedRoute><RoomsList /></ProtectedRoute>} />
       </Routes>
     </>
   );
