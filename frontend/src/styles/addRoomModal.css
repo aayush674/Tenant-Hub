@@ -87,3 +87,18 @@
   color: white;
   border-color: #987b23;
 }
+
+.error-box {
+    background: #ffe5e5;
+    color: #b00020;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+input:disabled{
+  background-color: #f5f5f5;
+  color: #777;
+  cursor: not-allowed;
+}

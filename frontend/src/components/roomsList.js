@@ -4,12 +4,15 @@ import { authFetch } from "../api/apiClient";
 import AddRoomModal from "./addRoomModal";
 import "../styles/roomsList.css";
 import { useNavigate } from "react-router-dom";
+import EditRoomModal from "./editRoomModal";
 
 function RoomsList() {
     const { pgId } = useParams()
     const [rooms, setRooms] = useState([]);
     const [showAddRoom, setShowAddRoom] = useState(false);
     const [pgData, setPgData] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editRoomData, setEditRoomData] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -42,6 +45,15 @@ function RoomsList() {
             .catch((error) => console.error("Error deleting Room:", error));
     };
 
+    const openEditRoom=(room)=>{
+        setEditRoomData(room);
+        setShowEditModal(true);
+    }
+
+    const updateRoom=(updatedRoom)=>{
+        setRooms(prev=>prev.map(room=>room.id===updatedRoom.id?updatedRoom:room));
+    }
+
     return (
         <div className="room-list-container">
             <div className="room-list-nav-path">
@@ -69,6 +81,18 @@ function RoomsList() {
                         onClose={() => setShowAddRoom(false)}
                     />
                 )}
+
+                {showEditModal &&(
+                    <EditRoomModal 
+                    room={editRoomData} 
+                    onUpdate={(updatedRoom)=>{
+                        updateRoom(updatedRoom);
+                        setShowEditModal(false);
+                    }}
+                    onClose={()=>setShowEditModal(false)}
+                    />
+                )}
+                
             </div>
             <table>
                 <thead>
@@ -89,6 +113,7 @@ function RoomsList() {
                             <td>{room.rent}</td>
                             <td>
                                 <button type="button" onClick={() => handleDeleteRoom(room.id)}>Delete</button>
+                                <button type="button" onClick={() => openEditRoom(room)}>Edit</button>
                             </td>
                         </tr>
                     ))}
