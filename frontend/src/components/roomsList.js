@@ -13,8 +13,10 @@ function RoomsList() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchRooms();
-        fetchPg();
+        const loadData = async () => {
+            await Promise.all([fetchRooms(), fetchPg()]);
+        };
+        loadData();
     }, [pgId]);
 
     const fetchRooms = async () => {
@@ -24,6 +26,9 @@ function RoomsList() {
     }
     const fetchPg = async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
+        if (!res.ok) {
+            throw new Error("Failed to fetch rooms");
+        }
         const data = await res.json();
         setPgData(data);
     }
@@ -32,7 +37,7 @@ function RoomsList() {
             method: "DELETE",
         })
             .then(() => {
-                setRooms(rooms.filter((room) => room.id !== deleteRoom));
+                setRooms(prev => prev.filter(room => room.id !== deleteRoom));
             })
             .catch((error) => console.error("Error deleting Room:", error));
     };
@@ -80,10 +85,10 @@ function RoomsList() {
                     {rooms.map(room => (
                         <tr key={room.id}>
                             <td>{room.room_number}</td>
-                            <td><span className={`occupancy-chip ${room.capacity === 1 ? "single" : "double"}`}>{room.capacity===1?"👤Single":"👥Double"}</span></td>
+                            <td><span className={`occupancy-chip ${room.capacity === 1 ? "single" : "double"}`}>{room.capacity === 1 ? "👤Single" : "👥Double"}</span></td>
                             <td>{room.rent}</td>
                             <td>
-                                <button type="button" onClick={()=>handleDeleteRoom(room.id)}>Delete</button>
+                                <button type="button" onClick={() => handleDeleteRoom(room.id)}>Delete</button>
                             </td>
                         </tr>
                     ))}

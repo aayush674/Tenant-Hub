@@ -1,14 +1,13 @@
 import ViewPG from "./viewPG";
 import ConfirmModal from "./confirmationModal";
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/pgList.css";
 import { authFetch } from "../api/apiClient";
 import AddPG from "./addPG";
 
 function PGList() {
     const navigate = useNavigate();
-    const location = useLocation();
     const [viewPG, setViewPG] = useState(null);
     const [showViewModal, setShowViewModal] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -18,15 +17,9 @@ function PGList() {
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const [showAddPG, setShowAddPG] = useState(false);
 
-
     useEffect(() => {
         authFetch("http://localhost:8000/api/pgs/")
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch PGs");
-                }
-                return response.json();
-            })
+            .then((res) => res.json())
             .then((data) => {
                 setPgs(data);
                 setLoading(false);
@@ -50,7 +43,6 @@ function PGList() {
             method: "DELETE",
         })
             .then(() => {
-
                 setPgs(pgs.filter((pg) => pg.id !== pgToDelete));
                 setShowConfirmModal(false);
                 setPgToDelete(null);
