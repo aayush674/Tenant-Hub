@@ -58,6 +58,13 @@ function AddRoomModal({pgId, onAdd, onClose}){
                     />
                     
                     <br/>
+
+                    {/* <select>
+                        <option value="">Select Room Type</option>
+                        {roomTypes.map(rt=>(
+                            <option key={rt.id}>{rt.name}</option>
+                        ))}
+                    </select> */}
                     <div>Room Occupancy Type: </div>
                     <div className="occupancy-toggle">
                         

@@ -11,9 +11,21 @@ class PGproperty(models.Model):  # This creates a database table, django automat
     def __str__(self):
         return self.name
 
+
+class RoomType(models.Model):
+    pg_property=models.ForeignKey(PGproperty, on_delete=models.CASCADE)
+    name=models.CharField(max_length=30)
+    rent=models.DecimalField(max_digits=10, decimal_places=2)
+    capacity=models.IntegerField()
+    is_balcony_room=models.BooleanField(default=False)
+    created_at=models.DateTimeField(auto_now_add=True)
+
 class Room(models.Model):
     pg_property = models.ForeignKey(PGproperty, related_name='rooms', on_delete=models.CASCADE) #This creates a foreign key relationship with PGproperty, and related_name allows us to access rooms from a PGproperty instance. Cascade means if a PGproperty is deleted, all associated rooms will also be deleted.
     room_number = models.CharField(max_length=10)
+    room_type=models.ForeignKey(RoomType, on_delete=models.SET_NULL, null=True, blank=True)
+
+    #ACTUAL STORED VALUES:- Can override Room Type values
     capacity = models.IntegerField()
     rent = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)

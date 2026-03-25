@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import PGList from "./components/pgList";
 import Login from "./components/login";
 import RoomsList from "./components/roomsList";
+import RoomTypes from "./components/roomTypes";
+
 import { ProtectedRoute } from "./api/protectedRoute";
 
 function App() {
@@ -28,6 +30,7 @@ function Layout() {
         <Route path="/" element={<ProtectedRoute><App /></ProtectedRoute>} />
         <Route path="/pg-list" element={<ProtectedRoute><PGList /></ProtectedRoute>} />
         <Route path="/pg/:pgId/rooms" element={<ProtectedRoute><RoomsList /></ProtectedRoute>} />
+        <Route path="/pg/:pgId/roomtypes" element={<ProtectedRoute><RoomTypes /></ProtectedRoute>} />
       </Routes>
     </>
   );

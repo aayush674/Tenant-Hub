@@ -94,6 +94,10 @@ function PGList() {
                                         View Rooms
                                     </button>
 
+                                     <button onClick={()=> navigate(`/pg/${pg.id}/roomtypes`)}>
+                                        View Room Types
+                                    </button>
+
                                     <button
                                         onClick={() => {
                                             setPgToDelete(pg.id);

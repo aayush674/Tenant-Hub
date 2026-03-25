@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MaintenanceRequest, PGproperty, Payment, Room, Tenant
+from .models import MaintenanceRequest, PGproperty, Payment, Room, Tenant, RoomType
 
 class PGpropertySerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,7 +11,11 @@ class PGpropertySerializer(serializers.ModelSerializer):
         if total_floors < 1:
             raise serializers.ValidationError("Total floors must be at least 1.")
         return total_floors
-    
+
+class RoomTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=RoomType
+        fields='__all__'
 
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
