@@ -103,3 +103,33 @@ tbody tr:hover {
     background-color: #e8f0fe;
     color: #1a73e8;
 }
+
+.action-column{
+    display: flex;
+    /* justify-content: space-between; */
+    /* align-items: center; */
+    gap: 12px;
+}
+
+.filter-button button{
+ background-color: #987b23;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: 5px;
+    border: 2px solid #5b4914;
+    transition: all 0.2s ease;
+    margin-bottom: 20px;    
+}
+
+.filter-button button:hover {
+    background-color: #5b4914;
+}
+
+.filter-button button:active {
+    background-color: #4a3a10;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}

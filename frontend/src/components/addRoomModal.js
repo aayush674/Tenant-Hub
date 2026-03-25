@@ -8,6 +8,7 @@ function AddRoomModal({pgId, onAdd, onClose}){
     const [roomNumber, setRoomNumber] = useState("");
     const [roomCapacity, setCapacity] = useState("");
     const [roomRent, setRent] = useState("");
+    const [roomBalcony, setRoomBalcony] = useState(false);
 
      const [closing, setClosing] = useState(false);
 
@@ -31,7 +32,8 @@ function AddRoomModal({pgId, onAdd, onClose}){
                 pg_property: pgId,
                 room_number: roomNumber,
                 capacity: roomCapacity,
-                rent: roomRent
+                rent: roomRent,
+                is_balcony_room: roomBalcony
             })
         });
 
@@ -59,11 +61,17 @@ function AddRoomModal({pgId, onAdd, onClose}){
                     <div>Room Occupancy Type: </div>
                     <div className="occupancy-toggle">
                         
-                        <button type="button" className={roomCapacity===1?"active":""} onClick={()=> setCapacity("1")}>👤Single</button>
-                        <button type="button" className={roomCapacity===2?"active":""} onClick={()=> setCapacity("2")}>👥Double</button>
+                        <button type="button" className={roomCapacity===1?"active":""} onClick={()=> setCapacity(1)}>👤Single</button>
+                        <button type="button" className={roomCapacity===2?"active":""} onClick={()=> setCapacity(2)}>👥Double</button>
                         
                     </div>
                     <br/>
+                    <div className="balcony-checkbox">
+                    <input type="checkbox" checked={roomBalcony} onChange={e => setRoomBalcony(e.target.checked)} />
+                    <label>Balcony room</label>
+                    </div>
+                    <br />
+
                     <div>Room Rent</div>
                     <input 
                         placeholder="Enter Room Rent"

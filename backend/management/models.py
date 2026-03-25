@@ -17,6 +17,7 @@ class Room(models.Model):
     capacity = models.IntegerField()
     rent = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_balcony_room=models.BooleanField(default=False)
     # is_available = models.BooleanField(default=True)
     class Meta:
         constraints=[

@@ -9,6 +9,7 @@ function EditRoomModal({ room, onUpdate, onClose }) {
     const [roomCapacity, setCapacity] = useState(room.capacity);
     const [roomRent, setRent] = useState(room.rent);
     const [error, setError] = useState(null);
+    const [roomBalcony, setRoomBalcony] = useState(room.is_balcony_room);
 
     const [closing, setClosing] = useState(false);
 
@@ -31,6 +32,7 @@ function EditRoomModal({ room, onUpdate, onClose }) {
                 },
                 body: JSON.stringify({
                     capacity: roomCapacity,
+                    is_balcony_room: roomBalcony,
                     rent: roomRent
                 })
             });
@@ -88,6 +90,13 @@ function EditRoomModal({ room, onUpdate, onClose }) {
 
                     </div>
                     <br />
+
+                    <div className="balcony-checkbox">
+                    <input type="checkbox" checked={roomBalcony} onChange={e => setRoomBalcony(e.target.checked)} />
+                    <label>Balcony room</label>
+                    </div>
+                    <br />
+
                     <div>Room Rent</div>
                     <input
                         placeholder="Enter Room Rent"
