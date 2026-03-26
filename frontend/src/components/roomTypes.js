@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authFetch } from "../api/apiClient";
 import { useParams } from "react-router-dom";
+import "../styles/roomTypes.css";
+import AddRoomTypeModal from "./addRoomType";
 
 function RoomTypes() {
     const [showAddRoomType, setShowAddRoomType] = useState(false);
@@ -49,20 +51,20 @@ function RoomTypes() {
             <div className="room-type-header">
                 <h1>{pgData && pgData.name} - Room Types</h1>
                 <button className="add-room-type-btn" onClick={() => setShowAddRoomType(true)}><b>+ Add Room Type</b></button>
-                {/* {showAddRoomType && (
-                    <AddRoomModal
+                 {showAddRoomType && (
+                    <AddRoomTypeModal
                         pgId={pgId}
                         onAdd={
-                            (room) => {
-                                setShowAddRoom(false);
-                                fetchRooms();
+                            () => {
+                                setShowAddRoomType(false);
+                                fetchRoomTypes();
                             }
                         }
-                        onClose={() => setShowAddRoom(false)}
+                        onClose={() => setShowAddRoomType(false)}
                     />
                 )}
 
-                {showEditModal && (
+                {/* {showEditModal && (
                     <EditRoomModal
                         room={editRoomData}
                         onUpdate={(updatedRoom) => {

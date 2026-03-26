@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { authFetch } from "../api/apiClient";
-import "../styles/addRoomModal.css";
+import "../styles/addRoomTypeModal.css";
 
 
-function AddRoomModal({pgId, onAdd, onClose}){
+function AddRoomTypeModal({pgId, onAdd, onClose}){
 
-    const [roomNumber, setRoomNumber] = useState("");
+    const [roomTypeTitle, setRoomTypeTitle] = useState("");
     const [roomCapacity, setCapacity] = useState("");
     const [roomRent, setRent] = useState("");
     const [roomBalcony, setRoomBalcony] = useState(false);
@@ -18,20 +18,19 @@ function AddRoomModal({pgId, onAdd, onClose}){
         setTimeout(() => {
             onClose();
         }, 300); // must match CSS transition
-        
     };
 
     const handleSubmit = async (e)=>{
         e.preventDefault();
 
-        const res = await authFetch("http://localhost:8000/api/rooms/",{
+        const res = await authFetch("http://localhost:8000/api/room-types/",{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
                 pg_property: pgId,
-                room_number: roomNumber,
+                name: roomTypeTitle,
                 capacity: roomCapacity,
                 rent: roomRent,
                 is_balcony_room: roomBalcony
@@ -44,28 +43,22 @@ function AddRoomModal({pgId, onAdd, onClose}){
 
 
     return(
-        <div className="add-room-modal-overlay">
+        <div className="add-room-type-modal-overlay">
            <div
-                className={`add-room-modal-box ${closing ? "close" : "open"}`}
+                className={`add-room-type-modal-box ${closing ? "close" : "open"}`}
                 onClick={(e) => e.stopPropagation()}
             >
-                <h1 className="modal-header">Add Room</h1>
+                <h1 className="modal-header">Add Room Template</h1>
                 <form>
-                    <div>Room Number</div>
+                    <div>Template Title</div>
                     <input 
-                        placeholder="Enter Room Number"
-                        value={roomNumber}
-                        onChange={e => setRoomNumber(e.target.value)}
+                        placeholder="Enter Title"
+                        value={roomTypeTitle}
+                        onChange={e => setRoomTypeTitle(e.target.value)}
                     />
                     
                     <br/>
 
-                    {/* <select>
-                        <option value="">Select Room Type</option>
-                        {roomTypes.map(rt=>(
-                            <option key={rt.id}>{rt.name}</option>
-                        ))}
-                    </select> */}
                     <div>Room Occupancy Type: </div>
                     <div className="occupancy-toggle">
                         
@@ -88,12 +81,14 @@ function AddRoomModal({pgId, onAdd, onClose}){
                     />
                     <br/>
 
-                    <button type="submit" onClick={handleSubmit}>Add Room</button>
+                    <button type="submit" onClick={handleSubmit}>Add Room Template</button>
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>
             </div>
         </div>
+
+
     )
 }
 
-export default AddRoomModal;
+export default AddRoomTypeModal;
