@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import MaintenanceRequest, PGproperty, Payment, Room, Tenant, RoomType
 
 class PGpropertySerializer(serializers.ModelSerializer):
+    room_count=serializers.IntegerField(read_only=True)
     class Meta:
         model = PGproperty
         fields = '__all__'

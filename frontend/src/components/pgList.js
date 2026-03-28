@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/pgList.css";
 import { authFetch } from "../api/apiClient";
 import AddPG from "./addPG";
+import { FaEye, FaTrash, FaEllipsisV } from "react-icons/fa";
 
 function PGList() {
     const navigate = useNavigate();
@@ -16,6 +17,7 @@ function PGList() {
     const [loading, setLoading] = useState(true);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const [showAddPG, setShowAddPG] = useState(false);
+    const [showActionDropdownId, setShowActionDropdownId] = useState(null);
 
     useEffect(() => {
         authFetch("http://localhost:8000/api/pgs/")
@@ -38,6 +40,18 @@ function PGList() {
         }
     }, [showSuccessMessage]);
 
+    useEffect(() => {
+        const handleClickOutside = () => {
+            setShowActionDropdownId(null);
+        };
+
+        document.addEventListener("click", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("click", handleClickOutside);
+        };
+    }, []);
+
     const deletePG = () => {
         authFetch(`http://localhost:8000/api/pgs/${pgToDelete}/`, {
             method: "DELETE",
@@ -51,7 +65,15 @@ function PGList() {
     };
 
     return (
-        <div>
+        <div  className={`pg-list-container ${
+    showActionDropdownId ? "dropdown-open" : ""
+  }`}>
+            <div className="nav-path">
+                <span onClick={() => navigate("/")} className="navigator">Home</span>
+                <span className="seperator"> / </span>
+                <span>PG List</span>
+
+            </div>
             {showSuccessMessage && (
                 <div className="success-message">PG added successfully!</div>
             )}
@@ -71,43 +93,65 @@ function PGList() {
                 }} />
 
             <h1>PG List</h1>
-            <div>
-                {loading ? (
-                    <p>Loading PGs...</p>
-                ) : pgs.length === 0 ? (
-                    <p>No PGs found. Please add some PGs.</p>
-                ) : (
-                    <ul>
-                        {pgs.map((pg) => (
-                            <li key={pg.id} className="pg-row">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Total Rooms</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {loading ? (
+                        <tr><td colSpan="3">Loading PGs...</td></tr>
+                    ) : pgs.length === 0 ? (
+                        <tr><td colSpan="3">No PGs found. Please add some PGs.</td></tr>
+                    ) : (
 
-                                <div className="pg-name"><strong>Name:</strong> {pg.name} </div>
+                        pgs.map((pg) => (
+                            <tr key={pg.id} className="pg-row">
 
-                                <div className="pg-row-actions">
-                                    <button
+                                <td className="pg-name">{pg.name}</td>
+                                <td className="pg-rooms-count">{pg.room_count ?? 0}</td>
+                                <td className="pg-row-actions">
+                                    <FaEye
                                         onClick={() => {
                                             setViewPG(pg);
                                             setShowViewModal(true);
-                                        }} className="view-pg-button">View</button>
-
-                                    <button onClick={()=> navigate(`/pg/${pg.id}/rooms`)}>
-                                        View Rooms
-                                    </button>
-
-                                     <button onClick={()=> navigate(`/pg/${pg.id}/roomtypes`)}>
-                                        View Room Types
-                                    </button>
-
-                                    <button
+                                        }} className="view-pg-button"
+                                        title="View" />
+                                    <FaTrash
                                         onClick={() => {
                                             setPgToDelete(pg.id);
                                             setShowConfirmModal(true);
-                                        }} className="delete-pg-button" >Delete</button>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                )}
+                                        }} className="delete-pg-button" 
+                                        title="Delete"/>
+
+                                    <div className="pg-row-more-menu" onClick={(e)=>e.stopPropagation()}>
+                                        <FaEllipsisV title="More" onClick={(e) => {
+                                            e.stopPropagation();
+                                            setShowActionDropdownId(prev => (prev === pg.id ? null : pg.id));
+                                        }
+                                        } className={showActionDropdownId===pg.id ? "menu-icon-active": "menu-icon"} />
+                                        {showActionDropdownId === pg.id && (
+                                            <div className="dropdown-actions">
+                                                <button onClick={() => navigate(`/pg/${pg.id}/rooms`)}>
+                                                   🏠 View Rooms
+                                                </button>
+
+                                                <button onClick={() => navigate(`/pg/${pg.id}/roomtypes`)}>
+                                                    View Room Types
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </td>
+                            </tr>
+                        ))
+
+                    )}
+                </tbody>
+
 
                 <ConfirmModal
                     show={showConfirmModal}
@@ -125,7 +169,7 @@ function PGList() {
                         setViewPG(null);
                     }}
                 />
-            </div>
+            </table>
         </div>
     )
 }

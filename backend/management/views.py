@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from django.db.models import Count, Q
 from .models import MaintenanceRequest, PGproperty, Room, Tenant, Payment, RoomType
 from .serializers import MaintenanceRequestSerializer, PGpropertySerializer, RoomSerializer, TenantSerializer, PaymentSerializer, RoomTypeSerializer
 
@@ -8,7 +8,10 @@ class PGpropertyViewSet(viewsets.ModelViewSet):
     queryset = PGproperty.objects.all()
     serializer_class = PGpropertySerializer
     def get_queryset(self):
-        return PGproperty.objects.filter(owner=self.request.user) # This ensures that users can only see their own properties.
+        return PGproperty.objects.filter(owner=self.request.user).annotate(
+            room_count=Count('rooms'),
+            # available_rooms=Count('rooms', filter=Q(rooms__is_available==True))       
+            ) # This ensures that users can only see their own properties.
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user) # This automatically sets the owner of the property to the currently authenticated user when a new property is created.
 
@@ -29,7 +32,7 @@ class RoomViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         queryset=Room.objects.all()
-        pg_property=self.request.query_params.get("pg_property")
+        pg_property=self.request.query_params.get("pg_property") # type: ignore
         max_price=self.request.query_params.get("max_price")
         min_price=self.request.query_params.get("min_price")
         capacity=self.request.query_params.get("capacity")
