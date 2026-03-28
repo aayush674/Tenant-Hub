@@ -1,4 +1,4 @@
-import React from "react";
+import { createPortal } from "react-dom";
 import '../styles/confirmationModal.css';
 
 function ConfirmModal({ show, title, message, onConfirm, onCancel }) {
@@ -7,27 +7,28 @@ function ConfirmModal({ show, title, message, onConfirm, onCancel }) {
     return null;
   }
 
-  return (
-    <div className="modal-overlay">
-      <div className="modal-box">
+ return createPortal(
+  <div className="modal-overlay">
+    <div className="modal-box">
 
-        <h3>{title}</h3>
+      <h3>{title}</h3>
 
-        <p>{message}</p>
+      <p>{message}</p>
 
-        <div className="modal-buttons">
-          <button onClick={onConfirm} className="confirm-btn">
-            Confirm
-          </button>
+      <div className="modal-buttons">
+        <button onClick={onCancel} className="cancel-btn">
+          Cancel
+        </button>
 
-          <button onClick={onCancel} className="cancel-btn">
-            Cancel
-          </button>
-        </div>
-
+        <button onClick={onConfirm} className="confirm-btn">
+          Confirm
+        </button>
       </div>
+
     </div>
-  );
+  </div>,
+  document.body
+);
 }
 
 export default ConfirmModal;
