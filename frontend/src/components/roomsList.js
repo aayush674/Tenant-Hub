@@ -70,6 +70,7 @@ function RoomsList() {
         const data = await res.json();
         setPgData(data);
     }
+    
     const handleDeleteRoom = (deleteRoom) => {
         authFetch(`http://localhost:8000/api/rooms/${deleteRoom}/`, {
             method: "DELETE",
