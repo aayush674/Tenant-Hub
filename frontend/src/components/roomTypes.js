@@ -4,6 +4,8 @@ import { authFetch } from "../api/apiClient";
 import { useParams } from "react-router-dom";
 import "../styles/roomTypes.css";
 import AddRoomTypeModal from "./addRoomType";
+import { FaPen, FaTrash } from "react-icons/fa";
+
 
 function RoomTypes() {
     const [showAddRoomType, setShowAddRoomType] = useState(false);
@@ -112,14 +114,9 @@ function RoomTypes() {
                             <td>{roomType.rent}</td>
                             <td>
                                 <div className="action-column">
-                                    <button
-                                        type="button"
-                                    // onClick={() => handleDeleteRoom(room.id)}
-                                    >Delete</button>
-                                    <button
-                                        type="button"
-                                    // onClick={() => openEditRoom(room)}
-                                    >Edit</button>
+                                    
+                                    <FaTrash className="delete-room-type-button"/>
+                                    <FaPen className="edit-room-type-button" />
                                 </div>
                             </td>
                         </tr>

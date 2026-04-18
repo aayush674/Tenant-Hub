@@ -7,6 +7,9 @@ import { useNavigate } from "react-router-dom";
 import EditRoomModal from "./editRoomModal";
 import RoomListFilterModal from "./roomListFilterModal";
 import { useSearchParams } from "react-router-dom";
+import ConfirmModal from "./confirmationModal";
+import { FaPen, FaTrash } from "react-icons/fa";
+// import { Tooltip } from 'react-tooltip';
 
 
 function RoomsList() {
@@ -19,18 +22,20 @@ function RoomsList() {
     const [showFilterModal, setShowFilterModal] = useState(false);
     const navigate = useNavigate();
     const [filters, setFilters] = useState({ occupancyType: "", minPrice: "", maxPrice: "" });
-    const [draftFilters, setDraftFilters] = useState({ occupancyType:"", minPrice: "", maxPrice: "" });
+    const [draftFilters, setDraftFilters] = useState({ occupancyType: "", minPrice: "", maxPrice: "" });
     const [searchParams, setSearchParams] = useSearchParams();
+    const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+    const [roomToDelete, setRoomToDelete] = useState(null);
 
     useEffect(() => {
         const min = searchParams.get("min_price") || "";
         const max = searchParams.get("max_price") || "";
-        const occupancy=searchParams.get("capacity") || "";
+        const occupancy = searchParams.get("capacity") || "";
 
         const initialFilters = {
             minPrice: min,
             maxPrice: max,
-            occupancyType: occupancy ? Number(occupancy):""
+            occupancyType: occupancy ? Number(occupancy) : ""
         }
 
         setDraftFilters(initialFilters);
@@ -43,23 +48,23 @@ function RoomsList() {
     }, [pgId, searchParams]);
 
     const fetchRooms = async () => {
-    const min = searchParams.get("min_price") || "";
-    const max = searchParams.get("max_price") || "";
-    const occupancy=searchParams.get("capacity") || "";
+        const min = searchParams.get("min_price") || "";
+        const max = searchParams.get("max_price") || "";
+        const occupancy = searchParams.get("capacity") || "";
 
-    const params = new URLSearchParams();
+        const params = new URLSearchParams();
 
-    if (min) params.append("min_price", min);
-    if (max) params.append("max_price", max);
-    if(occupancy) params.append("capacity", occupancy);
+        if (min) params.append("min_price", min);
+        if (max) params.append("max_price", max);
+        if (occupancy) params.append("capacity", occupancy);
 
-    const res = await authFetch(
-        `http://localhost:8000/api/rooms/?pg_property=${pgId}&${params.toString()}`
-    );
+        const res = await authFetch(
+            `http://localhost:8000/api/rooms/?pg_property=${pgId}&${params.toString()}`
+        );
 
-    const data = await res.json();
-    setRooms(data.results || data);
-};
+        const data = await res.json();
+        setRooms(data.results || data);
+    };
 
 
     const fetchPg = async () => {
@@ -70,13 +75,15 @@ function RoomsList() {
         const data = await res.json();
         setPgData(data);
     }
-    
+
     const handleDeleteRoom = (deleteRoom) => {
         authFetch(`http://localhost:8000/api/rooms/${deleteRoom}/`, {
             method: "DELETE",
         })
             .then(() => {
                 setRooms(prev => prev.filter(room => room.id !== deleteRoom));
+                setShowDeleteConfirmModal(false);
+                setRoomToDelete(null);
             })
             .catch((error) => console.error("Error deleting Room:", error));
     };
@@ -91,7 +98,7 @@ function RoomsList() {
     }
 
     const handleApplyFilters = () => {
-        
+
         setFilters(draftFilters);
         setShowFilterModal(false);
         const params = {};
@@ -103,8 +110,8 @@ function RoomsList() {
         if (draftFilters.maxPrice) {
             params.max_price = draftFilters.maxPrice;
         }
-        if(draftFilters.occupancyType){
-            params.capacity=draftFilters.occupancyType;
+        if (draftFilters.occupancyType) {
+            params.capacity = draftFilters.occupancyType;
         }
 
         setSearchParams(params);
@@ -156,18 +163,18 @@ function RoomsList() {
 
             </div>
             <div className="filter-button">
-            <button onClick={() => {
-                setDraftFilters(filters);
-                setShowFilterModal(true);
-            }}>Filters</button>
-            <RoomListFilterModal
-                isOpen={showFilterModal}
-                onClose={() => setShowFilterModal(false)}
-                filters={draftFilters}
-                setFilters={setDraftFilters}
-                onApply={handleApplyFilters}
-                onReset={handleResetFilters}
-            />
+                <button onClick={() => {
+                    setDraftFilters(filters);
+                    setShowFilterModal(true);
+                }}>Filters</button>
+                <RoomListFilterModal
+                    isOpen={showFilterModal}
+                    onClose={() => setShowFilterModal(false)}
+                    filters={draftFilters}
+                    setFilters={setDraftFilters}
+                    onApply={handleApplyFilters}
+                    onReset={handleResetFilters}
+                />
             </div>
 
             <table>
@@ -191,14 +198,36 @@ function RoomsList() {
                             <td>{room.rent}</td>
                             <td>
                                 <div className="action-column">
-                                    <button type="button" onClick={() => handleDeleteRoom(room.id)}>Delete</button>
-                                    <button type="button" onClick={() => openEditRoom(room)}>Edit</button>
+                                    <FaTrash className="delete-room-button"
+                                        onClick={() => {
+                                            setShowDeleteConfirmModal(true)
+                                            setRoomToDelete(room.id)
+                                        }}
+                                        // data-tooltip-id="actionTip"
+                                        // data-tooltip-content="Delete Room"
+                                    />
+
+                                    <FaPen className="edit-room-button"
+                                        onClick={() => openEditRoom(room)}
+                                        // data-tooltip-id="actionTip"
+                                        // data-tooltip-content="Edit Room"
+                                    />
+
+
                                 </div>
+                                <ConfirmModal
+                                    show={showDeleteConfirmModal}
+                                    title="Delete Room"
+                                    message="Are you sure you want to delete this room? The action once done can not be reverted."
+                                    onConfirm={() => handleDeleteRoom(roomToDelete)}
+                                    onCancel={() => setShowDeleteConfirmModal(false)}
+                                />
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+            {/* <Tooltip id="actionTip" /> */}
         </div>
     )
 }
