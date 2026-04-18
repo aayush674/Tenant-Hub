@@ -10,7 +10,7 @@ function AddPG({ show, onClose, onAdd }) {
     if (!show) {
         return null;
     }
-    
+
 
     const handleAddPG = () => {
         authFetch("http://localhost:8000/api/pgs/", {
@@ -36,32 +36,41 @@ function AddPG({ show, onClose, onAdd }) {
     };
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-box">
-                <h2>Add new PG</h2>
-                <input
-                    type="text"
-                    placeholder="PG Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
+        <div className="add-pg-modal-overlay">
+            <div className="add-pg-modal-box">
+                <h2 className="add-pg-modal-header">Add new PG</h2>
+                <div className="input-area">
+                    <label>Enter PG Name</label>
+                    <input
+                        type="text"
+                        placeholder="PG Name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                </div>
 
+                <div className="input-area">
+                    <label>Enter PG Address</label>
                 <input
                     type="text"
                     placeholder="PG Address"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                 />
+                </div>
 
+                <div className="input-area">
+                    <label>Enter Total Floors in PG</label>
                 <input
                     type="number"
                     placeholder="PG Floor"
                     value={floor}
                     onChange={(e) => setFloor(e.target.value)}
                 />
+                </div>
 
                 <div className="modal-buttons">
-            <button onClick={onClose} className="cancel-btn">Cancel</button>
+                    <button onClick={onClose} className="cancel-btn">Cancel</button>
                     <button onClick={handleAddPG} className="add-btn" disabled={!name}>Add PG</button>
                 </div>
             </div>

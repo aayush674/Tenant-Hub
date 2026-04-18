@@ -11,12 +11,12 @@ function ConfirmModal({ show, title, message, onConfirm, onCancel }) {
   <div className="modal-overlay">
     <div className="modal-box">
 
-      <h3>{title}</h3>
+      <h2 className="conf-modal-header">{title}</h2>
 
       <p>{message}</p>
 
       <div className="modal-buttons">
-        <button onClick={onCancel} className="cancel-btn">
+        <button onClick={onCancel} className="modal-cancel-btn">
           Cancel
         </button>
 
