@@ -13,6 +13,7 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
     const [closing, setClosing] = useState(false);
     const [selectedRoomType, setSelectedRoomType] = useState(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         fetchRoomTypes();
@@ -45,22 +46,54 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const res = await authFetch("http://localhost:8000/api/rooms/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                pg_property: pgId,
-                room_number: roomNumber,
-                capacity: roomCapacity,
-                rent: roomRent,
-                is_balcony_room: roomBalcony
-            })
-        });
+        const rnError = validateRoomNumber(roomNumber);
+        const rcError = validateRoomCapacity(roomCapacity);
+        const rrError = validateRoomRent(roomRent);
+        const finalError = {}
 
-        const data = await res.json();
-        onAdd(data);
+        if (rnError) {
+            finalError.roomNumber = rnError;
+        }
+        if (rcError) {
+            finalError.roomCapacity = rcError;
+        }
+        if (rrError) {
+            finalError.roomRent = rrError;
+        }
+        if (Object.keys(finalError).length > 0) {
+            setError(finalError);
+            return;
+        }
+
+
+        setError({});
+        try {
+            const res = await authFetch("http://localhost:8000/api/rooms/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    pg_property: pgId,
+                    room_number: Number(roomNumber),
+                    capacity: roomCapacity,
+                    rent: roomRent,
+                    is_balcony_room: roomBalcony
+                })
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                setError(errData);
+                console.log(errData);
+                return;
+            }
+            const data = await res.json();
+            onAdd(data);
+        }
+        catch (err) {
+            setError({ detail: "Something went wrong. Please try again." });
+        }
     }
 
     const handleUpdate = async (e) => {
@@ -72,6 +105,14 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
         setRent(selected.rent);
         setRoomBalcony(selected.is_balcony_room);
         setShowConfirmModal(false);
+        let newError=error;
+        if(newError.roomCapacity){
+            delete newError.roomCapacity;
+        }
+        if(newError.roomRent){
+            delete newError.roomRent;
+        }
+        setError(newError);
     }
 
     const handleCancel = () => {
@@ -86,44 +127,33 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
                 onClick={(e) => e.stopPropagation()}
             >
                 <h1 className="modal-header">Add Room</h1>
-                <form>
+
+                <form onSubmit={handleSubmit}>
                     <div>Room Number</div>
                     <input
                         placeholder="Enter Room Number"
                         value={roomNumber}
                         onChange={e => setRoomNumber(e.target.value)}
                     />
+                    <div className="error-container">
+                        {error?.roomNumber}
+                    </div>
 
-                    <br />
-
-                    <select onChange={(e) => setSelectedRoomType(Number(e.target.value))}>
+                    <div>Room Type</div>
+                    <select onChange={(e) => setSelectedRoomType(Number(e.target.value))} className="custom-select">
                         <option value="">Select Room Type</option>
                         {roomTypes.map(rt => (
                             <option key={rt.id} value={rt.id}>{rt.name}</option>
-                        ))}
+                        ))} 
                     </select>
+                    <br />
 
-                    {/* {showConfirmModal && (
-                        <div className="template-modal-overlay">
-                            <div className="template-modal-box">
-                                <h1>Are you Sure?</h1>
-                                <div className="template-modal-text">
-                                    Room Configuration will be updated to Room Template configuration if you have already entered. Are you sure you want to update Configuration?
-                                    <div className="template-modal-buttons">
-                                        <button className="confirm-button" onClick={handleUpdate}>Update</button>
-                                        <button className="cancel-button" onClick={handleCancel}>Cancel</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )} */}
-
-                    <ConfirmModal 
-                    show={showConfirmModal}
-                    title={"Are you Sure?"}
-                    message={" Room Configuration will be updated to Room Template configuration if you have already entered. Are you sure you want to update Configuration?"}
-                    onConfirm={handleUpdate}
-                    onCancel={handleCancel}
+                    <ConfirmModal
+                        show={showConfirmModal}
+                        title={"Are you Sure?"}
+                        message={" Room Configuration will be updated to Room Template configuration if you have already entered. Are you sure you want to update Configuration?"}
+                        onConfirm={handleUpdate}
+                        onCancel={handleCancel}
                     />
 
                     <div>Room Occupancy Type: </div>
@@ -133,7 +163,10 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
                         <button type="button" className={roomCapacity === 2 ? "active" : ""} onClick={() => setCapacity(2)}>👥Double</button>
 
                     </div>
-                    <br />
+                    <div className="error-container">
+                        {error?.roomCapacity}
+                    </div>
+                    
                     <div className="balcony-checkbox">
                         <input type="checkbox" checked={roomBalcony} onChange={e => setRoomBalcony(e.target.checked)} />
                         <label>Balcony room</label>
@@ -146,14 +179,44 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
                         value={roomRent}
                         onChange={e => setRent(e.target.value)}
                     />
-                    <br />
+                    <div className="error-container">
+                        {error?.roomRent}
+                    </div>
+                    
 
-                    <button type="submit" onClick={handleSubmit}>Add Room</button>
+                    <button type="submit">Add Room</button>
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>
             </div>
         </div>
     )
+}
+
+function validateRoomNumber(roomNumber) {
+    if (!roomNumber || roomNumber.trim() === "") {
+        return "Room Number is required to add a Room"
+    }
+    else if (isNaN(roomNumber)) {
+        return "Room Number must be a valid Number"
+    }
+    return null;
+}
+
+function validateRoomCapacity(roomCapacity) {
+    if (!roomCapacity) {
+        return "Room Capacity is required to add a Room"
+    }
+    return null;
+}
+
+function validateRoomRent(roomRent) {
+    if (!roomRent || roomRent.trim() === "") {
+        return "Room Rent is required to add a Room"
+    }
+    else if (isNaN(roomRent)) {
+        return "Room Rent must be a valid Number"
+    }
+    return null;
 }
 
 export default AddRoomModal;
