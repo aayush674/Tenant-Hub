@@ -109,7 +109,7 @@ input:disabled {
   border: 1px solid #ccc;
   border-radius: 6px;
   background-color: #fff;
-  color: #333;
+  color: #282828;
   outline: none;
   cursor: pointer;
   transition: all 0.2s ease;

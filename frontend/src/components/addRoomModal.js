@@ -76,8 +76,8 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
                 body: JSON.stringify({
                     pg_property: pgId,
                     room_number: Number(roomNumber),
-                    capacity: roomCapacity,
-                    rent: roomRent,
+                    capacity: Number(roomCapacity),
+                    rent: Number(roomRent),
                     is_balcony_room: roomBalcony
                 })
             });
@@ -105,11 +105,11 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
         setRent(selected.rent);
         setRoomBalcony(selected.is_balcony_room);
         setShowConfirmModal(false);
-        let newError=error;
-        if(newError.roomCapacity){
+        let newError = { ...error };
+        if (newError.roomCapacity) {
             delete newError.roomCapacity;
         }
-        if(newError.roomRent){
+        if (newError.roomRent) {
             delete newError.roomRent;
         }
         setError(newError);
@@ -133,7 +133,14 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
                     <input
                         placeholder="Enter Room Number"
                         value={roomNumber}
-                        onChange={e => setRoomNumber(e.target.value)}
+                        onChange={e => {
+                            setRoomNumber(e.target.value);
+                            if (error?.roomNumber) {
+                                const newError = { ...error };
+                                delete newError.roomNumber;
+                                setError(newError);
+                            }
+                        }}
                     />
                     <div className="error-container">
                         {error?.roomNumber}
@@ -144,7 +151,7 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
                         <option value="">Select Room Type</option>
                         {roomTypes.map(rt => (
                             <option key={rt.id} value={rt.id}>{rt.name}</option>
-                        ))} 
+                        ))}
                     </select>
                     <br />
 
@@ -159,14 +166,30 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
                     <div>Room Occupancy Type: </div>
                     <div className="occupancy-toggle">
 
-                        <button type="button" className={roomCapacity === 1 ? "active" : ""} onClick={() => setCapacity(1)}>👤Single</button>
-                        <button type="button" className={roomCapacity === 2 ? "active" : ""} onClick={() => setCapacity(2)}>👥Double</button>
+                        <button type="button" className={roomCapacity === 1 ? "active" : ""} onClick={() => {
+                            setCapacity(1);
+                            if (error?.roomCapacity) {
+                                const newError = { ...error };
+                                delete newError.roomCapacity;
+                                setError(newError);
+                            }
+                        }
+                        }>👤Single</button>
+                        <button type="button" className={roomCapacity === 2 ? "active" : ""} onClick={() => {
+                            setCapacity(2);
+                            if (error?.roomCapacity) {
+                                const newError = { ...error };
+                                delete newError.roomCapacity;
+                                setError(newError);
+                            }
+                        }
+                            }>👥Double</button>
 
                     </div>
                     <div className="error-container">
                         {error?.roomCapacity}
                     </div>
-                    
+
                     <div className="balcony-checkbox">
                         <input type="checkbox" checked={roomBalcony} onChange={e => setRoomBalcony(e.target.checked)} />
                         <label>Balcony room</label>
@@ -177,12 +200,22 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
                     <input
                         placeholder="Enter Room Rent"
                         value={roomRent}
-                        onChange={e => setRent(e.target.value)}
+                        onChange={e => {
+                            setRent(e.target.value);
+                             if (error?.roomRent) {
+                                const newError = { ...error };
+                                delete newError.roomRent;
+                                setError(newError);
+                            }
+                        }
+                    }
                     />
                     <div className="error-container">
                         {error?.roomRent}
                     </div>
-                    
+                    {error?.detail && (
+                        <div className="error-container">{error.detail}</div>
+                    )}
 
                     <button type="submit">Add Room</button>
                     <button type="button" onClick={handleClose}>Cancel</button>
