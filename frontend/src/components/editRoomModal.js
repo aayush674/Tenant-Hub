@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { authFetch } from "../api/apiClient";
 import "../styles/addRoomModal.css";
-
+import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../utils/roomValidation";
 
 function EditRoomModal({ room, onUpdate, onClose }) {
 
     const [roomNumber, setRoomNumber] = useState(room.room_number);
     const [roomCapacity, setCapacity] = useState(room.capacity);
     const [roomRent, setRent] = useState(room.rent);
+    const [roomType, setRoomType]= useState(room.roomType)
     const [error, setError] = useState(null);
     const [roomBalcony, setRoomBalcony] = useState(room.is_balcony_room);
-
     const [closing, setClosing] = useState(false);
 
     const handleClose = () => {
@@ -23,7 +23,21 @@ function EditRoomModal({ room, onUpdate, onClose }) {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-        setError(null);
+        const rcError = validateRoomCapacity(roomCapacity);
+        const rrError = validateRoomRent(roomRent);
+        const finalError = {}
+
+        if (rcError) {
+            finalError.roomCapacity = rcError;
+        }
+        if (rrError) {
+            finalError.roomRent = rrError;
+        }
+        if (Object.keys(finalError).length > 0) {
+            setError(finalError);
+            return;
+        }
+        setError({});
         try {
             const res = await authFetch(`http://localhost:8000/api/rooms/${room.id}/`, {
                 method: "PATCH",
@@ -61,19 +75,6 @@ function EditRoomModal({ room, onUpdate, onClose }) {
             >
                 <h1 className="modal-header">Edit Room</h1>
 
-                {error && (
-                    <div className="error-box">
-                        {error.room_number && (<div>{error.room_number[0]}</div>)}
-                        {error.capacity && (<div>{error.capacity[0]}</div>)}
-                        {error.rent && (<div>{error.rent[0]}</div>)}
-                        {error.detail && (<div>{error.detail[0]}</div>)}
-                        {error.non_field_errors && (
-                            <div>{error.non_field_errors[0]}</div>
-                        )}
-
-                    </div>
-                )}
-
                 <form>
                     <div>Room Number</div>
                     <input
@@ -89,7 +90,9 @@ function EditRoomModal({ room, onUpdate, onClose }) {
                         <button type="button" className={roomCapacity === 2 ? "active" : ""} onClick={() => setCapacity(2)}>👥Double</button>
 
                     </div>
-                    <br />
+                    <div className="error-container">
+                        {error?.roomCapacity}
+                    </div>
 
                     <div className="balcony-checkbox">
                     <input type="checkbox" checked={roomBalcony} onChange={e => setRoomBalcony(e.target.checked)} />
@@ -101,11 +104,25 @@ function EditRoomModal({ room, onUpdate, onClose }) {
                     <input
                         placeholder="Enter Room Rent"
                         value={roomRent}
-                        onChange={e => setRent(e.target.value)}
+                        onChange={e => {
+                            setRent(e.target.value);
+                             if (error?.roomRent) {
+                                const newError = { ...error };
+                                delete newError.roomRent;
+                                setError(newError);
+                            }
+                        }
+                    }
                     />
-                    <br />
+                    <div className="error-container">
+                        {error?.roomRent}
+                    </div>
+                    {error?.detail && (
+                        <div className="error-container">{error.detail}</div>
+                    )}
+                    
 
-                    <button type="submit" onClick={handleUpdate}>Edit</button>
+                    <button type="submit" onClick={handleUpdate}>Save</button>
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>
             </div>
