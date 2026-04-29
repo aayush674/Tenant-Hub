@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { authFetch } from "../api/apiClient";
 import "../styles/addRoomModal.css";
 import ConfirmModal from "./confirmationModal";
+import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../utils/roomValidation";
 
 function AddRoomModal({ pgId, onAdd, onClose }) {
 
@@ -223,33 +224,6 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
             </div>
         </div>
     )
-}
-
-function validateRoomNumber(roomNumber) {
-    if (!roomNumber || roomNumber.trim() === "") {
-        return "Room Number is required to add a Room"
-    }
-    else if (isNaN(roomNumber)) {
-        return "Room Number must be a valid Number"
-    }
-    return null;
-}
-
-function validateRoomCapacity(roomCapacity) {
-    if (!roomCapacity) {
-        return "Room Capacity is required to add a Room"
-    }
-    return null;
-}
-
-function validateRoomRent(roomRent) {
-    if (!roomRent || roomRent.trim() === "") {
-        return "Room Rent is required to add a Room"
-    }
-    else if (isNaN(roomRent)) {
-        return "Room Rent must be a valid Number"
-    }
-    return null;
 }
 
 export default AddRoomModal;
