@@ -19,7 +19,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "backend": "cd ../backend && venv\\Scripts\\python manage.py runserver",
+    "backend": "cd ../backend && py manage.py runserver",
     "dev": "concurrently \"npm run backend\" \"npm start\""
   },
   "eslintConfig": {
