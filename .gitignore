@@ -1,0 +1,58 @@
+# =========================
+# FRONTEND / NODE
+# =========================
+
+frontend/node_modules/
+frontend/build/
+frontend/coverage/
+
+.pnp
+.pnp.js
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+# PYTHON / DJANGO
+# =========================
+
+backend/venv/
+venv/
+
+__pycache__/
+*.py[cod]
+
+.pytest_cache/
+.mypy_cache/
+
+db.sqlite3
+
+# Django static files
+staticfiles/
+
+# =========================
+# ENV FILES
+# =========================
+
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# =========================
+# EDITOR / OS
+# =========================
+
+.vscode/
+.DS_Store
+
+# =========================
+# CACHE
+# =========================
+
+.cache/
+
+# Ignore migration cache only
+**/migrations/__pycache__/
