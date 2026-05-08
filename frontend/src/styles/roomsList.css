@@ -165,3 +165,23 @@ tbody tr:hover {
 .edit-room-button:hover{
     background-color: #0a7420;
 }
+
+.floor-navigation-box{
+    display: flex;
+    gap: 10px;
+    margin: 10px 0px;
+}
+
+.floor-navigation-box button{
+    min-width: 110px;
+    padding: 10px 0px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    border: 1px solid #987b23;
+    font-weight: bold;
+}
+
+.floor-navigation-box button.active-floor{
+    background-color: #987b23;
+    color: #ffffff;
+}

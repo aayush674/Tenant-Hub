@@ -36,6 +36,7 @@ class RoomViewSet(viewsets.ModelViewSet):
         max_price=self.request.query_params.get("max_price")
         min_price=self.request.query_params.get("min_price")
         capacity=self.request.query_params.get("capacity")
+        floor=self.request.query_params.get("room_floor")
         if pg_property:
             queryset=queryset.filter(pg_property__id=pg_property)
         if min_price:
@@ -44,6 +45,8 @@ class RoomViewSet(viewsets.ModelViewSet):
             queryset=queryset.filter(rent__lte=max_price)
         if capacity:
             queryset=queryset.filter(capacity=capacity)    
+        if floor:
+            queryset=queryset.filter(room_floor=floor)
         return queryset
 
 class TenantViewSet(viewsets.ModelViewSet):

@@ -26,16 +26,18 @@ function RoomsList() {
     const [searchParams, setSearchParams] = useSearchParams();
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
     const [roomToDelete, setRoomToDelete] = useState(null);
+    const [floorCounts, setFloorCounts] = useState({});
 
     useEffect(() => {
         const min = searchParams.get("min_price") || "";
         const max = searchParams.get("max_price") || "";
         const occupancy = searchParams.get("capacity") || "";
+        const room_floor = searchParams.get("room_floor") || "";
 
         const initialFilters = {
             minPrice: min,
             maxPrice: max,
-            occupancyType: occupancy ? Number(occupancy) : ""
+            occupancyType: occupancy ? Number(occupancy) : "",
         }
 
         setDraftFilters(initialFilters);
@@ -51,12 +53,14 @@ function RoomsList() {
         const min = searchParams.get("min_price") || "";
         const max = searchParams.get("max_price") || "";
         const occupancy = searchParams.get("capacity") || "";
+        const room_floor = searchParams.get("room_floor") || "";
 
         const params = new URLSearchParams();
 
         if (min) params.append("min_price", min);
         if (max) params.append("max_price", max);
         if (occupancy) params.append("capacity", occupancy);
+        if (room_floor) params.append("room_floor", room_floor)
 
         const res = await authFetch(
             `http://localhost:8000/api/rooms/?pg_property=${pgId}&${params.toString()}`
@@ -86,6 +90,7 @@ function RoomsList() {
                 setRoomToDelete(null);
             })
             .catch((error) => console.error("Error deleting Room:", error));
+        fetchFloorCounts();
     };
 
     const openEditRoom = (room) => {
@@ -113,14 +118,44 @@ function RoomsList() {
         if (draftFilters.occupancyType) {
             params.capacity = draftFilters.occupancyType;
         }
-
         setSearchParams(params);
+        fetchFloorCounts();
     }
 
     const handleResetFilters = () => {
         setDraftFilters({});
         handleApplyFilters();
     }
+
+    const getFloorLabel = (floor) => {
+        if (floor == 0) return "Unspecified";
+        if (floor == 1) return "1st Floor";
+        if (floor == 2) return "2nd Floor";
+        if (floor == 3) return "3rd Floor";
+        return `${floor}th Floor`;
+    };
+
+    const selectedFloor = searchParams.get("room_floor");
+
+    useEffect(() => {
+        fetchFloorCounts();
+    }, [pgId]);
+
+    const fetchFloorCounts = async () => {
+        const res = await authFetch(
+            `http://localhost:8000/api/rooms/?pg_property=${pgId}`
+        );
+
+        const data = await res.json();
+        const allRooms = data.results || data;
+
+        const counts = allRooms.reduce((acc, room) => {
+            acc[room.room_floor] = (acc[room.room_floor] || 0) + 1;
+            return acc;
+        }, {});
+
+        setFloorCounts(counts);
+    };
 
     return (
         <div className="room-list-container">
@@ -177,10 +212,34 @@ function RoomsList() {
                 />
             </div>
 
+            <div className="floor-navigation-box">
+                <button
+                    className={!selectedFloor ? "active-floor" : ""}
+                    onClick={() => {
+                        const params = Object.fromEntries(searchParams);
+                        delete params.room_floor;
+                        setSearchParams(params);
+                    }}>All ({pgData?.room_count})</button>
+                {Array.from({ length: pgData?.total_floors + 1 }, (_, i) => i).map((floor) => (
+                    <button key={floor}
+                        className={selectedFloor == floor ? "active-floor" : ""}
+                        onClick={() => {
+                            setSearchParams({
+                                ...Object.fromEntries(searchParams),
+                                room_floor: floor
+                            });
+                        }}>
+                        {getFloorLabel(floor)} ({floorCounts[floor] || 0})
+                    </button>
+                ))}
+            </div>
+
+
             <table>
                 <thead>
                     <tr>
                         <th>Room</th>
+                        <th>Floor</th>
                         <th>Capacity</th>
                         <th>Balcony Room</th>
                         <th>Rent</th>
@@ -193,6 +252,7 @@ function RoomsList() {
                     {rooms.map(room => (
                         <tr key={room.id}>
                             <td>{room.room_number}</td>
+                            <td>{room.room_floor != 0 ? room.room_floor : "Unspecified"}</td>
                             <td><span className={`occupancy-chip ${room.capacity === 1 ? "single" : "double"}`}>{room.capacity === 1 ? "👤Single" : "👥Double"}</span></td>
                             <td>{room.is_balcony_room === true ? "Yes" : "No"}</td>
                             <td>{room.rent}</td>
@@ -203,14 +263,14 @@ function RoomsList() {
                                             setShowDeleteConfirmModal(true)
                                             setRoomToDelete(room.id)
                                         }}
-                                        // data-tooltip-id="actionTip"
-                                        // data-tooltip-content="Delete Room"
+                                    // data-tooltip-id="actionTip"
+                                    // data-tooltip-content="Delete Room"
                                     />
 
                                     <FaPen className="edit-room-button"
                                         onClick={() => openEditRoom(room)}
-                                        // data-tooltip-id="actionTip"
-                                        // data-tooltip-content="Edit Room"
+                                    // data-tooltip-id="actionTip"
+                                    // data-tooltip-content="Edit Room"
                                     />
 
 
