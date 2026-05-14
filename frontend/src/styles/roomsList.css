@@ -113,20 +113,29 @@ tbody tr:hover {
 
 .filter-button button{
  background-color: #987b23;
+ font-size: 2.5vh;
     color: white;
     border: none;
     padding: 8px 16px;
-    border-radius: 3px;
     cursor: pointer;
     flex-shrink: 0;
     border-radius: 5px;
     border: 2px solid #5b4914;
     transition: all 0.2s ease;
     margin-bottom: 20px;    
+    font-weight: bold;
+     display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .filter-button button:hover {
     background-color: #5b4914;
+}
+
+.filter-icon {
+    width: 18px;
+    height: 18px;
 }
 
 .filter-button button:active {
@@ -184,4 +193,11 @@ tbody tr:hover {
 .floor-navigation-box button.active-floor{
     background-color: #987b23;
     color: #ffffff;
+}
+
+.no-rooms-message {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-weight: bold;
 }

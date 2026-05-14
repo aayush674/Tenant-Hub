@@ -9,6 +9,7 @@ import RoomListFilterModal from "./roomListFilterModal";
 import { useSearchParams } from "react-router-dom";
 import ConfirmModal from "./confirmationModal";
 import { FaPen, FaTrash } from "react-icons/fa";
+import FilterIcon from  "../assets/filter-svgrepo.svg"
 // import { Tooltip } from 'react-tooltip';
 
 
@@ -47,6 +48,7 @@ function RoomsList() {
     useEffect(() => {
         fetchRooms();
         fetchPg();
+        
     }, [pgId, searchParams]);
 
     const fetchRooms = async () => {
@@ -203,7 +205,9 @@ function RoomsList() {
                 <button onClick={() => {
                     setDraftFilters(filters);
                     setShowFilterModal(true);
-                }}>Filters</button>
+                }}>
+                    <img src={FilterIcon} alt="Filter" className="filter-icon"/>
+                    Filters</button>
                 <RoomListFilterModal
                     isOpen={showFilterModal}
                     onClose={() => setShowFilterModal(false)}
@@ -229,7 +233,7 @@ function RoomsList() {
                             setSearchParams({
                                 ...Object.fromEntries(searchParams),
                                 room_floor: floor
-                            });
+                            }); 
                         }}>
                         {getFloorLabel(floor)} ({floorCounts[floor] || 0})
                     </button>
@@ -251,7 +255,13 @@ function RoomsList() {
                 </thead>
 
                 <tbody>
-                    {rooms.map(room => (
+                    
+                    {  rooms.length===0?( <tr>
+            <td colSpan="6" className="no-rooms-message">
+                No Rooms Available
+            </td>
+        </tr>):(
+                    rooms.map(room => (
                         <tr key={room.id}>
                             <td>{room.room_number}</td>
                             <td>{room.room_floor != 0 ? room.room_floor : "Unspecified"}</td>
@@ -281,7 +291,7 @@ function RoomsList() {
                                 />
                             </td>
                         </tr>
-                    ))}
+                    )))}
                 </tbody>
             </table>
         </div>
