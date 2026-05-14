@@ -113,20 +113,29 @@ tbody tr:hover {
 
 .filter-button button{
  background-color: #987b23;
+ font-size: 2.5vh;
     color: white;
     border: none;
     padding: 8px 16px;
-    border-radius: 3px;
     cursor: pointer;
     flex-shrink: 0;
     border-radius: 5px;
     border: 2px solid #5b4914;
     transition: all 0.2s ease;
     margin-bottom: 20px;    
+    font-weight: bold;
+     display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .filter-button button:hover {
     background-color: #5b4914;
+}
+
+.filter-icon {
+    width: 18px;
+    height: 18px;
 }
 
 .filter-button button:active {
@@ -164,4 +173,31 @@ tbody tr:hover {
 
 .edit-room-button:hover{
     background-color: #0a7420;
+}
+
+.floor-navigation-box{
+    display: flex;
+    gap: 10px;
+    margin: 10px 0px;
+}
+
+.floor-navigation-box button{
+    min-width: 110px;
+    padding: 10px 0px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    border: 1px solid #987b23;
+    font-weight: bold;
+}
+
+.floor-navigation-box button.active-floor{
+    background-color: #987b23;
+    color: #ffffff;
+}
+
+.no-rooms-message {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-weight: bold;
 }

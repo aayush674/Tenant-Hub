@@ -30,7 +30,15 @@ class Room(models.Model):
     rent = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     is_balcony_room=models.BooleanField(default=False)
+    room_floor=models.IntegerField()
     # is_available = models.BooleanField(default=True)
+    def save(self, *args, **kwargs):
+        try:
+            self.room_floor=int(self.room_number)//100
+        except ValueError:
+            self.room_floor=0
+        super().save(*args, **kwargs)
+
     class Meta:
         constraints=[
             models.UniqueConstraint(

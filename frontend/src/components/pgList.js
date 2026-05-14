@@ -97,6 +97,7 @@ function PGList() {
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Total Floors</th>
                         <th>Total Rooms</th>
                         <th>Actions</th>
                     </tr>
@@ -112,6 +113,7 @@ function PGList() {
                             <tr key={pg.id} className="pg-row">
 
                                 <td className="pg-name">{pg.name}</td>
+                                <td className="pg-floors-count">{pg.total_floors}</td>
                                 <td className="pg-rooms-count">{pg.room_count ?? 0}</td>
                                 <td className="pg-row-actions">
                                     <FaEye

@@ -22,6 +22,7 @@ class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
         fields = '__all__'
+        read_only_fields=['room_floor']
 
     def validate_capacity(self, capacity):
         if capacity not in [1, 2]:
