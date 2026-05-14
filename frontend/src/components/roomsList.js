@@ -88,9 +88,10 @@ function RoomsList() {
                 setRooms(prev => prev.filter(room => room.id !== deleteRoom));
                 setShowDeleteConfirmModal(false);
                 setRoomToDelete(null);
+                fetchFloorCounts();
             })
             .catch((error) => console.error("Error deleting Room:", error));
-        fetchFloorCounts();
+        
     };
 
     const openEditRoom = (room) => {
@@ -179,6 +180,7 @@ function RoomsList() {
                             (room) => {
                                 setShowAddRoom(false);
                                 fetchRooms();
+                                fetchFloorCounts();
                             }
                         }
                         onClose={() => setShowAddRoom(false)}
@@ -263,16 +265,11 @@ function RoomsList() {
                                             setShowDeleteConfirmModal(true)
                                             setRoomToDelete(room.id)
                                         }}
-                                    // data-tooltip-id="actionTip"
-                                    // data-tooltip-content="Delete Room"
                                     />
 
                                     <FaPen className="edit-room-button"
                                         onClick={() => openEditRoom(room)}
-                                    // data-tooltip-id="actionTip"
-                                    // data-tooltip-content="Edit Room"
                                     />
-
 
                                 </div>
                                 <ConfirmModal
@@ -287,7 +284,6 @@ function RoomsList() {
                     ))}
                 </tbody>
             </table>
-            {/* <Tooltip id="actionTip" /> */}
         </div>
     )
 }
