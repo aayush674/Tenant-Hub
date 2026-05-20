@@ -5,6 +5,7 @@ import PGList from "./components/pgList";
 import Login from "./components/login";
 import RoomsList from "./components/roomsList";
 import RoomTypes from "./components/roomTypes";
+import TenantList from "./components/tenantList";
 
 import { ProtectedRoute } from "./api/protectedRoute";
 
@@ -31,6 +32,7 @@ function Layout() {
         <Route path="/pg-list" element={<ProtectedRoute><PGList /></ProtectedRoute>} />
         <Route path="/pg/:pgId/rooms" element={<ProtectedRoute><RoomsList /></ProtectedRoute>} />
         <Route path="/pg/:pgId/roomtypes" element={<ProtectedRoute><RoomTypes /></ProtectedRoute>} />
+        <Route path="/pg/:pgId/tenants" element={<ProtectedRoute><TenantList /></ProtectedRoute>} />
       </Routes>
     </>
   );

@@ -144,6 +144,9 @@ function PGList() {
                                                 <button onClick={() => navigate(`/pg/${pg.id}/roomtypes`)}>
                                                     View Room Types
                                                 </button>
+                                                 <button onClick={() => navigate(`/pg/${pg.id}/tenants`)}>
+                                                   View Tenants
+                                                </button>
                                             </div>
                                         )}
                                     </div>

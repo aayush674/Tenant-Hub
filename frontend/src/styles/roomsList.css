@@ -3,11 +3,6 @@
     font-family: "Lexend", sans-serif;
 }
 
-.room-list-container {
-    padding: 30px;
-    font-family: "Lexend", sans-serif;
-}
-
 .room-list-header {
     display: flex;
     justify-content: space-between;

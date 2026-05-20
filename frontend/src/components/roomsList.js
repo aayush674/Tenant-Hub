@@ -76,7 +76,7 @@ function RoomsList() {
     const fetchPg = async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
         if (!res.ok) {
-            throw new Error("Failed to fetch rooms");
+            throw new Error("Failed to fetch PG");
         }
         const data = await res.json();
         setPgData(data);
