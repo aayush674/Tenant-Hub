@@ -10,7 +10,7 @@ function TenantList(){
     const navigate=useNavigate()
     const [pgData, setPgData] = useState();
     const [showAddTenant, setShowAddTenant] = useState(false);
-    const [tenants, setTenants]=useState();
+    const [tenants, setTenants]=useState([]);
 
     const fetchPg = async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
@@ -52,9 +52,9 @@ function TenantList(){
                     <AddTenantModal
                         pgId={pgId}
                         onAdd={
-                            (tenant) => {
+                            async (tenant) => {
                                 setShowAddTenant(false);
-                                // fetchTenants();
+                                await fetchTenants();
                                 // fetchFloorCounts();
                             }
                         }
