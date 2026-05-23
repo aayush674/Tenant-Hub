@@ -81,7 +81,7 @@ function TenantList(){
                         <th>Tenant Name</th>
                         <th>Room Number</th>
                         <th>Email</th>
-                        <th>Join Date</th>
+                        <th>Joining Date</th>
                         <th>Phone Number</th>
                         <th>Actions</th>
                     </tr>
@@ -97,8 +97,8 @@ function TenantList(){
         </tr>):(
                     tenants.map(tenant => (
                         <tr key={tenant.id}>
-                            <td>{tenant.name}</td>
-                            <td>{tenant.room}</td>
+                            <td>{tenant.first_name + " " + tenant.last_name}</td>
+                            <td>{tenant.room.room_number}</td>
                             <td>{tenant.email}</td>
                             <td>{tenant.join_date}</td>
                             <td>{tenant.phone_number}</td>

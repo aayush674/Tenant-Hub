@@ -7,6 +7,7 @@ import ConfirmModal from "./confirmationModal";
 function AddTenantModal({ pgId, onAdd, onClose }) {
 
     const [tenantName, setTenantName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [tenantRoom, setTenantRoom] = useState("");
     const [tenantEmail, setTenantEmail] = useState("");
     const [tenantPhone, setTenantPhone] = useState("");
@@ -80,7 +81,8 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
                 body: JSON.stringify({
                     // pg_property: pgId,
                     room: tenantRoom,
-                    name: tenantName,
+                    first_name: tenantName,
+                    last_name: lastName,
                     email: tenantEmail,
                     phone_number: tenantPhone,
                     join_date: tenantJoinDate
@@ -134,9 +136,9 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
                 <h1 className="modal-header">Add Tenant</h1>
 
                 <form onSubmit={handleSubmit}>
-                    <div>Tenant Name</div>
+                    <div>First Name</div>
                     <input
-                        placeholder="Enter Tenant Name"
+                        placeholder="Enter First Name"
                         value={tenantName}
                         onChange={e => {
                             setTenantName(e.target.value);
@@ -150,10 +152,25 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
                     <div className="error-container">
                         {error?.name}
                     </div>
-
+                    <div>Last Name</div>
+                    <input
+                        placeholder="Enter Last Name"
+                        value={lastName}
+                        onChange={e => {
+                            setLastName(e.target.value);
+                            // if (error?.roomNumber) {
+                            //     const newError = { ...error };
+                            //     delete newError.roomNumber;
+                            //     setError(newError);
+                            // }
+                        }}
+                    />
+                    <div className="error-container">
+                        {error?.name}
+                    </div>
                     <div>Alloted Room</div>
                     <select
-                        onChange={(e) => setTenantRoom(Number(e.target.value))} 
+                        onChange={(e) => setTenantRoom(Number(e.target.value))}
                         className="custom-select">
                         <option value="">Select Room</option>
                         {rooms.map(room => (
@@ -208,7 +225,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
                     </div>
                     <div>Joining Date</div>
 
-                    <input type="date" value={tenantJoinDate} onChange={(e)=> setTenantJoinDate(e.target.value)}/>
+                    <input type="date" value={tenantJoinDate} onChange={(e) => setTenantJoinDate(e.target.value)} />
                     <div className="error-container">
                         {error?.join_date}
                     </div>

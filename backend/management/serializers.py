@@ -35,6 +35,7 @@ class RoomSerializer(serializers.ModelSerializer):
         return rent
     
 class TenantSerializer(serializers.ModelSerializer):
+    room=RoomSerializer(read_only=True)
     class Meta:
         model = Tenant
         fields = '__all__'
