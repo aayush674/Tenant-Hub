@@ -4,16 +4,14 @@ import "../styles/addTenant.css";
 import TenantForm from "./tenantForm";
 import { validateEmail, validatePhoneNumber, validateName, validateRoom, validateDate } from "../utils/tenantValidation";
 
-function AddTenantModal({ pgId, onAdd, onClose }) {
+function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
 
-    const [tenantName, setTenantName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [tenantRoom, setTenantRoom] = useState("");
-    const [tenantEmail, setTenantEmail] = useState("");
-    const [tenantPhone, setTenantPhone] = useState("");
-    const [tenantJoinDate, setTenantJoinDate] = useState(
-        new Date().toLocaleDateString("en-CA")
-    );
+    const [tenantName, setTenantName] = useState(tenant.first_name);
+    const [lastName, setLastName] = useState(tenant.last_name);
+    const [tenantRoom, setTenantRoom] = useState(tenant.room);
+    const [tenantEmail, setTenantEmail] = useState(tenant.email);
+    const [tenantPhone, setTenantPhone] = useState(tenant.phone_number);
+    const [tenantJoinDate, setTenantJoinDate] = useState(tenant.join_date);
     const [closing, setClosing] = useState(false);
     const [rooms, setRooms] = useState([]);
     const [error, setError] = useState(null);
@@ -84,8 +82,8 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
         });
         setError({});
         try {
-            const res = await authFetch("http://localhost:8000/api/tenants/", {
-                method: "POST",
+            const res = await authFetch(`http://localhost:8000/api/tenants/${tenant.id}/`, {
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -107,7 +105,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
                 return;
             }
             const data = await res.json();
-            onAdd(data);
+            onEdit(data);
         }
         catch (err) {
             setError({ detail: "Something went wrong. Please try again." });
@@ -120,7 +118,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
                 className={`add-tenant-modal-box ${closing ? "close" : "open"}`}
                 onClick={(e) => e.stopPropagation()}
             >
-                <h1 className="modal-header">Add Tenant</h1>
+                <h1 className="modal-header">Edit Tenant</h1>
 
                 <form onSubmit={handleSubmit}>
 
@@ -148,7 +146,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
                         setError={setError}
                     />
 
-                    <button type="submit">Add Tenant</button>
+                    <button type="submit">Save Tenant</button>
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>
             </div>
@@ -156,4 +154,4 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
     )
 }
 
-export default AddTenantModal;
+export default EditTenantModal;

@@ -3,7 +3,10 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { authFetch } from "../api/apiClient";
 import AddTenantModal from "./addTenant";
+import EditTenantModal from "./editTenant";
 import "../styles/tenantList.css";
+import { FaPen, FaTrash } from "react-icons/fa";
+import ConfirmModal from "./confirmationModal";
 
 function TenantList(){
     const { pgId } = useParams()
@@ -11,6 +14,10 @@ function TenantList(){
     const [pgData, setPgData] = useState();
     const [showAddTenant, setShowAddTenant] = useState(false);
     const [tenants, setTenants]=useState([]);
+    const [showEditTenant, setShowEditTenant] = useState(false);
+    const [editTenantData, setEditTenantData] = useState(null);
+    const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+    const [tenantToDelete, setTenantToDelete] = useState(null);
 
     const fetchPg = async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
@@ -27,11 +34,28 @@ function TenantList(){
         setTenants(data.results || data);
     }
 
+    const handleDeleteTenant = (tenantToDelete) =>{
+        authFetch(`http://localhost:8000/api/tenants/${tenantToDelete}/`, {
+            method: "DELETE",
+        })
+            .then(() => {
+                setShowDeleteConfirmModal(false);
+                setTenantToDelete(null);
+                fetchTenants();                
+            })
+            .catch((error) => console.error("Error deleting Tenant:", error));
+    }
+
     useEffect(() => {
         fetchPg();
         fetchTenants();
         
     }, [pgId]);
+
+    const openEditTenant = (tenant) => {
+        setEditTenantData(tenant);
+        setShowEditTenant(true);
+    }
 
     return(
         <div className="tenant-list-container">
@@ -62,16 +86,17 @@ function TenantList(){
                     />
                 )}
 
-                {/* {showEditModal && (
-                    <EditRoomModal
-                        room={editRoomData}
-                        onUpdate={(updatedRoom) => {
-                            updateRoom(updatedRoom);
-                            setShowEditModal(false);
+                {showEditTenant && (
+                    <EditTenantModal
+                        pgId={pgId}
+                        tenant={editTenantData}
+                        onEdit={async () => {
+                            setShowEditTenant(false);
+                            await fetchTenants();
                         }}
-                        onClose={() => setShowEditModal(false)}
+                        onClose={() => setShowEditTenant(false)}
                     />
-                )} */}
+                )}
 
             </div>
 
@@ -98,31 +123,31 @@ function TenantList(){
                     tenants.map(tenant => (
                         <tr key={tenant.id}>
                             <td>{tenant.first_name + " " + tenant.last_name}</td>
-                            <td>{tenant.room.room_number}</td>
+                            <td>{tenant.room_number}</td>
                             <td>{tenant.email}</td>
                             <td>{tenant.join_date}</td>
                             <td>{tenant.phone_number}</td>
                             <td>
                                 <div className="action-column">
-                                    {/* <FaTrash className="delete-room-button"
+                                    <FaTrash className="delete-tenant-button"
                                         onClick={() => {
                                             setShowDeleteConfirmModal(true)
-                                            setRoomToDelete(room.id)
+                                            setTenantToDelete(tenant.id)
                                         }}
                                     />
 
-                                    <FaPen className="edit-room-button"
-                                        onClick={() => openEditRoom(room)}
-                                    /> */}
+                                    <FaPen className="edit-tenant-button"
+                                        onClick={() => openEditTenant(tenant)}
+                                    />
 
                                 </div>
-                                {/* <ConfirmModal
+                                <ConfirmModal
                                     show={showDeleteConfirmModal}
-                                    title="Delete Room"
-                                    message="Are you sure you want to delete this room? The action once done can not be reverted."
-                                    onConfirm={() => handleDeleteRoom(roomToDelete)}
+                                    title="Delete Tenant"
+                                    message="Are you sure you want to remove this Tenant? The action once done can not be reverted."
+                                    onConfirm={() => handleDeleteTenant(tenantToDelete)}
                                     onCancel={() => setShowDeleteConfirmModal(false)}
-                                /> */}
+                                />
                             </td>   
                         </tr>
                     )))}
