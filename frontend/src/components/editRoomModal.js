@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { authFetch } from "../api/apiClient";
 import "../styles/addRoomModal.css";
 import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../utils/roomValidation";
@@ -8,10 +8,11 @@ function EditRoomModal({ room, onUpdate, onClose }) {
     const [roomNumber, setRoomNumber] = useState(room.room_number);
     const [roomCapacity, setCapacity] = useState(room.capacity);
     const [roomRent, setRent] = useState(room.rent);
-    const [roomType, setRoomType]= useState(room.roomType)
+    const [roomType, setRoomType] = useState(room.roomType)
     const [error, setError] = useState(null);
     const [roomBalcony, setRoomBalcony] = useState(room.is_balcony_room);
     const [closing, setClosing] = useState(false);
+    const [opening, setOpening] = useState(false);
 
     const handleClose = () => {
         setClosing(true);
@@ -20,6 +21,12 @@ function EditRoomModal({ room, onUpdate, onClose }) {
             onClose();
         }, 300); // must match CSS transition
     };
+
+    useEffect(() => {
+        requestAnimationFrame(() => {
+            setOpening(true);
+        });
+    }, []);
 
     const handleUpdate = async (e) => {
         e.preventDefault();
@@ -70,7 +77,8 @@ function EditRoomModal({ room, onUpdate, onClose }) {
     return (
         <div className="add-room-modal-overlay">
             <div
-                className={`add-room-modal-box ${closing ? "close" : "open"}`}
+                className={`add-room-modal-box ${closing ? "close" : opening ? "open" : ""
+                    }`}
                 onClick={(e) => e.stopPropagation()}
             >
                 <h1 className="modal-header">Edit Room</h1>
@@ -95,8 +103,8 @@ function EditRoomModal({ room, onUpdate, onClose }) {
                     </div>
 
                     <div className="balcony-checkbox">
-                    <input type="checkbox" checked={roomBalcony} onChange={e => setRoomBalcony(e.target.checked)} />
-                    <label>Balcony room</label>
+                        <input type="checkbox" checked={roomBalcony} onChange={e => setRoomBalcony(e.target.checked)} />
+                        <label>Balcony room</label>
                     </div>
                     <br />
 
@@ -106,13 +114,13 @@ function EditRoomModal({ room, onUpdate, onClose }) {
                         value={roomRent}
                         onChange={e => {
                             setRent(e.target.value);
-                             if (error?.roomRent) {
+                            if (error?.roomRent) {
                                 const newError = { ...error };
                                 delete newError.roomRent;
                                 setError(newError);
                             }
                         }
-                    }
+                        }
                     />
                     <div className="error-container">
                         {error?.roomRent}
@@ -120,7 +128,7 @@ function EditRoomModal({ room, onUpdate, onClose }) {
                     {error?.detail && (
                         <div className="error-container">{error.detail}</div>
                     )}
-                    
+
 
                     <button type="submit" onClick={handleUpdate}>Save</button>
                     <button type="button" onClick={handleClose}>Cancel</button>

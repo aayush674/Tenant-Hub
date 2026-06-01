@@ -12,6 +12,7 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
     const [roomBalcony, setRoomBalcony] = useState(false);
     const [roomTypes, setRoomTypes] = useState([]);
     const [closing, setClosing] = useState(false);
+    const [opening, setOpening] = useState(false);
     const [selectedRoomType, setSelectedRoomType] = useState(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [error, setError] = useState(null);
@@ -19,6 +20,12 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
     useEffect(() => {
         fetchRoomTypes();
     }, [])
+
+    useEffect(() => {
+        requestAnimationFrame(() => {
+            setOpening(true);
+        });
+    }, []);
 
     useEffect(() => {
         if (selectedRoomType) {
@@ -124,7 +131,8 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
     return (
         <div className="add-room-modal-overlay">
             <div
-                className={`add-room-modal-box ${closing ? "close" : "open"}`}
+                className={`add-room-modal-box ${closing ? "close" : opening ? "open" : ""
+                    }`}
                 onClick={(e) => e.stopPropagation()}
             >
                 <h1 className="modal-header">Add Room</h1>
@@ -184,7 +192,7 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
                                 setError(newError);
                             }
                         }
-                            }>👥Double</button>
+                        }>👥Double</button>
 
                     </div>
                     <div className="error-container">
@@ -203,13 +211,13 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
                         value={roomRent}
                         onChange={e => {
                             setRent(e.target.value);
-                             if (error?.roomRent) {
+                            if (error?.roomRent) {
                                 const newError = { ...error };
                                 delete newError.roomRent;
                                 setError(newError);
                             }
                         }
-                    }
+                        }
                     />
                     <div className="error-container">
                         {error?.roomRent}

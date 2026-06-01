@@ -39,9 +39,8 @@
     cursor: pointer;
     border: 2px solid #2c2c5d;
     transition: all 0.2s ease;
-
+    font-family: "Lexend", sans-serif;
 }
-
 
 .nav-links button:hover {
     background-color: #2c2c5d;
