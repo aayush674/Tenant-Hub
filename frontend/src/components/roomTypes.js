@@ -115,8 +115,13 @@ function RoomTypes() {
                             <td>
                                 <div className="action-column">
                                     
-                                    <FaTrash className="delete-room-type-button"/>
-                                    <FaPen className="edit-room-type-button" />
+                                    <button className="delete-room-type-button"
+                                            
+                                        ><FaTrash /> Delete</button>
+
+                                        <button className="edit-room-type-button"
+                                            
+                                        ><FaPen /> Edit</button>
                                 </div>
                             </td>
                         </tr>

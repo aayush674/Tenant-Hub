@@ -21,7 +21,7 @@ function RoomListFilterModal({ isOpen, onClose, filters, setFilters, onApply, on
                 }}>
 
                     <div className="filters-container">
-                        <div className="filter-heading">Room Rent</div>
+                        <div className="filter-heading">Room Rent (&#8377;)</div>
                         <div className="filter-field">
                             <input placeholder="Minimum Rent"
                                 value={filters.minPrice}

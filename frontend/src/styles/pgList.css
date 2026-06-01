@@ -1,6 +1,6 @@
 .pg-list-container {
-    padding: 30px;
-    font-family: "Lexend", sans-serif;
+  padding: 30px;
+  font-family: "Lexend", sans-serif;
 }
 
 .success-message {
@@ -12,7 +12,7 @@
   padding: 14px 22px;
   border-radius: 6px;
   font-size: 14px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   z-index: 9999;
   animation: slideIn 0.3s ease;
 }
@@ -22,33 +22,34 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.create-pg-btn{
+.create-pg-btn {
   background-color: #987b23;
   color: white;
   border: none;
   padding: 5px 10px;
   border-radius: 3px;
   cursor: pointer;
-  flex-shrink: 0; 
+  flex-shrink: 0;
   border-radius: 5px;
   border: 2px solid #5b4914;
   transition: all 0.2s ease;
   margin-top: 20px;
 }
 
-.create-pg-btn:hover{
+.create-pg-btn:hover {
   background-color: #5b4914;
 }
 
-.create-pg-btn:active{
+.create-pg-btn:active {
   background-color: #4a3a10;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .pg-row td {
@@ -62,19 +63,21 @@
 }
 
 .delete-pg-button {
-  background-color: #fb5454;
-  color: white;
-  border: none;
-  padding: 4px 6px;
-  border-radius: 3px;
+  color: red;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font-weight: 600;
+  font-family: "Lexend", sans-serif;
+  min-height: 32px;
+  min-width: 85px;
   cursor: pointer;
-  flex-shrink: 0; 
-  border: 2px solid #a31712;
   transition: all 0.2s ease;
 }
 
 .delete-pg-button:hover {
-  background-color: #a31712;
+  background-color: #ffd1d1;
+  border-color: #fca5a5;
 }
 
 /* .pg-name{
@@ -84,59 +87,61 @@
 } */
 
 .view-pg-button {
-  background-color: #4c8caf;
-  color: white;
-  border: none;
-  padding: 4px 6px;
-  border-radius: 3px;
-  cursor: pointer;
-  flex-shrink: 0; 
-  border: 2px solid #31627c;
+  color: green;
+  background-color: #f2fef2;
+  border: 1px solid #cafeca;
+  border-radius: 6px;
+  font-weight: 600;
+  font-family: "Lexend", sans-serif;
+  min-height: 32px;
+  min-width: 85px;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .view-pg-button:hover {
-  background-color: #31627c;
+  background-color: #d1ffd1;
+  border-color: #a5fca5;
 }
 
-.nav-path{
-    color: #434242;
-    font-size: 14px;
-    margin-bottom: 15px;
+.nav-path {
+  color: #434242;
+  font-size: 14px;
+  margin-bottom: 15px;
 }
 
 .navigator {
-    cursor: pointer;
-    color: #987b23;
+  cursor: pointer;
+  color: #987b23;
 }
 
 .navigator:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .pg-list-container table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 2px solid #5b4914;
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #5b4914;
 }
 
 .pg-list-container thead {
-    background-color: #b79739;
+  background-color: #b79739;
 }
 
 .pg-list-container th {
-    text-align: left;
-    padding: 12px;
-    border-bottom: 2px solid #ddd;
+  text-align: left;
+  padding: 12px;
+  border-bottom: 2px solid #ddd;
 }
 
 .pg-list-container td {
-    padding: 12px;
-    border-bottom: 1px solid #987b23;
+  padding: 12px;
+  border-bottom: 1px solid #987b23;
 }
 
-.pg-list-container tbody tr{
-    transition: background-color 0.15s ease;
+.pg-list-container tbody tr {
+  transition: background-color 0.15s ease;
 }
 
 /* Normal hover */
@@ -148,12 +153,12 @@
   background-color: white !important;
 }
 
-.pg-row-more-menu{
-  position: relative; 
+.pg-row-more-menu {
+  position: relative;
 }
 
-.dropdown-actions{
- position: absolute;
+.dropdown-actions {
+  position: absolute;
   top: 80%;
   right: 0;
   left: 100%;
@@ -163,16 +168,16 @@
   min-width: 150px;
 
   border: 1px solid #e0e0e0;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
 
   display: flex;
   flex-direction: column;
   z-index: 100;
 
-    opacity: 0;
+  opacity: 0;
   transform: translateY(-6px) scale(0.98);
   animation: dropdownFade 0.18s ease forwards;
-    transform-origin: top left;
+  transform-origin: top left;
 
 }
 
@@ -197,7 +202,7 @@
 .dropdown-actions button:hover {
   background: #f3f3f3;
   padding-left: 18px;
-}   
+}
 
 .dropdown-actions button:not(:last-child) {
   border-bottom: 1px solid #eee;
@@ -217,7 +222,8 @@
 
 /* Active (when dropdown open) */
 .menu-icon-active {
-  background-color: #d8d8d8;   /* match your theme */
+  background-color: #d8d8d8;
+  /* match your theme */
   color: #5b4914;
   padding: 5px;
   border-radius: 4px;

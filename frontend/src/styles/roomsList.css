@@ -3,11 +3,6 @@
     font-family: "Lexend", sans-serif;
 }
 
-.room-list-container {
-    padding: 30px;
-    font-family: "Lexend", sans-serif;
-}
-
 .room-list-header {
     display: flex;
     justify-content: space-between;
@@ -143,36 +138,41 @@ tbody tr:hover {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.delete-room-button {
-  background-color: #fb5454;
-  color: white;
-  border: none;
-  padding: 4px 6px;
-  border-radius: 3px;
-  cursor: pointer;
-  flex-shrink: 0; 
-  border: 2px solid #a31712;
-  transition: all 0.2s ease;
+
+.delete-room-button{
+    color: red;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    font-weight: 600;
+    font-family: "Lexend", sans-serif;
+    min-height: 32px;
+    min-width: 85px;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .delete-room-button:hover{
-    background-color: #a31712;
+    background-color: #ffd1d1;
+    border-color: #fca5a5;
 }
 
-.edit-room-button {
-  background-color: #2aa944;
-  color: white;
-  border: none;
-  padding: 4px 6px;
-  border-radius: 3px;
-  cursor: pointer;
-  flex-shrink: 0; 
-  border: 2px solid #0a7420;
-  transition: all 0.2s ease;
+.edit-room-button{
+    color: blue;
+    background-color: #f2f2fe;
+    border: 1px solid #cacafe;
+    border-radius: 6px;
+    font-weight: 600;
+    font-family: "Lexend", sans-serif;
+    min-height: 32px;
+    min-width: 85px;
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .edit-room-button:hover{
-    background-color: #0a7420;
+    background-color: #d1d1ff;
+    border-color: #a5a5fc;
 }
 
 .floor-navigation-box{
@@ -188,6 +188,7 @@ tbody tr:hover {
     background-color: #ffffff;
     border: 1px solid #987b23;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .floor-navigation-box button.active-floor{

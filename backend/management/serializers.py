@@ -35,6 +35,10 @@ class RoomSerializer(serializers.ModelSerializer):
         return rent
     
 class TenantSerializer(serializers.ModelSerializer):
+    room_number = serializers.CharField(
+        source="room.room_number",
+        read_only=True
+    )
     class Meta:
         model = Tenant
         fields = '__all__'

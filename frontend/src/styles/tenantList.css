@@ -1,16 +1,34 @@
-.room-type-container {
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100;300;400;600;700&display=swap');
+.tenant-list-container {
     padding: 30px;
     font-family: "Lexend", sans-serif;
 }
 
-.room-type-header {
+.tenant-list-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
 
-.add-room-type-btn {
+.tenant-list-nav-path {
+    /* color: #5b4914; */
+    color: #434242;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.tenant-list-navigator {
+    cursor: pointer;
+    color: #987b23;
+}
+
+.tenant-list-navigator:hover {
+    text-decoration: underline;
+}
+
+
+.add-tenant-btn {
     background-color: #987b23;
     color: white;
     border: none;
@@ -24,109 +42,45 @@
     margin-top: 20px;
 }
 
-.add-room-type-btn:hover {
+.add-tenant-btn:hover {
     background-color: #5b4914;
 }
 
-.add-room-type-btn:active {
+.add-tenant-btn:active {
     background-color: #4a3a10;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-table {
+.tenant-list-container table {
     width: 100%;
     border-collapse: collapse;
     border: 2px solid #5b4914;
 }
 
-thead {
+.tenant-list-container thead {
     background-color: #b79739;
 }
 
-th {
+.tenant-list-container th {
     text-align: left;
     padding: 12px;
     border-bottom: 2px solid #ddd;
 }
 
-td {
+.tenant-list-container td {
     padding: 12px;
     border-bottom: 1px solid #987b23;
 }
 
-tbody tr{
+.tenant-list-container tbody tr{
     transition: background-color 0.15s ease;
 }
 
-tbody tr:hover {
+.tenant-list-container tbody tr:hover {
     background-color: #ccb673;
 }
 
-.room-type-header h1 {
-    color: #5b4914;
-}
-
-.room-type-nav-path{
-    color: #434242;
-    font-size: 14px;
-    margin-bottom: 15px;
-}
-
-.room-type-navigator {
-    cursor: pointer;
-    color: #987b23;
-}
-
-.room-type-navigator:hover {
-    text-decoration: underline;
-}
-
-.occupancy-chip {
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.occupancy-chip.single {
-    background-color: #e6f6ea;
-    color: #1e7d32;
-}
-
-.occupancy-chip.double {
-    background-color: #e8f0fe;
-    color: #1a73e8;
-}
-
-.action-column{
-    display: flex;
-    gap: 12px;
-}
-
-/* .filter-button button{
- background-color: #987b23;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 3px;
-    cursor: pointer;
-    flex-shrink: 0;
-    border-radius: 5px;
-    border: 2px solid #5b4914;
-    transition: all 0.2s ease;
-    margin-bottom: 20px;    
-}
-
-.filter-button button:hover {
-    background-color: #5b4914;
-}
-
-.filter-button button:active {
-    background-color: #4a3a10;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-} */
-
-.delete-room-type-button{
+.delete-tenant-button{
     color: red;
     background-color: #fef2f2;
     border: 1px solid #fecaca;
@@ -139,12 +93,12 @@ tbody tr:hover {
     transition: all 0.2s ease;
 }
 
-.delete-room-type-button:hover{
+.delete-tenant-button:hover{
     background-color: #ffd1d1;
     border-color: #fca5a5;
 }
 
-.edit-room-type-button{
+.edit-tenant-button{
     color: blue;
     background-color: #f2f2fe;
     border: 1px solid #cacafe;
@@ -157,7 +111,7 @@ tbody tr:hover {
     cursor: pointer;
 }
 
-.edit-room-type-button:hover{
+.edit-tenant-button:hover{
     background-color: #d1d1ff;
     border-color: #a5a5fc;
 }
