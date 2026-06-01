@@ -129,16 +129,17 @@ function TenantList(){
                             <td>{tenant.phone_number}</td>
                             <td>
                                 <div className="action-column">
-                                    <FaTrash className="delete-tenant-button"
-                                        onClick={() => {
-                                            setShowDeleteConfirmModal(true)
-                                            setTenantToDelete(tenant.id)
-                                        }}
-                                    />
+                                    <button className="delete-tenant-button"
+                                    onClick={()=>{
+                                        setShowDeleteConfirmModal(true)
+                                        setTenantToDelete(tenant.id)
+                                    }}
+                                    ><FaTrash/> Delete</button>
 
-                                    <FaPen className="edit-tenant-button"
-                                        onClick={() => openEditTenant(tenant)}
-                                    />
+                                    <button className="edit-tenant-button"
+                                    onClick={() => openEditTenant(tenant)}
+                                    ><FaPen/> Edit</button>
+                                    
 
                                 </div>
                                 <ConfirmModal

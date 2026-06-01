@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100;300;400;600;700&display=swap');
 .tenant-list-container {
     padding: 30px;
     font-family: "Lexend", sans-serif;
@@ -77,4 +78,40 @@
 
 .tenant-list-container tbody tr:hover {
     background-color: #ccb673;
+}
+
+.delete-tenant-button{
+    color: red;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    font-weight: 600;
+    font-family: "Lexend", sans-serif;
+    min-height: 32px;
+    min-width: 85px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-tenant-button:hover{
+    background-color: #ffd1d1;
+    border-color: #fca5a5;
+}
+
+.edit-tenant-button{
+    color: blue;
+    background-color: #f2f2fe;
+    border: 1px solid #cacafe;
+    border-radius: 6px;
+    font-weight: 600;
+    font-family: "Lexend", sans-serif;
+    min-height: 32px;
+    min-width: 85px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.edit-tenant-button:hover{
+    background-color: #d1d1ff;
+    border-color: #a5a5fc;
 }

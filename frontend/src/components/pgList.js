@@ -65,9 +65,8 @@ function PGList() {
     };
 
     return (
-        <div  className={`pg-list-container ${
-    showActionDropdownId ? "dropdown-open" : ""
-  }`}>
+        <div className={`pg-list-container ${showActionDropdownId ? "dropdown-open" : ""
+            }`}>
             <div className="nav-path">
                 <span onClick={() => navigate("/")} className="navigator">Home</span>
                 <span className="seperator"> / </span>
@@ -116,37 +115,51 @@ function PGList() {
                                 <td className="pg-floors-count">{pg.total_floors}</td>
                                 <td className="pg-rooms-count">{pg.room_count ?? 0}</td>
                                 <td className="pg-row-actions">
-                                    <FaEye
+                                    {/* <FaEye
                                         onClick={() => {
                                             setViewPG(pg);
                                             setShowViewModal(true);
                                         }} className="view-pg-button"
-                                        title="View" />
-                                    <FaTrash
+                                        title="View" /> */}
+                                    {/* <FaTrash
                                         onClick={() => {
                                             setPgToDelete(pg.id);
                                             setShowConfirmModal(true);
-                                        }} className="delete-pg-button" 
-                                        title="Delete"/>
+                                        }} className="delete-pg-button"
+                                        title="Delete" /> */}
 
-                                    <div className="pg-row-more-menu" onClick={(e)=>e.stopPropagation()}>
+                                    <button className="view-pg-button"
+                                        onClick={() => {setViewPG(pg);
+                                            setShowViewModal(true);}}
+                                    ><FaEye /> View</button>
+
+                                    <button className= "delete-pg-button"
+                                        onClick={() => {
+                                            setPgToDelete(pg.id);
+                                            setShowConfirmModal(true);
+                                        }}
+                                    ><FaTrash /> Delete</button>
+
+                                    <div className="pg-row-more-menu" onClick={(e) => e.stopPropagation()}>
                                         <FaEllipsisV title="More" onClick={(e) => {
                                             e.stopPropagation();
                                             setShowActionDropdownId(prev => (prev === pg.id ? null : pg.id));
                                         }
-                                        } className={showActionDropdownId===pg.id ? "menu-icon-active": "menu-icon"} />
+                                        } className={showActionDropdownId === pg.id ? "menu-icon-active" : "menu-icon"} />
                                         {showActionDropdownId === pg.id && (
                                             <div className="dropdown-actions">
                                                 <button onClick={() => navigate(`/pg/${pg.id}/rooms`)}>
-                                                   🏠 View Rooms
+                                                    🏠 View Rooms
                                                 </button>
 
                                                 <button onClick={() => navigate(`/pg/${pg.id}/roomtypes`)}>
                                                     View Room Types
                                                 </button>
-                                                 <button onClick={() => navigate(`/pg/${pg.id}/tenants`)}>
-                                                   View Tenants
+                                                <button onClick={() => navigate(`/pg/${pg.id}/tenants`)}>
+                                                    View Tenants
                                                 </button>
+
+
                                             </div>
                                         )}
                                     </div>

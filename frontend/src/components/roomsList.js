@@ -9,7 +9,7 @@ import RoomListFilterModal from "./roomListFilterModal";
 import { useSearchParams } from "react-router-dom";
 import ConfirmModal from "./confirmationModal";
 import { FaPen, FaTrash } from "react-icons/fa";
-import FilterIcon from  "../assets/filter-svgrepo.svg"
+import FilterIcon from "../assets/filter-svgrepo.svg"
 // import { Tooltip } from 'react-tooltip';
 
 
@@ -48,7 +48,7 @@ function RoomsList() {
     useEffect(() => {
         fetchRooms();
         fetchPg();
-        
+
     }, [pgId, searchParams]);
 
     const fetchRooms = async () => {
@@ -93,7 +93,7 @@ function RoomsList() {
                 fetchFloorCounts();
             })
             .catch((error) => console.error("Error deleting Room:", error));
-        
+
     };
 
     const openEditRoom = (room) => {
@@ -206,7 +206,7 @@ function RoomsList() {
                     setDraftFilters(filters);
                     setShowFilterModal(true);
                 }}>
-                    <img src={FilterIcon} alt="Filter" className="filter-icon"/>
+                    <img src={FilterIcon} alt="Filter" className="filter-icon" />
                     Filters</button>
                 <RoomListFilterModal
                     isOpen={showFilterModal}
@@ -233,7 +233,7 @@ function RoomsList() {
                             setSearchParams({
                                 ...Object.fromEntries(searchParams),
                                 room_floor: floor
-                            }); 
+                            });
                         }}>
                         {getFloorLabel(floor)} ({floorCounts[floor] || 0})
                     </button>
@@ -248,50 +248,49 @@ function RoomsList() {
                         <th>Floor</th>
                         <th>Capacity</th>
                         <th>Balcony Room</th>
-                        <th>Rent</th>
+                        <th>Rent (&#8377;)</th>
                         <th>Actions</th>
                     </tr>
 
                 </thead>
 
                 <tbody>
-                    
-                    {  rooms.length===0?( <tr>
-            <td colSpan="6" className="no-rooms-message">
-                No Rooms Available
-            </td>
-        </tr>):(
-                    rooms.map(room => (
-                        <tr key={room.id}>
-                            <td>{room.room_number}</td>
-                            <td>{room.room_floor != 0 ? room.room_floor : "Unspecified"}</td>
-                            <td><span className={`occupancy-chip ${room.capacity === 1 ? "single" : "double"}`}>{room.capacity === 1 ? "👤Single" : "👥Double"}</span></td>
-                            <td>{room.is_balcony_room === true ? "Yes" : "No"}</td>
-                            <td>{room.rent}</td>
-                            <td>
-                                <div className="action-column">
-                                    <FaTrash className="delete-room-button"
-                                        onClick={() => {
-                                            setShowDeleteConfirmModal(true)
-                                            setRoomToDelete(room.id)
-                                        }}
-                                    />
 
-                                    <FaPen className="edit-room-button"
-                                        onClick={() => openEditRoom(room)}
-                                    />
+                    {rooms.length === 0 ? (<tr>
+                        <td colSpan="6" className="no-rooms-message">
+                            No Rooms Available
+                        </td>
+                    </tr>) : (
+                        rooms.map(room => (
+                            <tr key={room.id}>
+                                <td>{room.room_number}</td>
+                                <td>{room.room_floor != 0 ? room.room_floor : "Unspecified"}</td>
+                                <td><span className={`occupancy-chip ${room.capacity === 1 ? "single" : "double"}`}>{room.capacity === 1 ? "👤Single" : "👥Double"}</span></td>
+                                <td>{room.is_balcony_room === true ? "Yes" : "No"}</td>
+                                <td>&#8377; {room.rent}</td>
+                                <td>
+                                    <div className="action-column">
+                                        <button className="delete-room-button"
+                                            onClick={() => {
+                                                setShowDeleteConfirmModal(true)
+                                                setRoomToDelete(room.id)
+                                            }}
+                                        ><FaTrash /> Delete</button>
 
-                                </div>
-                                <ConfirmModal
-                                    show={showDeleteConfirmModal}
-                                    title="Delete Room"
-                                    message="Are you sure you want to delete this room? The action once done can not be reverted."
-                                    onConfirm={() => handleDeleteRoom(roomToDelete)}
-                                    onCancel={() => setShowDeleteConfirmModal(false)}
-                                />
-                            </td>
-                        </tr>
-                    )))}
+                                        <button className="edit-room-button"
+                                            onClick={() => openEditRoom(room)}
+                                        ><FaPen /> Edit</button>
+                                    </div>
+                                    <ConfirmModal
+                                        show={showDeleteConfirmModal}
+                                        title="Delete Room"
+                                        message="Are you sure you want to delete this room? The action once done can not be reverted."
+                                        onConfirm={() => handleDeleteRoom(roomToDelete)}
+                                        onCancel={() => setShowDeleteConfirmModal(false)}
+                                    />
+                                </td>
+                            </tr>
+                        )))}
                 </tbody>
             </table>
         </div>

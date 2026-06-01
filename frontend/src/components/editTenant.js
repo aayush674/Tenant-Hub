@@ -13,6 +13,7 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
     const [tenantPhone, setTenantPhone] = useState(tenant.phone_number);
     const [tenantJoinDate, setTenantJoinDate] = useState(tenant.join_date);
     const [closing, setClosing] = useState(false);
+    const [opening, setOpening] = useState(false);
     const [rooms, setRooms] = useState([]);
     const [error, setError] = useState(null);
 
@@ -28,6 +29,12 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
         }, 300); // must match CSS transition
 
     };
+
+    useEffect(() => {
+        requestAnimationFrame(() => {
+            setOpening(true);
+        });
+    }, []);
 
     const fetchRooms = async () => {
         const res = await authFetch(`http://localhost:8000/api/rooms/?pg_property=${pgId}`);
@@ -46,7 +53,7 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
         const emailError = validateEmail(tenantEmail);
         const phoneError = validatePhoneNumber(tenantPhone);
         const roomError = validateRoom(tenantRoom);
-        const join_dateError=validateDate(tenantJoinDate);
+        const join_dateError = validateDate(tenantJoinDate);
         const finalError = {}
 
         if (fnError) {
@@ -61,11 +68,11 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
         if (phoneError) {
             finalError.phone_number = phoneError;
         }
-        if(roomError){
-            finalError.room=roomError;
+        if (roomError) {
+            finalError.room = roomError;
         }
-        if(join_dateError){
-            finalError.join_date=join_dateError;
+        if (join_dateError) {
+            finalError.join_date = join_dateError;
         }
         if (Object.keys(finalError).length > 0) {
             setError(finalError);
@@ -115,7 +122,8 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
     return (
         <div className="add-tenant-modal-overlay">
             <div
-                className={`add-tenant-modal-box ${closing ? "close" : "open"}`}
+                className={`add-tenant-modal-box ${closing ? "close" : opening ? "open" : ""
+                    }`}
                 onClick={(e) => e.stopPropagation()}
             >
                 <h1 className="modal-header">Edit Tenant</h1>
