@@ -8,8 +8,10 @@ function ConfirmModal({ show, title, message, onConfirm, onCancel }) {
   }
 
  return createPortal(
-  <div className="modal-overlay">
-    <div className="modal-box">
+  <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-box"
+    onClick={(e) => e.stopPropagation()}
+    >
 
       <h2 className="conf-modal-header">{title}</h2>
 

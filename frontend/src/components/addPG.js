@@ -36,8 +36,9 @@ function AddPG({ show, onClose, onAdd }) {
     };
 
     return (
-        <div className="add-pg-modal-overlay">
-            <div className="add-pg-modal-box">
+        <div className="add-pg-modal-overlay" onClick={onClose}>
+            <div className="add-pg-modal-box"
+            onClick={(e)=>e.stopPropagation()}>
                 <h2 className="add-pg-modal-header">Add new PG</h2>
                 <div className="input-area">
                     <label>Enter PG Name</label>

@@ -201,8 +201,9 @@ function RoomsList() {
                 )}
 
             </div>
-            <div className="filter-button">
-                <button onClick={() => {
+            <div>
+                <button className="filter-button"
+                onClick={() => {
                     setDraftFilters(filters);
                     setShowFilterModal(true);
                 }}>
@@ -263,7 +264,7 @@ function RoomsList() {
                     </tr>) : (
                         rooms.map(room => (
                             <tr key={room.id}>
-                                <td>{room.room_number}</td>
+                                <td><b>{room.room_number}</b></td>
                                 <td>{room.room_floor != 0 ? room.room_floor : "Unspecified"}</td>
                                 <td><span className={`occupancy-chip ${room.capacity === 1 ? "single" : "double"}`}>{room.capacity === 1 ? "👤Single" : "👥Double"}</span></td>
                                 <td>{room.is_balcony_room === true ? "Yes" : "No"}</td>

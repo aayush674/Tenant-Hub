@@ -6,8 +6,10 @@ function RoomListFilterModal({ isOpen, onClose, filters, setFilters, onApply, on
 
 
     return (
-        <div className={`filter-modal-container ${isOpen ? "show" : "hide"}`}>
-            <div className={`filter-modal-box ${isOpen ? "open" : ""}`}>
+        <div className={`filter-modal-container ${isOpen ? "show" : "hide"}`} onClick={onClose}>
+            <div className={`filter-modal-box ${isOpen ? "open" : ""}`}
+            onClick={(e) => e.stopPropagation()}
+            >
                 <h1 className="modal-header">Filters</h1>
                 <form onSubmit={(e) => {
                     e.preventDefault();
