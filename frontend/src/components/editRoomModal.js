@@ -75,7 +75,7 @@ function EditRoomModal({ room, onUpdate, onClose }) {
 
 
     return (
-        <div className="add-room-modal-overlay">
+        <div className="add-room-modal-overlay" onClick={handleClose}>
             <div
                 className={`add-room-modal-box ${closing ? "close" : opening ? "open" : ""
                     }`}

@@ -7,8 +7,10 @@ function ViewPG({ show, pg, onClose }) {
   }
 
   return (
-    <div className="modal-overlay">
-    <div className="view-pg-modal">
+    <div className="modal-overlay" onClick={onClose}>
+    <div className="view-pg-modal"
+    onClick={(e)=> e.stopPropagation()}
+    >
       <h2><u>{pg.name}</u></h2>
       <p><strong>Location:</strong> {pg.address}</p>
       <p><strong>Number of Floors:</strong> {pg.total_floors}</p>

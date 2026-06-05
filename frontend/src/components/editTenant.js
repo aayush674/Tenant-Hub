@@ -120,7 +120,7 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
     }
 
     return (
-        <div className="add-tenant-modal-overlay">
+        <div className="add-tenant-modal-overlay" onClick={handleClose}>
             <div
                 className={`add-tenant-modal-box ${closing ? "close" : opening ? "open" : ""
                     }`}

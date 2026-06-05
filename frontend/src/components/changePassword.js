@@ -29,8 +29,9 @@ function ChangePassword({ show, onClose }) {
         return;
     }
     return (
-        <div className="modal-overlay">
-            <div className="modal-box">
+        <div className="cp-modal-overlay" onClick={onClose}>
+            <div className="cp-modal-box"
+            onClick={(e)=>e.stopPropagation()}>
                 <input
                     type="password"
                     placeholder="Current Password"

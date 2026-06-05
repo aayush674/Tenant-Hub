@@ -201,8 +201,9 @@ function RoomsList() {
                 )}
 
             </div>
-            <div className="filter-button">
-                <button onClick={() => {
+            <div>
+                <button className="filter-button"
+                onClick={() => {
                     setDraftFilters(filters);
                     setShowFilterModal(true);
                 }}>

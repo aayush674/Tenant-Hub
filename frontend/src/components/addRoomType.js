@@ -50,7 +50,7 @@ function AddRoomTypeModal({ pgId, onAdd, onClose }) {
 
 
     return (
-        <div className="add-room-type-modal-overlay">
+        <div className="add-room-type-modal-overlay" onClick={handleClose}>
             <div
                 className={`add-room-type-modal-box ${closing ? "close" : opening ? "open" : ""
                     }`}
