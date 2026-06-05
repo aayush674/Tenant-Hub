@@ -108,7 +108,7 @@ function RoomTypes() {
                 <tbody>
                     {roomTypes.map(roomType => (
                         <tr key={roomType.id}>
-                            <td>{roomType.name}</td>
+                            <td><b>{roomType.name}</b></td>
                             <td><span className={`occupancy-chip ${roomType.capacity === 1 ? "single" : "double"}`}>{roomType.capacity === 1 ? "👤Single" : "👥Double"}</span></td>
                             <td>{roomType.is_balcony_room === true ? "Yes" : "No"}</td>
                             <td>{roomType.rent}</td>

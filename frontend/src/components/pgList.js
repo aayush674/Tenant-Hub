@@ -111,7 +111,7 @@ function PGList() {
                         pgs.map((pg) => (
                             <tr key={pg.id} className="pg-row">
 
-                                <td className="pg-name">{pg.name}</td>
+                                <td className="pg-name"><b>{pg.name}</b></td>
                                 <td className="pg-floors-count">{pg.total_floors}</td>
                                 <td className="pg-rooms-count">{pg.room_count ?? 0}</td>
                                 <td className="pg-row-actions">
