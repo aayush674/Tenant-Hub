@@ -169,6 +169,19 @@ function RoomsList() {
         setFloorCounts(counts);
     };
 
+    const getRoomTenants = (room) => {
+        let cap=room.capacity;
+        let roomTenants=[];
+        for(const tenant of tenantData){
+            if(cap==0) break;
+            if(tenant.room===room.id){
+                roomTenants.push(tenant);
+                cap--;
+            }
+        }
+        return roomTenants;
+    }
+
     return (
         <div className="room-list-container">
             <div className="room-list-nav-path">
