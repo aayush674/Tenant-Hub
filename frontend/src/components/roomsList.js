@@ -28,6 +28,7 @@ function RoomsList() {
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
     const [roomToDelete, setRoomToDelete] = useState(null);
     const [floorCounts, setFloorCounts] = useState({});
+    const [tenantData, setTenants] = useState([]);
 
     useEffect(() => {
         const min = searchParams.get("min_price") || "";
@@ -47,10 +48,13 @@ function RoomsList() {
 
     useEffect(() => {
         fetchRooms();
-        fetchPg();
-
     }, [pgId, searchParams]);
 
+    useEffect(()=>{
+        fetchPg();
+        fetchTenants();
+    }, [pgId]);
+    
     const fetchRooms = async () => {
         const min = searchParams.get("min_price") || "";
         const max = searchParams.get("max_price") || "";
@@ -72,6 +76,11 @@ function RoomsList() {
         setRooms(data.results || data);
     };
 
+    const fetchTenants = async () => {
+        const res= await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`)
+        const data = await res.json();
+        setTenants(data.results || data);
+    }
 
     const fetchPg = async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
