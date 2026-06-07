@@ -202,3 +202,7 @@ tbody tr:hover {
     color: #666;
     font-weight: bold;
 }
+
+.tenant-column{
+    width: 200px;
+}

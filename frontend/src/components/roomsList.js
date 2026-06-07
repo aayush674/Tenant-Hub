@@ -28,6 +28,7 @@ function RoomsList() {
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
     const [roomToDelete, setRoomToDelete] = useState(null);
     const [floorCounts, setFloorCounts] = useState({});
+    const [tenantData, setTenants] = useState([]);
 
     useEffect(() => {
         const min = searchParams.get("min_price") || "";
@@ -47,10 +48,13 @@ function RoomsList() {
 
     useEffect(() => {
         fetchRooms();
-        fetchPg();
-
     }, [pgId, searchParams]);
 
+    useEffect(()=>{
+        fetchPg();
+        fetchTenants();
+    }, [pgId]);
+    
     const fetchRooms = async () => {
         const min = searchParams.get("min_price") || "";
         const max = searchParams.get("max_price") || "";
@@ -72,6 +76,11 @@ function RoomsList() {
         setRooms(data.results || data);
     };
 
+    const fetchTenants = async () => {
+        const res= await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`)
+        const data = await res.json();
+        setTenants(data.results || data);
+    }
 
     const fetchPg = async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
@@ -159,6 +168,19 @@ function RoomsList() {
 
         setFloorCounts(counts);
     };
+
+    const getRoomTenants = (room) => {
+        let cap=room.capacity;
+        let roomTenants=[];
+        for(const tenant of tenantData){
+            if(cap==0) break;
+            if(tenant.room===room.id){
+                roomTenants.push(tenant.first_name+" "+tenant.last_name);
+                cap--;
+            }
+        }
+        return roomTenants;
+    }
 
     return (
         <div className="room-list-container">
@@ -248,6 +270,7 @@ function RoomsList() {
                         <th>Room</th>
                         <th>Floor</th>
                         <th>Capacity</th>
+                        <th>Tenants</th>
                         <th>Balcony Room</th>
                         <th>Rent (&#8377;)</th>
                         <th>Actions</th>
@@ -258,7 +281,7 @@ function RoomsList() {
                 <tbody>
 
                     {rooms.length === 0 ? (<tr>
-                        <td colSpan="6" className="no-rooms-message">
+                        <td colSpan="7" className="no-rooms-message">
                             No Rooms Available
                         </td>
                     </tr>) : (
@@ -267,6 +290,10 @@ function RoomsList() {
                                 <td><b>{room.room_number}</b></td>
                                 <td>{room.room_floor != 0 ? room.room_floor : "Unspecified"}</td>
                                 <td><span className={`occupancy-chip ${room.capacity === 1 ? "single" : "double"}`}>{room.capacity === 1 ? "👤Single" : "👥Double"}</span></td>
+                                <td className="tenant-column">
+                                    {getRoomTenants(room).length==0?<p>-</p>:
+                                    (getRoomTenants(room).join(", "))}
+                                </td>
                                 <td>{room.is_balcony_room === true ? "Yes" : "No"}</td>
                                 <td>&#8377; {room.rent}</td>
                                 <td>
