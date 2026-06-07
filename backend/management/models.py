@@ -51,6 +51,13 @@ class Room(models.Model):
         return f"{self.pg_property.name} - Room {self.room_number}"
     
 class Tenant(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="tenant_profile"
+    )
     room = models.ForeignKey(Room, related_name='tenants', on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
@@ -60,7 +67,7 @@ class Tenant(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.name} - Room {self.room.room_number}"
+        return f"{self.first_name} {self.last_name} - Room {self.room.room_number}"
 
 class Payment(models.Model):
     tenant = models.ForeignKey(Tenant, related_name='payments', on_delete=models.SET_NULL, null=True) # If a tenant is deleted, we set the tenant field to null instead of deleting the payment record.
@@ -74,7 +81,7 @@ class Payment(models.Model):
     class Meta:
         unique_together = ("tenant", "month", "year")
     def __str__(self):
-        return f"{self.tenant.name} - {self.month}/{self.year} - {'Paid' if self.is_paid else 'Unpaid'}"
+        return f"{self.tenant} - {self.month}/{self.year} - {'Paid' if self.is_paid else 'Unpaid'}"
 
 class MaintenanceRequest(models.Model):
     room = models.ForeignKey(Room, related_name='maintenance_requests', on_delete=models.SET_NULL, null=True) # If a room is deleted, we set the room field to null instead of deleting the maintenance request.
@@ -83,4 +90,5 @@ class MaintenanceRequest(models.Model):
     status = models.CharField(max_length=20, choices = [('pending', 'Pending'), ('in_progress', 'In Progress'), ('resolved', 'Resolved')], default='pending')
 
     def __str__(self):
-        return f"Room {self.room.room_number} - {self.status}"
+        room_number = self.room.room_number if self.room else "Deleted Room"
+        return f"Room {room_number} - {self.status}"

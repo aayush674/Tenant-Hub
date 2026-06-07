@@ -21,7 +21,10 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields) # This calls the create_user method to create a superuser with the provided email and password.
         
     
-
+class UserRole(models.TextChoices):
+    OWNER = "OWNER", "Owner"
+    EMPLOYEE = "EMPLOYEE", "Employee"
+    TENANT = "TENANT", "Tenant"
 
 class User(AbstractUser):
     username = None # We are removing the default username field as we will be using email as the unique identifier for authentication.
@@ -31,3 +34,44 @@ class User(AbstractUser):
     REQUIRED_FIELDS = [] # This means there are no additional required fields besides email and password. 
 
     objects = UserManager() # This tells Django to use our custom UserManager for creating users and superusers.
+    role = models.CharField(
+    max_length=20,
+    choices=UserRole.choices,
+    default=UserRole.TENANT)
+
+    def __str__(self):
+        return self.email
+
+class CollaboratorRole(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    def __str__(self):
+        return self.name
+
+class Permission(models.Model):
+    code = models.CharField(max_length=100, unique=True)
+    def __str__(self):
+        return self.code
+
+class CollaboratorRolePermission(models.Model):
+    role = models.ForeignKey(CollaboratorRole, on_delete=models.CASCADE)
+    permission = models.ForeignKey(Permission, on_delete=models.CASCADE)
+    class Meta:
+        unique_together = ("role", "permission")
+
+class PGCollaborator(models.Model):
+    employee = models.ForeignKey(
+    User,
+    on_delete=models.CASCADE,
+    related_name="pg_assignments")
+
+    pg = models.ForeignKey(
+    "management.PGproperty",
+    on_delete=models.CASCADE)
+
+    role = models.ForeignKey(
+    CollaboratorRole,
+    on_delete=models.CASCADE,
+    related_name="assignments")
+
+    class Meta:
+        unique_together = ("employee", "pg")
