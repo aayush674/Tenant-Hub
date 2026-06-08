@@ -2,16 +2,46 @@ from rest_framework import viewsets
 from django.db.models import Count, Q
 from .models import MaintenanceRequest, PGproperty, Room, Tenant, Payment, RoomType
 from .serializers import MaintenanceRequestSerializer, PGpropertySerializer, RoomSerializer, TenantSerializer, PaymentSerializer, RoomTypeSerializer
-
+from accounts.models import UserRole
+from accounts.utils import has_permission
+from rest_framework.exceptions import PermissionDenied
 
 class PGpropertyViewSet(viewsets.ModelViewSet):
     queryset = PGproperty.objects.all()
     serializer_class = PGpropertySerializer
     def get_queryset(self):
-        return PGproperty.objects.filter(owner=self.request.user).annotate(
-            room_count=Count('rooms'),
-            # available_rooms=Count('rooms', filter=Q(rooms__is_available==True))       
-            ) # This ensures that users can only see their own properties.
+        user=self.request.user
+        print("USER:", self.request.user)
+        print("ROLE:", self.request.user.role)
+        if user.role==UserRole.OWNER:
+            return PGproperty.objects.filter(
+                owner=user
+                ).annotate(
+                    room_count=Count("rooms"),
+                        # available_rooms=Count('rooms', filter=Q(rooms__is_available==True))  
+                )
+      
+        if user.role==UserRole.EMPLOYEE:
+            assigned_pg_ids=user.pg_assignments.values_list(
+                "pg_id",
+                flat=True
+            )  
+            
+            return PGproperty.objects.filter(
+                id__in=assigned_pg_ids
+            ).annotate(room_count=Count("rooms"),
+                       # available_rooms=Count('rooms', filter=Q(rooms__is_available==True))  
+                       )
+            
+        return PGproperty.objects.none()
+        
+        # return PGproperty.objects.filter(owner=self.request.user).annotate(
+        #     room_count=Count('rooms'),
+        #     # available_rooms=Count('rooms', filter=Q(rooms__is_available==True))       
+        #     ) # This ensures that users can only see their own properties.
+        
+        
+        
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user) # This automatically sets the owner of the property to the currently authenticated user when a new property is created.
 
@@ -52,6 +82,53 @@ class RoomViewSet(viewsets.ModelViewSet):
 class TenantViewSet(viewsets.ModelViewSet):
     queryset = Tenant.objects.all()
     serializer_class = TenantSerializer
+    def get_queryset(self):
+        user=self.request.user
+
+        if user.role==UserRole.OWNER:
+            return Tenant.objects.filter(
+                room__pg_property__owner=user
+            )
+        
+        if user.role == UserRole.EMPLOYEE:
+            assigned_pg_ids = []
+
+            for assignment in user.pg_assignments.all():
+                if has_permission(
+                    user,
+                    assignment.pg_id,
+                    "view_tenants"
+                ):
+                    assigned_pg_ids.append(
+                        assignment.pg_id
+                    )
+                    
+            return Tenant.objects.filter(
+                room__pg_property__id__in=assigned_pg_ids
+            )
+        
+        if user.role == UserRole.TENANT:
+            return Tenant.objects.filter(
+                user=user
+            )
+        
+        return Tenant.objects.none()
+
+    def perform_create(self, serializer):
+        user=self.request.user
+        
+        if user.role==UserRole.OWNER:
+            serializer.save()
+            return
+        
+        room=serializer.validated_data["room"]
+        pg_id=room.pg_property.id
+        
+        if not has_permission(user, pg_id, "add_tenants"):
+            raise PermissionDenied("You do not have permission to add tenants.")
+
+        serializer.save()
+        
 
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()

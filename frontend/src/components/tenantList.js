@@ -18,6 +18,7 @@ function TenantList(){
     const [editTenantData, setEditTenantData] = useState(null);
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
     const [tenantToDelete, setTenantToDelete] = useState(null);
+    const [permissions, setPermissions] = useState();
 
     const fetchPg = async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
@@ -32,6 +33,14 @@ function TenantList(){
         const res= await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`)
         const data = await res.json();
         setTenants(data.results || data);
+    }
+
+    const fetchPermissions=async()=>{
+        const res=await authFetch(
+            `http://localhost:8000/auth/permissions/?pg_id=${pgId}`
+        )
+        const data=await res.json();
+        setPermissions(data);
     }
 
     const handleDeleteTenant = (tenantToDelete) =>{
@@ -49,7 +58,7 @@ function TenantList(){
     useEffect(() => {
         fetchPg();
         fetchTenants();
-        
+        fetchPermissions();
     }, [pgId]);
 
     const openEditTenant = (tenant) => {
@@ -71,7 +80,7 @@ function TenantList(){
             </div>
              <div className="tenant-list-header">
                 <h1>{pgData && pgData.name} - Tenant List</h1>
-                <button className="add-tenant-btn" onClick={() => setShowAddTenant(true)}><b>+ Add Tenant</b></button>
+                {permissions?.add_tenants && <button className="add-tenant-btn" onClick={() => setShowAddTenant(true)}><b>+ Add Tenant</b></button>}
                 {showAddTenant && (
                     <AddTenantModal
                         pgId={pgId}
