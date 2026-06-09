@@ -129,6 +129,33 @@ class TenantViewSet(viewsets.ModelViewSet):
 
         serializer.save()
         
+    def perform_update(self, serializer):
+        user=self.request.user
+        
+        if user.role==UserRole.OWNER:
+            serializer.save()
+            return
+        
+        pg_id=serializer.instance.room.pg_property.id
+        
+        if not has_permission(user, pg_id, "edit_tenants"):
+            raise PermissionDenied("You do not have permission to edit tenants")
+        
+        serializer.save()
+    
+    def perform_destroy(self, serializer):
+        user=self.request.user
+        
+        if user.role==UserRole.OWNER:
+            serializer.delete()
+            return
+        
+        pg_id=serializer.room.pg_property.id
+        
+        if not has_permission(user, pg_id, "delete_tenants"):
+            raise PermissionDenied("You do not have permission to delete tenants")
+        
+        serializer.delete()
 
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
