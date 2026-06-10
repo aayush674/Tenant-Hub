@@ -1,5 +1,14 @@
 from django.contrib import admin
+from .models import (
+    User,
+    Permission,
+    CollaboratorRole,
+    CollaboratorRolePermission,
+    PGCollaborator
+)
 
-from .models import User
-
-admin.site.register(User) # Tells the django show the User table in the Django Admin interface. 
+admin.site.register(User)
+admin.site.register(Permission)
+admin.site.register(CollaboratorRole)
+admin.site.register(CollaboratorRolePermission)
+admin.site.register(PGCollaborator)

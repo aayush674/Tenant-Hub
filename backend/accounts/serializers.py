@@ -32,6 +32,7 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
         response["user"] = {
             "id": self.user.pk,
             "email": self.user.email,
+            "role": self.user.role,
         }
 
         return response

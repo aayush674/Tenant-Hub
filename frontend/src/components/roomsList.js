@@ -50,11 +50,11 @@ function RoomsList() {
         fetchRooms();
     }, [pgId, searchParams]);
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchPg();
         fetchTenants();
     }, [pgId]);
-    
+
     const fetchRooms = async () => {
         const min = searchParams.get("min_price") || "";
         const max = searchParams.get("max_price") || "";
@@ -77,7 +77,7 @@ function RoomsList() {
     };
 
     const fetchTenants = async () => {
-        const res= await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`)
+        const res = await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`)
         const data = await res.json();
         setTenants(data.results || data);
     }
@@ -170,12 +170,12 @@ function RoomsList() {
     };
 
     const getRoomTenants = (room) => {
-        let cap=room.capacity;
-        let roomTenants=[];
-        for(const tenant of tenantData){
-            if(cap==0) break;
-            if(tenant.room===room.id){
-                roomTenants.push(tenant.first_name+" "+tenant.last_name);
+        let cap = room.capacity;
+        let roomTenants = [];
+        for (const tenant of tenantData) {
+            if (cap == 0) break;
+            if (tenant.room === room.id) {
+                roomTenants.push(tenant.first_name + " " + tenant.last_name);
                 cap--;
             }
         }
@@ -225,10 +225,10 @@ function RoomsList() {
             </div>
             <div>
                 <button className="filter-button"
-                onClick={() => {
-                    setDraftFilters(filters);
-                    setShowFilterModal(true);
-                }}>
+                    onClick={() => {
+                        setDraftFilters(filters);
+                        setShowFilterModal(true);
+                    }}>
                     <img src={FilterIcon} alt="Filter" className="filter-icon" />
                     Filters</button>
                 <RoomListFilterModal
@@ -291,8 +291,8 @@ function RoomsList() {
                                 <td>{room.room_floor != 0 ? room.room_floor : "Unspecified"}</td>
                                 <td><span className={`occupancy-chip ${room.capacity === 1 ? "single" : "double"}`}>{room.capacity === 1 ? "👤Single" : "👥Double"}</span></td>
                                 <td className="tenant-column">
-                                    {getRoomTenants(room).length==0?<p>-</p>:
-                                    (getRoomTenants(room).join(", "))}
+                                    {getRoomTenants(room).length == 0 ? <p>-</p> :
+                                        (getRoomTenants(room).join(", "))}
                                 </td>
                                 <td>{room.is_balcony_room === true ? "Yes" : "No"}</td>
                                 <td>&#8377; {room.rent}</td>

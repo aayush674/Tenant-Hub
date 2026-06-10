@@ -7,6 +7,8 @@ from .models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import EmailTokenObtainPairSerializer
 from rest_framework.decorators import api_view, permission_classes
+from .utils import has_permission
+
 
 class SignupView(APIView):
     def post(self, request):
@@ -44,3 +46,25 @@ def change_password(request):
     user.save()
 
     return Response({"message": "Password updated successfully"})
+
+
+class PermissionView(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request):
+        pg_id=request.query_params.get("pg_id")
+        permissions=[
+            "view_tenants",
+            "add_tenants",
+            "edit_tenants",
+            "delete_tenants",
+        ]
+        
+        data = {}
+        for permission in permissions:
+            data[permission] = has_permission(
+                request.user,
+                pg_id,
+                permission
+            )
+            
+        return Response(data)

@@ -18,6 +18,7 @@ function TenantList(){
     const [editTenantData, setEditTenantData] = useState(null);
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
     const [tenantToDelete, setTenantToDelete] = useState(null);
+    const [permissions, setPermissions] = useState();
 
     const fetchPg = async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
@@ -32,6 +33,14 @@ function TenantList(){
         const res= await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`)
         const data = await res.json();
         setTenants(data.results || data);
+    }
+
+    const fetchPermissions=async()=>{
+        const res=await authFetch(
+            `http://localhost:8000/auth/permissions/?pg_id=${pgId}`
+        )
+        const data=await res.json();
+        setPermissions(data);
     }
 
     const handleDeleteTenant = (tenantToDelete) =>{
@@ -49,7 +58,7 @@ function TenantList(){
     useEffect(() => {
         fetchPg();
         fetchTenants();
-        
+        fetchPermissions();
     }, [pgId]);
 
     const openEditTenant = (tenant) => {
@@ -71,7 +80,7 @@ function TenantList(){
             </div>
              <div className="tenant-list-header">
                 <h1>{pgData && pgData.name} - Tenant List</h1>
-                <button className="add-tenant-btn" onClick={() => setShowAddTenant(true)}><b>+ Add Tenant</b></button>
+                {permissions?.add_tenants && <button className="add-tenant-btn" onClick={() => setShowAddTenant(true)}><b>+ Add Tenant</b></button>}
                 {showAddTenant && (
                     <AddTenantModal
                         pgId={pgId}
@@ -108,7 +117,7 @@ function TenantList(){
                         <th>Email</th>
                         <th>Joining Date</th>
                         <th>Phone Number</th>
-                        <th>Actions</th>
+                        {(permissions?.edit_tenants || permissions?.delete_tenants) && <th>Actions</th>}
                     </tr>
 
                 </thead>
@@ -127,18 +136,18 @@ function TenantList(){
                             <td>{tenant.email}</td>
                             <td>{tenant.join_date}</td>
                             <td>{tenant.phone_number}</td>
-                            <td>
+                            {(permissions?.edit_tenants || permissions?.delete_tenants) && <td>
                                 <div className="action-column">
-                                    <button className="delete-tenant-button"
+                                    {(permissions?.delete_tenants) && <button className="delete-tenant-button"
                                     onClick={()=>{
                                         setShowDeleteConfirmModal(true)
                                         setTenantToDelete(tenant.id)
                                     }}
-                                    ><FaTrash/> Delete</button>
+                                    ><FaTrash/> Delete</button>}
 
-                                    <button className="edit-tenant-button"
+                                    {(permissions?.edit_tenants) && <button className="edit-tenant-button"
                                     onClick={() => openEditTenant(tenant)}
-                                    ><FaPen/> Edit</button>
+                                    ><FaPen/> Edit</button>}
                                     
 
                                 </div>
@@ -149,7 +158,7 @@ function TenantList(){
                                     onConfirm={() => handleDeleteTenant(tenantToDelete)}
                                     onCancel={() => setShowDeleteConfirmModal(false)}
                                 />
-                            </td>   
+                            </td>   }
                         </tr>
                     )))}
                 </tbody>
