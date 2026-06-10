@@ -142,6 +142,7 @@
 
 .pg-list-container tbody tr {
   transition: background-color 0.15s ease;
+  cursor: pointer;
 }
 
 /* Normal hover */

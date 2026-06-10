@@ -1,0 +1,31 @@
+.pg-details-container{
+    font-family: "Lexend", sans-serif;
+    padding: 10px 30px;
+}
+
+.details-nav-path {
+    /* color: #5b4914; */
+    color: #434242;
+    font-size: 14px;
+    margin-bottom: 0px;
+}
+
+.navigator {
+    cursor: pointer;
+    color: #987b23;
+}
+
+.navigator:hover {
+    text-decoration: underline;
+}
+
+.pg-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.pg-details-header h1 {
+    color: #5b4914;
+}
