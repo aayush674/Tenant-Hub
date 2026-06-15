@@ -29,3 +29,20 @@
 .pg-details-header h1 {
     color: #5b4914;
 }
+
+.pg-details-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pg-details-form form input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.pg-details-form input:focus {
+  outline: none;
+  border-color: #987b23;
+}
