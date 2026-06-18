@@ -109,38 +109,26 @@ function PGList() {
                     ) : (
 
                         pgs.map((pg) => (
-                            <tr key={pg.id} className="pg-row">
+                            <tr key={pg.id} className="pg-row" onClick={()=> navigate(`/pg/${pg.id}`)}>
 
                                 <td className="pg-name"><b>{pg.name}</b></td>
                                 <td className="pg-floors-count">{pg.total_floors}</td>
                                 <td className="pg-rooms-count">{pg.room_count ?? 0}</td>
                                 <td className="pg-row-actions">
-                                    {/* <FaEye
-                                        onClick={() => {
-                                            setViewPG(pg);
-                                            setShowViewModal(true);
-                                        }} className="view-pg-button"
-                                        title="View" /> */}
-                                    {/* <FaTrash
-                                        onClick={() => {
-                                            setPgToDelete(pg.id);
-                                            setShowConfirmModal(true);
-                                        }} className="delete-pg-button"
-                                        title="Delete" /> */}
-
                                     <button className="view-pg-button"
                                         onClick={() => {setViewPG(pg);
                                             setShowViewModal(true);}}
                                     ><FaEye /> View</button>
 
                                     <button className= "delete-pg-button"
-                                        onClick={() => {
+                                        onClick={(e) => {
+                                            e.stopPropagation();
                                             setPgToDelete(pg.id);
                                             setShowConfirmModal(true);
                                         }}
                                     ><FaTrash /> Delete</button>
 
-                                    <div className="pg-row-more-menu" onClick={(e) => e.stopPropagation()}>
+                                    {/* <div className="pg-row-more-menu" onClick={(e) => e.stopPropagation()}>
                                         <FaEllipsisV title="More" onClick={(e) => {
                                             e.stopPropagation();
                                             setShowActionDropdownId(prev => (prev === pg.id ? null : pg.id));
@@ -162,7 +150,7 @@ function PGList() {
 
                                             </div>
                                         )}
-                                    </div>
+                                    </div> */}
                                 </td>
                             </tr>
                         ))

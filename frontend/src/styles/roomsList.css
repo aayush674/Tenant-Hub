@@ -1,5 +1,5 @@
 .room-list-container {
-    padding: 30px;
+    padding: 10px 30px;
     font-family: "Lexend", sans-serif;
 }
 
@@ -8,6 +8,10 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+}
+
+.room-list-header h1 {
+    color: #5b4914;
 }
 
 .add-room-btn {
@@ -62,15 +66,11 @@ tbody tr:hover {
     background-color: #ccb673;
 }
 
-.room-list-header h1 {
-    color: #5b4914;
-}
-
 .room-list-nav-path {
     /* color: #5b4914; */
     color: #434242;
     font-size: 14px;
-    margin-bottom: 15px;
+    margin-bottom: 0px;
 }
 
 .room-list-navigator {

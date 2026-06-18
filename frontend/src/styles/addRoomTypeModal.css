@@ -8,6 +8,7 @@
 
   display: flex;
   justify-content: flex-end;
+  z-index: 2000;
 }
 
 .add-room-type-modal-box {

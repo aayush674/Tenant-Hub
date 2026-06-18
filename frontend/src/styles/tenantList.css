@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100;300;400;600;700&display=swap');
 .tenant-list-container {
-    padding: 30px;
+    padding: 10px 30px;
     font-family: "Lexend", sans-serif;
 }
 
@@ -11,11 +11,15 @@
     margin-bottom: 20px;
 }
 
+.tenant-list-header h1 {
+    color: #5b4914;
+}
+
 .tenant-list-nav-path {
     /* color: #5b4914; */
     color: #434242;
     font-size: 14px;
-    margin-bottom: 15px;
+    margin-bottom: 0px;
 }
 
 .tenant-list-navigator {

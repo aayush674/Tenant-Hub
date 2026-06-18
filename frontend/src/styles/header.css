@@ -8,6 +8,10 @@
     padding: 0 20px;
     box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.1);
     /* margin: 10px; */
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .header-logo {
