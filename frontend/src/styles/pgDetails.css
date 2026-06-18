@@ -23,11 +23,20 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
 }
 
 .pg-details-header h1 {
     color: #5b4914;
+}
+
+.pg-details-form{
+    background-color: #e3e3e3;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.pg-details-form.enabled{
+    background-color: white;
 }
 
 .pg-details-form form {
@@ -45,4 +54,74 @@
 .pg-details-form input:focus {
   outline: none;
   border-color: #987b23;
+}
+
+.form-header-block{
+    margin-bottom: 10px;
+    min-height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.edit-button{
+    color: blue;
+    background-color: #f2f2fe;
+    border: 1px solid #cacafe;
+    border-radius: 6px;
+    font-weight: 600;
+    font-family: "Lexend", sans-serif;
+    min-height: 32px;
+    min-width: 100px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.edit-button:hover{
+    background-color: #d1d1ff;
+    border-color: #a5a5fc;
+}
+
+.edit-mode-buttons{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.edit-mode-buttons button[type='submit']{
+    color: green;
+    background-color: #f2fef2;
+    border: 1px solid #cafeca;
+    border-radius: 6px;
+    font-weight: 600;
+    font-family: "Lexend", sans-serif;
+    min-height: 32px;
+    min-width: 100px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.edit-mode-buttons button[type='submit']:hover{
+    background-color: #d1ffd1;
+    border-color: #a5fca5;
+}
+
+.edit-mode-buttons button[type='button']{
+    color: red;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    font-weight: 600;
+    font-family: "Lexend", sans-serif;
+    min-height: 32px;
+    min-width: 100px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.edit-mode-buttons button[type='button']:hover{
+    background-color: #ffd1d1;
+    border-color: #fca5a5;
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { authFetch } from "../api/apiClient";
 import "../styles/pgDetails.css";
+import { FaPen } from "react-icons/fa";
 
 function PGDetails() {
     const navigate = useNavigate();
@@ -43,6 +44,7 @@ function PGDetails() {
             }
             const data = await res.json();
             setPgData(formData);
+            setEditMode(false);
         }
         catch (err) {
             setError({ detail: "Something went wrong. Please try again." });
@@ -67,9 +69,11 @@ function PGDetails() {
             <div className="pg-details-header">
                 <h1>{pgData && pgData.name} - Details</h1>
             </div>
-            {!editMode && <div className="edit-button">
-                <button onClick={()=> setEditMode(true)}>Edit</button>
+            <div className="form-header-block">
+            {!editMode && <div>
+                <button className="edit-button" onClick={()=> setEditMode(true)}><FaPen />Edit Details</button>
             </div>}
+            </div>
             <div className={`pg-details-form ${editMode ? 'enabled' : 'disabled'}`}>
                 <form onSubmit={handleSubmit}>
                     <div>PG Name</div>
@@ -128,8 +132,8 @@ function PGDetails() {
                     />
 
                     {editMode && <div className="edit-mode-buttons">
-                    <button type="submit">Submit</button>
                     <button type="button" onClick={()=> setEditMode(false)}>Cancel</button>
+                    <button type="submit">Submit</button>
                     </div>}
                 </form>
             </div>
