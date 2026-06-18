@@ -131,6 +131,11 @@ function PGDetails() {
                         value={formData && formData.room_count}
                     />
 
+                    <div>Total Tenants</div>
+                    <input disabled
+                        value={formData && formData.tenant_count}
+                    />
+
                     {editMode && <div className="edit-mode-buttons">
                     <button type="button" onClick={()=> setEditMode(false)}>Cancel</button>
                     <button type="submit">Submit</button>

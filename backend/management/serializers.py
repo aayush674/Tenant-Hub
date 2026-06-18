@@ -3,6 +3,7 @@ from .models import MaintenanceRequest, PGproperty, Payment, Room, Tenant, RoomT
 
 class PGpropertySerializer(serializers.ModelSerializer):
     room_count=serializers.IntegerField(read_only=True)
+    tenant_count=serializers.IntegerField(read_only=True)
     class Meta:
         model = PGproperty
         fields = '__all__'
