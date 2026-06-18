@@ -18,6 +18,7 @@ class PGpropertyViewSet(viewsets.ModelViewSet):
                 owner=user
                 ).annotate(
                     room_count=Count("rooms"),
+                    tenant_count=Count("rooms__tenants"),
                         # available_rooms=Count('rooms', filter=Q(rooms__is_available==True))  
                 )
       
@@ -30,6 +31,7 @@ class PGpropertyViewSet(viewsets.ModelViewSet):
             return PGproperty.objects.filter(
                 id__in=assigned_pg_ids
             ).annotate(room_count=Count("rooms"),
+                       tenant_count=Count("tenants"),
                        # available_rooms=Count('rooms', filter=Q(rooms__is_available==True))  
                        )
             
