@@ -67,6 +67,7 @@ class Tenant(models.Model):
     first_name = models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
     email = models.EmailField()
+    phone_country_code=models.CharField(max_length=10)
     phone_number = models.CharField(max_length=15)
     join_date = models.DateField()
     is_active = models.BooleanField(default=True)
