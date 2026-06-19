@@ -110,7 +110,8 @@ function TenantForm({
             </div>
 
             <div>Tenant Phone Number</div>
-            {/* <select
+            <div className="phone-number-block">
+            <select
                 value={phoneCode}
                 onChange={e => {
                     setTenantPhone(`${e.target.value}-${phoneNumber}`);
@@ -119,19 +120,7 @@ function TenantForm({
                 {countries.map(country => (
                     <option key={country.isoCode} value={country.phonecode}>+{country.phonecode}({country.name})</option>
                 ))}
-            </select> */}
-            <Select
-                options={countryOptions}
-                value={countryOptions.find(
-                    option => option.value === phoneCode
-                )}
-                onChange={(selected) => {
-                    setTenantPhone(
-                        `${selected.value}-${phoneNumber}`
-                    );
-                }}
-                placeholder="Search country..."
-            />
+            </select>
             <input
                 placeholder="Enter Tenant Phone Number"
                 value={phoneNumber}
@@ -145,6 +134,7 @@ function TenantForm({
                 }
                 }
             />
+            </div>
             <div className="error-container">
                 {error?.phone_number}
             </div>
