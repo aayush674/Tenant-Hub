@@ -1,4 +1,6 @@
 import "../styles/addTenant.css";
+import { Country } from "country-state-city";
+import Select from "react-select";
 
 function TenantForm({
     tenantName,
@@ -26,6 +28,12 @@ function TenantForm({
     error,
     setError
 }) {
+    const countries = Country.getAllCountries();
+    const countryOptions = countries.map(country => ({
+        value: country.phonecode,
+        label: `${country.name} (+${country.phonecode})`
+    }));
+
     return (
         <>
             <div>First Name</div>
@@ -63,14 +71,14 @@ function TenantForm({
             <div>Alloted Room</div>
             <select
                 value={tenantRoom}
-                onChange={(e) => setTenantRoom(e.target.value ? Number(e.target.value):"")}
+                onChange={(e) => setTenantRoom(e.target.value ? Number(e.target.value) : "")}
                 className="custom-select">
                 <option value="">Select Room</option>
                 {rooms.map(room => (
                     <option key={room.id} value={room.id}>{room.room_number}</option>
                 ))}
             </select>
-             <div className="error-container">
+            <div className="error-container">
                 {error?.room}
             </div>
 
@@ -89,7 +97,7 @@ function TenantForm({
                 value={tenantEmail}
                 onChange={e => {
                     setTenantEmail(e.target.value);
-                     if (error?.email) {
+                    if (error?.email) {
                         const newError = { ...error };
                         delete newError.email;
                         setError(newError);
@@ -102,26 +110,34 @@ function TenantForm({
             </div>
 
             <div>Tenant Phone Number</div>
-            <input
-                // placeholder="Enter Tenant Phone Number"
+            {/* <select
                 value={phoneCode}
                 onChange={e => {
-
                     setTenantPhone(`${e.target.value}-${phoneNumber}`);
-                     if (error?.phone) {
-                        const newError = { ...error };
-                        delete newError.phone;
-                        setError(newError);
-                    }
-                }
-                }
+                }}
+            >
+                {countries.map(country => (
+                    <option key={country.isoCode} value={country.phonecode}>+{country.phonecode}({country.name})</option>
+                ))}
+            </select> */}
+            <Select
+                options={countryOptions}
+                value={countryOptions.find(
+                    option => option.value === phoneCode
+                )}
+                onChange={(selected) => {
+                    setTenantPhone(
+                        `${selected.value}-${phoneNumber}`
+                    );
+                }}
+                placeholder="Search country..."
             />
             <input
                 placeholder="Enter Tenant Phone Number"
                 value={phoneNumber}
                 onChange={e => {
                     setTenantPhone(`${phoneCode}-${e.target.value}`);
-                     if (error?.phone) {
+                    if (error?.phone) {
                         const newError = { ...error };
                         delete newError.phone;
                         setError(newError);

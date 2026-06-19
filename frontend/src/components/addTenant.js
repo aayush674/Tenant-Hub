@@ -10,7 +10,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
     const [lastName, setLastName] = useState("");
     const [tenantRoom, setTenantRoom] = useState("");
     const [tenantEmail, setTenantEmail] = useState("");
-    const [tenantPhone, setTenantPhone] = useState("");
+    const [tenantPhone, setTenantPhone] = useState("91-");
     const [phoneCode, phoneNumber] = tenantPhone.split('-');
     const [tenantJoinDate, setTenantJoinDate] = useState(
         new Date().toLocaleDateString("en-CA")
@@ -95,7 +95,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
                     first_name: tenantName,
                     last_name: lastName,
                     email: tenantEmail,
-                    phone_country_code:phoneCode,
+                    phone_country_code:`+${phoneCode}`,
                     phone_number: phoneNumber,
                     join_date: tenantJoinDate
                 })

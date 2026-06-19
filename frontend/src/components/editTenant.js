@@ -10,7 +10,7 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
     const [lastName, setLastName] = useState(tenant.last_name);
     const [tenantRoom, setTenantRoom] = useState(tenant.room);
     const [tenantEmail, setTenantEmail] = useState(tenant.email);
-    const [tenantPhone, setTenantPhone] = useState(tenant.phone_country_code+'-'+tenant.phone_number);
+    const [tenantPhone, setTenantPhone] = useState(`${tenant.phone_country_code.replace('+', '')}-${tenant.phone_number}`); 
     const [phoneCode, phoneNumber] = tenantPhone.split('-');
     const [tenantJoinDate, setTenantJoinDate] = useState(tenant.join_date);
     const [closing, setClosing] = useState(false);
