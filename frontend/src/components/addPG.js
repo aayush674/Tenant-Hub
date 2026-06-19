@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 import "../styles/addPG.css";
 import { authFetch } from "../api/apiClient";
-
 function AddPG({ show, onClose, onAdd }) {
 
     const [name, setName] = useState("");
-    const [address, setAddress] = useState("");
     const [floor, setFloor] = useState("");
     if (!show) {
         return null;
     }
-
 
     const handleAddPG = () => {
         authFetch("http://localhost:8000/api/pgs/", {
@@ -20,7 +17,6 @@ function AddPG({ show, onClose, onAdd }) {
             },
             body: JSON.stringify({
                 name: name,
-                address: address,
                 total_floors: Number(floor),
             }),
         })
@@ -29,7 +25,6 @@ function AddPG({ show, onClose, onAdd }) {
                 onAdd(newPG);
                 onClose();
                 setName("");
-                setAddress("");
                 setFloor("");
             })
             .catch((error) => console.error("Error:", error));
@@ -48,16 +43,6 @@ function AddPG({ show, onClose, onAdd }) {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                     />
-                </div>
-
-                <div className="input-area">
-                    <label>Enter PG Address</label>
-                <input
-                    type="text"
-                    placeholder="PG Address"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                />
                 </div>
 
                 <div className="input-area">

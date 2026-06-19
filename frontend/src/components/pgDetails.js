@@ -3,13 +3,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import { authFetch } from "../api/apiClient";
 import "../styles/pgDetails.css";
 import { FaPen } from "react-icons/fa";
+import { State, City } from "country-state-city";
 
 function PGDetails() {
     const navigate = useNavigate();
     const { pgId } = useParams();
     const [pgData, setPgData] = useState();
     // const [pgName, setPgName] = useState(pgData?pgData.name:"");
-    const [formData, setFormData] = useState();
+    const [formData, setFormData] = useState({
+        name:"",
+        address_line_1:"",
+        address_line_2:"",
+        state:"",
+        city:"",
+        country:"India",
+        postal_code:"",
+        total_floors:""
+    });
     const [error, setError] = useState();
     const [editMode, setEditMode] = useState(false);
 
@@ -22,6 +32,14 @@ function PGDetails() {
         setPgData(data);
         setFormData(data);
     }
+    console.log(formData);
+    const states = State.getStatesOfCountry("IN");
+    const selectedState = states.find((state) => state.name === formData?.state)
+    const cities = selectedState ? City.getCitiesOfState(
+        "IN",
+        selectedState.isoCode
+    ) : [];
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -32,7 +50,12 @@ function PGDetails() {
                 },
                 body: JSON.stringify({
                     name: formData.name,
-                    address: formData.address,
+                    address_line_1: formData.address_line_1,
+                    address_line_2: formData.address_line_2,
+                    city: formData.city,
+                    state: formData.state,
+                    country: formData.country,
+                    postal_code: formData.postal_code,
                     total_floors: formData.total_floors,
                 })
             });
@@ -70,9 +93,9 @@ function PGDetails() {
                 <h1>{pgData && pgData.name} - Details</h1>
             </div>
             <div className="form-header-block">
-            {!editMode && <div>
-                <button className="edit-button" onClick={()=> setEditMode(true)}><FaPen />Edit Details</button>
-            </div>}
+                {!editMode && <div>
+                    <button className="edit-button" onClick={() => setEditMode(true)}><FaPen />Edit Details</button>
+                </div>}
             </div>
             <div className={`pg-details-form ${editMode ? 'enabled' : 'disabled'}`}>
                 <form onSubmit={handleSubmit}>
@@ -98,19 +121,86 @@ function PGDetails() {
                         {error?.roomNumber}
                     </div> */}
 
-                    <div>Address</div>
-                    <input
-                        className={`pg-details-input ${editMode ? 'enabled' : 'disabled'}`}
-                        disabled={!editMode}
-                        placeholder="Enter PG Address"
-                        value={formData && formData.address}
-                        onChange={e => {
-                            setFormData({
-                                ...formData,
-                                address: e.target.value
-                            })
-                        }}
-                    />
+                    <div className="input-area">
+                        <label>Enter PG Address</label>
+                        <div className="address-1">
+                            <input
+                                disabled={!editMode}
+                                type="text"
+                                placeholder="Address Line 1"
+                                value={formData.address_line_1}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    address_line_1: e.target.value
+                                })}
+                            />
+                            <input
+                                type="text"
+                                disabled={!editMode}
+                                placeholder="Address Line 2"
+                                value={formData.address_line_2}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    address_line_2: e.target.value
+                                })}
+                            />
+                        </div>
+                        <div className="address-1">
+                            <input
+                                type="text"
+                                disabled={!editMode}
+                                className="short-field"
+                                placeholder="Postal Code"
+                                value={formData.postal_code}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    postal_code: e.target.value
+                                })}
+                            />
+                            <input
+                                type="text"
+                                disabled={!editMode}
+                                placeholder="Country"
+                                className="short-field"
+                                value={formData.country}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    country: e.target.value
+                                })}
+                            />
+                            <select
+                                name="state"
+                                disabled={!editMode}
+                                className="short-field"
+                                value={formData.state}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    state: e.target.value
+                                })}
+                            >
+                                <option value="">Select State</option>
+                                {states.map((state) => (
+                                    <option key={state.isoCode} value={state.name}>{state.name}</option>
+                                ))}
+                            </select>
+                            <select
+                                name="city"
+                                disabled={!editMode}
+                                className="short-field"
+                                value={formData.city}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    city: e.target.value
+                                })}
+                            >
+                                <option value="">Select City</option>
+                                {cities.map((city) => (
+                                    <option key={city.isoCode} value={city.name}>{city.name}</option>
+                                ))}
+                            </select>
+
+                        </div>
+                    </div>
 
                     <div>Total floors</div>
                     <input
@@ -137,8 +227,8 @@ function PGDetails() {
                     />
 
                     {editMode && <div className="edit-mode-buttons">
-                    <button type="button" onClick={()=> setEditMode(false)}>Cancel</button>
-                    <button type="submit">Submit</button>
+                        <button type="button" onClick={() => setEditMode(false)}>Cancel</button>
+                        <button type="submit">Submit</button>
                     </div>}
                 </form>
             </div>

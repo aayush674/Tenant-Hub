@@ -14,9 +14,8 @@
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;
-     width: 400px;
-     max-width: 90%;
-
+    width: 600px;
+    max-width: 90%;
     display: flex;
     flex-direction: column;
     gap: 14px;
@@ -30,6 +29,10 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+.short-field{
+    max-width: 200px;
 }
 
 .modal-buttons{
@@ -77,6 +80,7 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
+    gap: 10px;
 }
 
 label{
