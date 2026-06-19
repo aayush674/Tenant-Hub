@@ -56,3 +56,4 @@ staticfiles/
 
 # Ignore migration cache only
 **/migrations/__pycache__/
+node_modules/
