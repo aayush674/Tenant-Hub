@@ -135,7 +135,7 @@ function TenantList(){
                             <td>{tenant.room_number}</td>
                             <td>{tenant.email}</td>
                             <td>{tenant.join_date}</td>
-                            <td>{tenant.phone_number}</td>
+                            <td>{`${tenant.phone_country_code}-${tenant.phone_number}`}</td>
                             {(permissions?.edit_tenants || permissions?.delete_tenants) && <td>
                                 <div className="action-column">
                                     {(permissions?.delete_tenants) && <button className="delete-tenant-button"

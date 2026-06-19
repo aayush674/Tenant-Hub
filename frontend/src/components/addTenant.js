@@ -11,6 +11,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
     const [tenantRoom, setTenantRoom] = useState("");
     const [tenantEmail, setTenantEmail] = useState("");
     const [tenantPhone, setTenantPhone] = useState("");
+    const [phoneCode, phoneNumber] = tenantPhone.split('-');
     const [tenantJoinDate, setTenantJoinDate] = useState(
         new Date().toLocaleDateString("en-CA")
     );
@@ -81,14 +82,6 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
             return;
         }
 
-        console.log({
-            room: tenantRoom,
-            first_name: tenantName,
-            last_name: lastName,
-            email: tenantEmail,
-            phone_number: tenantPhone,
-            join_date: tenantJoinDate
-        });
         setError({});
         try {
             const res = await authFetch("http://localhost:8000/api/tenants/", {
@@ -102,7 +95,8 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
                     first_name: tenantName,
                     last_name: lastName,
                     email: tenantEmail,
-                    phone_number: tenantPhone,
+                    phone_country_code:phoneCode,
+                    phone_number: phoneNumber,
                     join_date: tenantJoinDate
                 })
             });
@@ -147,6 +141,9 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
 
                         tenantPhone={tenantPhone}
                         setTenantPhone={setTenantPhone}
+
+                        phoneCode={phoneCode}
+                        phoneNumber={phoneNumber}
 
                         tenantJoinDate={tenantJoinDate}
                         setTenantJoinDate={setTenantJoinDate}

@@ -2,8 +2,8 @@ export function validatePhoneNumber(phone) {
     if (!phone || phone.trim() === "") {
         return "Phone Number is required to add a Tenant"
     }
-    else if(phone.length<10){
-        return "Please enter a valid Phone number"
+    else if(phone.split('-')[1].length!=10){
+        return "Phone Number must contain exactly 10 digits"
     }
     return null;
     

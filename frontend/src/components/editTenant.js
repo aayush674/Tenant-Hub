@@ -10,7 +10,8 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
     const [lastName, setLastName] = useState(tenant.last_name);
     const [tenantRoom, setTenantRoom] = useState(tenant.room);
     const [tenantEmail, setTenantEmail] = useState(tenant.email);
-    const [tenantPhone, setTenantPhone] = useState(tenant.phone_number);
+    const [tenantPhone, setTenantPhone] = useState(tenant.phone_country_code+'-'+tenant.phone_number);
+    const [phoneCode, phoneNumber] = tenantPhone.split('-');
     const [tenantJoinDate, setTenantJoinDate] = useState(tenant.join_date);
     const [closing, setClosing] = useState(false);
     const [opening, setOpening] = useState(false);
@@ -78,15 +79,6 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
             setError(finalError);
             return;
         }
-
-        console.log({
-            room: tenantRoom,
-            first_name: tenantName,
-            last_name: lastName,
-            email: tenantEmail,
-            phone_number: tenantPhone,
-            join_date: tenantJoinDate
-        });
         setError({});
         try {
             const res = await authFetch(`http://localhost:8000/api/tenants/${tenant.id}/`, {
@@ -100,7 +92,8 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
                     first_name: tenantName,
                     last_name: lastName,
                     email: tenantEmail,
-                    phone_number: tenantPhone,
+                    phone_country_code: phoneCode,
+                    phone_number: phoneNumber,
                     join_date: tenantJoinDate
                 })
             });
@@ -145,6 +138,9 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
 
                         tenantPhone={tenantPhone}
                         setTenantPhone={setTenantPhone}
+
+                        phoneCode={phoneCode}
+                        phoneNumber={phoneNumber}
 
                         tenantJoinDate={tenantJoinDate}
                         setTenantJoinDate={setTenantJoinDate}

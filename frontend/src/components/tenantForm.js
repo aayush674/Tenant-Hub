@@ -16,6 +16,9 @@ function TenantForm({
     tenantPhone,
     setTenantPhone,
 
+    phoneCode,
+    phoneNumber,
+
     tenantJoinDate,
     setTenantJoinDate,
 
@@ -100,10 +103,24 @@ function TenantForm({
 
             <div>Tenant Phone Number</div>
             <input
-                placeholder="Enter Tenant Phone Number"
-                value={tenantPhone}
+                // placeholder="Enter Tenant Phone Number"
+                value={phoneCode}
                 onChange={e => {
-                    setTenantPhone(e.target.value);
+
+                    setTenantPhone(`${e.target.value}-${phoneNumber}`);
+                     if (error?.phone) {
+                        const newError = { ...error };
+                        delete newError.phone;
+                        setError(newError);
+                    }
+                }
+                }
+            />
+            <input
+                placeholder="Enter Tenant Phone Number"
+                value={phoneNumber}
+                onChange={e => {
+                    setTenantPhone(`${phoneCode}-${e.target.value}`);
                      if (error?.phone) {
                         const newError = { ...error };
                         delete newError.phone;
