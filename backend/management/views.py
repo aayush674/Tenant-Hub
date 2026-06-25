@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from django.db.models import Count, Q
-from .models import MaintenanceRequest, PGproperty, Room, Tenant, Payment, RoomType
-from .serializers import MaintenanceRequestSerializer, PGpropertySerializer, RoomSerializer, TenantSerializer, PaymentSerializer, RoomTypeSerializer
+from .models import MaintenanceRequest, PGproperty, Room, Tenant, Payment, RoomType, Dues
+from .serializers import MaintenanceRequestSerializer, PGpropertySerializer, RoomSerializer, TenantSerializer, PaymentSerializer, DueSerializer, RoomTypeSerializer
 from accounts.models import UserRole
 from accounts.utils import has_permission
 from rest_framework.exceptions import PermissionDenied
@@ -162,6 +162,22 @@ class TenantViewSet(viewsets.ModelViewSet):
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+    
+class DuesViewSet(viewsets.ModelViewSet):
+    serializer_class=DueSerializer
+    queryset=Dues.objects.all()
+    def get_queryset(self):
+        queryset=Dues.objects.all()
+        tenant=self.request.query_params.get("tenant")
+        status=self.request.query_params.get("status")
+        
+        if tenant:
+            queryset=queryset.filter(tenant_id=tenant)
+        
+        if status:
+            queryset=queryset.filter(status=status)
+        
+        return queryset
 
 class MaintenanceRequestViewSet(viewsets.ModelViewSet):
     queryset = MaintenanceRequest.objects.all()

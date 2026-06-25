@@ -75,19 +75,48 @@ class Tenant(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name} - Room {self.room.room_number}"
 
+class Dues(models.Model):
+    tenant = models.ForeignKey(Tenant, related_name='due', on_delete=models.SET_NULL, null=True)
+    due_date = models.DateField()
+    due_amount = models.DecimalField(max_digits=15, decimal_places=2)
+    due_type = models.CharField(
+        max_length=20,
+        choices=[
+            ("rent", "Rent"),
+            ("electricity", "Electricity"),
+            ("maintenance", "Maintenance"),
+            ("other", "Other"),
+        ]
+    )
+    status = models.CharField(
+        max_length=20, 
+        choices=[
+            ("pending", "Pending"),
+            ("partial", "Partially Paid"),
+            ("paid", "Paid"),
+            ("overdue", "Overdue"),
+    ], default="pending")
+    paid_amount=models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
+        default=0
+    )
+    created_at=models.DateTimeField(auto_now_add=True)
+    
+    @property
+    def is_overdue(self):
+        return self.status!="paid" and self.due_date < timezone.now().date()
+
 class Payment(models.Model):
-    tenant = models.ForeignKey(Tenant, related_name='payments', on_delete=models.SET_NULL, null=True) # If a tenant is deleted, we set the tenant field to null instead of deleting the payment record.
-    month = models.IntegerField()
-    year = models.IntegerField()
+    due = models.ForeignKey(
+        Dues,
+        related_name="payments",
+        on_delete=models.CASCADE
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateField()
-    is_paid = models.BooleanField(default=False)
     payment_method = models.CharField(max_length=50)
-
-    class Meta:
-        unique_together = ("tenant", "month", "year")
-    def __str__(self):
-        return f"{self.tenant} - {self.month}/{self.year} - {'Paid' if self.is_paid else 'Unpaid'}"
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class MaintenanceRequest(models.Model):
     room = models.ForeignKey(Room, related_name='maintenance_requests', on_delete=models.SET_NULL, null=True) # If a room is deleted, we set the room field to null instead of deleting the maintenance request.
