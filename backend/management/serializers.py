@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MaintenanceRequest, PGproperty, Payment, Room, Tenant, RoomType
+from .models import MaintenanceRequest, PGproperty, Payment, Room, Tenant, RoomType, Dues
 
 class PGpropertySerializer(serializers.ModelSerializer):
     room_count=serializers.IntegerField(read_only=True)
@@ -68,21 +68,11 @@ class PaymentSerializer(serializers.ModelSerializer):
         if amount <= 0:
             raise serializers.ValidationError("Payment amount must be a positive value.")
         return amount
-    
-    def validate_month(self, month):
-        if month < 1 or month > 12:
-            raise serializers.ValidationError("This is not a valid month.")
-        return month
-    
-    def validate_year(self, year):
-        if year < 2000 or year > 2100:
-            raise serializers.ValidationError("This is not a valid year.")
-        return year
-        
-    def validate(self, data):
-        if data['is_paid'] and not data.get('payment_date'):
-            raise serializers.ValidationError("Payment date is required when payment is marked as paid.")
-        return data
+
+class DueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Dues
+        fields='__all__'
 
 class MaintenanceRequestSerializer(serializers.ModelSerializer):
     class Meta:
