@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { authFetch } from "../api/apiClient";
-import "../styles/addRoomModal.css";
-import ConfirmModal from "./confirmationModal";
-import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../utils/roomValidation";
+import { authFetch } from "../../api/apiClient";
+import "../../styles/addRoomModal.css";
+import ConfirmModal from "../common/confirmationModal";
+import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../../utils/roomValidation";
 
 function AddRoomModal({ pgId, onAdd, onClose }) {
 

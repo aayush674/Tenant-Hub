@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { authFetch } from "../api/apiClient";
-import "../styles/changePassword.css";
+import { authFetch } from "../../api/apiClient";
+import "../../styles/changePassword.css";
 
 
 function ChangePassword({ show, onClose }) {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { authFetch } from "../api/apiClient";
-import "../styles/addRoomTypeModal.css";
+import { authFetch } from "../../api/apiClient";
+import "../../styles/addRoomTypeModal.css";
 
 
 function AddRoomTypeModal({ pgId, onAdd, onClose }) {

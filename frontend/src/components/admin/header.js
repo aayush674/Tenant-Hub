@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import "../styles/header.css";
-import logo from "../assets/Tenant-Hub-Logo.png";
+import "../../styles/header.css";
+import logo from "../../assets/Tenant-Hub-Logo.png";
 import { useState, useEffect, useRef } from "react";
-import ChangePassword from "./changePassword";
-import profileIcon from "../assets/profile-Icon.png";
+import ChangePassword from "../common/changePassword";
+import profileIcon from "../../assets/profile-Icon.png";
 
 function Header() {
     const navigate = useNavigate();

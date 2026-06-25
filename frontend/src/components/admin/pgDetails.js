@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { authFetch } from "../api/apiClient";
-import "../styles/pgDetails.css";
+import { authFetch } from "../../api/apiClient";
+import "../../styles/pgDetails.css";
 import { FaPen } from "react-icons/fa";
 import { State, City } from "country-state-city";
 

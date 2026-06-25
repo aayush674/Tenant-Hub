@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { authFetch } from "../api/apiClient";
+import { authFetch } from "../../api/apiClient";
 import AddTenantModal from "./addTenant";
 import EditTenantModal from "./editTenant";
-import "../styles/tenantList.css";
+import "../../styles/tenantList.css";
 import { FaPen, FaTrash } from "react-icons/fa";
-import ConfirmModal from "./confirmationModal";
+import ConfirmModal from "../common/confirmationModal";
 
 function TenantList(){
     const { pgId } = useParams()

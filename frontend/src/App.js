@@ -1,13 +1,13 @@
 import "./App.css";
-import Header from "./components/header";
+import Header from "./components/admin/header";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import PGList from "./components/pgList";
-import Login from "./components/login";
-import RoomsList from "./components/roomsList";
-import RoomTypes from "./components/roomTypes";
-import TenantList from "./components/tenantList";
-import PGDetails from "./components/pgDetails";
-import PGLayout from "./components/pgLayout";
+import PGList from "./components/admin/pgList";
+import Login from "./components/common/login";
+import RoomsList from "./components/admin/roomsList";
+import RoomTypes from "./components/admin/roomTypes";
+import TenantList from "./components/admin/tenantList";
+import PGDetails from "./components/admin/pgDetails";
+import PGLayout from "./components/admin/pgLayout";
 
 import { ProtectedRoute } from "./api/protectedRoute";
 

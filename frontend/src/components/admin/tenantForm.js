@@ -1,4 +1,4 @@
-import "../styles/addTenant.css";
+import "../../styles/addTenant.css";
 import { Country } from "country-state-city";
 import Select from "react-select";
 

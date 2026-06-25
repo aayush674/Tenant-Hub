@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../styles/roomListFilterModal.css";
+import "../../styles/roomListFilterModal.css";
 
 function RoomListFilterModal({ isOpen, onClose, filters, setFilters, onApply, onReset }) {
     const [error, setError] = useState({});

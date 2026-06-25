@@ -1,8 +1,8 @@
-import { login } from "../api/auth.js";
+import { login } from "../../api/auth.js";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/login.css";
-import complogo from "../assets/Tenant-Hub-Logo.png";
+import "../../styles/login.css";
+import complogo from "../../assets/Tenant-Hub-Logo.png";
 
 function Login() {
     const [email, setEmail] = useState("");

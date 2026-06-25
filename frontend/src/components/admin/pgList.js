@@ -1,9 +1,9 @@
 import ViewPG from "./viewPG";
-import ConfirmModal from "./confirmationModal";
+import ConfirmModal from "../common/confirmationModal";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/pgList.css";
-import { authFetch } from "../api/apiClient";
+import "../../styles/pgList.css";
+import { authFetch } from "../../api/apiClient";
 import AddPG from "./addPG";
 import { FaEye, FaTrash, FaEllipsisV } from "react-icons/fa";
 
