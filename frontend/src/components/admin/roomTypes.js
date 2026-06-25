@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authFetch } from "../api/apiClient";
+import { authFetch } from "../../api/apiClient";
 import { useParams } from "react-router-dom";
-import "../styles/roomTypes.css";
+import "../../styles/roomTypes.css";
 import AddRoomTypeModal from "./addRoomType";
 import { FaPen, FaTrash } from "react-icons/fa";
 

@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import '../styles/confirmationModal.css';
+import '../../styles/confirmationModal.css';
 
 function ConfirmModal({ show, title, message, onConfirm, onCancel }) {
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { authFetch } from "../api/apiClient";
-import "../styles/addRoomModal.css";
-import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../utils/roomValidation";
+import { authFetch } from "../../api/apiClient";
+import "../../styles/addRoomModal.css";
+import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../../utils/roomValidation";
 
 function EditRoomModal({ room, onUpdate, onClose }) {
 

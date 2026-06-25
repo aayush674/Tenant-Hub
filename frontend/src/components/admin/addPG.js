@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "../styles/addPG.css";
-import { authFetch } from "../api/apiClient";
+import "../../styles/addPG.css";
+import { authFetch } from "../../api/apiClient";
 function AddPG({ show, onClose, onAdd }) {
 
     const [name, setName] = useState("");

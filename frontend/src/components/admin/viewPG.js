@@ -1,5 +1,5 @@
 import React from "react";
-import '../styles/viewPG.css';
+import '../../styles/viewPG.css';
 function ViewPG({ show, pg, onClose }) {
 
   if (!show || !pg) {

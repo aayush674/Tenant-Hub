@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { authFetch } from "../api/apiClient";
+import { authFetch } from "../../api/apiClient";
 import AddRoomModal from "./addRoomModal";
-import "../styles/roomsList.css";
+import "../../styles/roomsList.css";
 import { useNavigate } from "react-router-dom";
 import EditRoomModal from "./editRoomModal";
 import RoomListFilterModal from "./roomListFilterModal";
 import { useSearchParams } from "react-router-dom";
-import ConfirmModal from "./confirmationModal";
+import ConfirmModal from "../common/confirmationModal";
 import { FaPen, FaTrash } from "react-icons/fa";
-import FilterIcon from "../assets/filter-svgrepo.svg"
+import FilterIcon from "../../assets/filter-svgrepo.svg"
 // import { Tooltip } from 'react-tooltip';
 
 

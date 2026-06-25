@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { authFetch } from "../api/apiClient";
-import "../styles/addTenant.css";
+import { authFetch } from "../../api/apiClient";
+import "../../styles/addTenant.css";
 import TenantForm from "./tenantForm";
-import { validateEmail, validatePhoneNumber, validateName, validateRoom, validateDate } from "../utils/tenantValidation";
+import { validateEmail, validatePhoneNumber, validateName, validateRoom, validateDate } from "../../utils/tenantValidation";
 
 function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
 
