@@ -15,6 +15,7 @@ import TenantDashboard from "./components/tenant/tenantDashboard";
 import TenantDues from "./components/tenant/tenantDues";
 import TenantMaintainence from "./components/tenant/tenantMaintainence";
 import TenantLayout from "./components/tenant/tenantLayout";
+import TenantHeader from "./components/tenant/tenantHeader";
 
 function App() {
   return (
@@ -36,6 +37,11 @@ function Layout() {
       {location.pathname !== "/login" && !isTenantRoute && (
         <ProtectedRoute>
           <Header />
+        </ProtectedRoute>
+      )}
+      {location.pathname !== "/login" && isTenantRoute && (
+        <ProtectedRoute>
+          <TenantHeader />
         </ProtectedRoute>
       )}
       <Routes>

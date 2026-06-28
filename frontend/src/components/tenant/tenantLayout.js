@@ -1,5 +1,5 @@
 import { useNavigate, useParams, Outlet, NavLink } from "react-router-dom";
-// import "../../styles/pgLayout.css";
+import "../../styles/tenantLayout.css";
 function TenantLayout(){
     const navigate=useNavigate();
     const {pgId} = useParams();
