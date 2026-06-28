@@ -44,11 +44,16 @@ function Login() {
                 localStorage.setItem("access_token", data.access);
                 // console.log("Access Token Stored:", data.access);
                 localStorage.setItem("refresh_token", data.refresh);
-                // console.log("Refresh Token Stored:", data.refresh);                
-                navigate("/");
+                // console.log("Refresh Token Stored:", data.refresh);
+                if(data.user.role==="TENANT"){
+                    navigate("/t")
+                }           
+                else{
+                    navigate("/");
+                }
             }
             else {
-                triggerError("Invalid credentials");
+                triggerError("Invalid credentials 1");
             }
         }
         catch (error) {
@@ -65,6 +70,7 @@ function Login() {
 
         if (access_token && refresh_token) {
             navigate("/");
+            console.log("Inside useeffect")
         }
     }, [navigate]);
 

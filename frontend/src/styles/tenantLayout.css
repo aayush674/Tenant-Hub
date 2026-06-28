@@ -1,0 +1,47 @@
+.tenant-layout-container {
+    display: flex;
+    /* min-height: calc(100vh - 70px); adjust for header height */
+    font-family: "Lexend", sans-serif;
+    align-items: flex-start;
+}
+
+.tenant-sidebar {
+    position: sticky;
+    top: 70px;
+    width: 220px;
+    height: fit-content;
+    background: white;
+    border-right: 1px solid #e5e5e5;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.content {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.tenant-sidebar a {
+    border: none;
+    background: transparent;
+
+    padding: 14px 24px;
+    text-align: left;
+    text-decoration: none;
+    font-size: 15px;
+    cursor: pointer;
+    color: #333;
+    transition: background 0.2s ease;
+}
+
+.tenant-sidebar a.active {
+    background: #fff9ee;
+    border-right: 4px solid #eba925;
+    font-weight: 600;
+}
+
+.tenant-sidebar a:hover {
+    background: #fff9ee;
+}
