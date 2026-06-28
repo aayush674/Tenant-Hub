@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { authFetch } from "../../api/apiClient";
-import "../../styles/addRoomModal.css";
+import "../../styles/addDue.css";
 import ConfirmModal from "../common/confirmationModal";
 // import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../../utils/roomValidation";
 
@@ -104,9 +104,9 @@ function AddDueModal({ pgId, onAdd, onClose }) {
     };
 
     return (
-        <div className="add-room-modal-overlay" onClick={handleClose}>
+        <div className="add-due-modal-overlay" onClick={handleClose}>
             <div
-                className={`add-room-modal-box ${closing ? "close" : opening ? "open" : ""
+                className={`add-due-modal-box ${closing ? "close" : opening ? "open" : ""
                     }`}
                 onClick={(e) => e.stopPropagation()}
             >
