@@ -1,0 +1,189 @@
+.dues-container {
+    padding: 10px 30px;
+    font-family: "Lexend", sans-serif;
+}
+
+.dues-nav-path {
+    /* color: #5b4914; */
+    color: #434242;
+    font-size: 14px;
+    margin-bottom: 0px;
+}
+
+.dues-navigator {
+    cursor: pointer;
+    color: #987b23;
+}
+
+.dues-navigator:hover {
+    text-decoration: underline;
+}
+
+.dues-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dues-header h1 {
+    color: #5b4914;
+}
+
+.add-due-btn {
+    background-color: #987b23;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: 5px;
+    border: 2px solid #5b4914;
+    transition: all 0.2s ease;
+    margin-top: 20px;
+}
+
+.add-due-btn:hover {
+    background-color: #5b4914;
+}
+
+.add-due-btn:active {
+    background-color: #4a3a10;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 2px solid #5b4914;
+}
+
+thead {
+    background-color: #b79739;
+}
+
+th {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 2px solid #ddd;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #987b23;
+}
+
+tbody tr{
+    transition: background-color 0.15s ease;
+}
+
+tbody tr:hover {
+    background-color: #ccb673;
+}
+
+/* .action-column{
+    display: flex;
+    gap: 12px;
+}
+
+.filter-button{
+ background-color: #987b23;
+ font-size: 2.5vh;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: 5px;
+    border: 2px solid #5b4914;
+    transition: all 0.2s ease;
+    margin-bottom: 20px;    
+    font-weight: bold;
+     display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-button:hover {
+    background-color: #5b4914;
+}
+
+.filter-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.filter-button:active {
+    background-color: #4a3a10;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+
+.delete-room-button{
+    color: red;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    font-weight: 600;
+    font-family: "Lexend", sans-serif;
+    min-height: 32px;
+    min-width: 85px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-room-button:hover{
+    background-color: #ffd1d1;
+    border-color: #fca5a5;
+}
+
+.edit-room-button{
+    color: blue;
+    background-color: #f2f2fe;
+    border: 1px solid #cacafe;
+    border-radius: 6px;
+    font-weight: 600;
+    font-family: "Lexend", sans-serif;
+    min-height: 32px;
+    min-width: 85px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.edit-room-button:hover{
+    background-color: #d1d1ff;
+    border-color: #a5a5fc;
+}
+
+.floor-navigation-box{
+    display: flex;
+    gap: 10px;
+    margin: 10px 0px;
+}
+
+.floor-navigation-box button{
+    min-width: 110px;
+    padding: 10px 0px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    border: 1px solid #987b23;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.floor-navigation-box button.active-floor{
+    background-color: #987b23;
+    color: #ffffff;
+} */
+
+.no-ḍues-message {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-weight: bold;
+}
+
+.tenant-column{
+    width: 200px;
+}

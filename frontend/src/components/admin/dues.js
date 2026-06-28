@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import AddDueModal from "./addDue";
+import "../../styles/dues.css";
 
 function Dues() {
     const navigate = useNavigate();
@@ -43,10 +44,10 @@ function Dues() {
                 <span>Dues</span>
 
             </div>
-            <div className="room-list-header">
+            <div className="dues-header">
                 <h1>{pgData && pgData.name} - Dues</h1>
                 <button
-                    className="add-room-btn"
+                    className="add-due-btn"
                     onClick={() => setShowAddDue(true)}
                 ><b>+ Add Due</b></button>
                 {showAddDue && (
@@ -94,7 +95,7 @@ function Dues() {
                     <tbody>
 
                         {dues.length === 0 ? (<tr>
-                            <td colSpan="5" className="no-rooms-message">
+                            <td colSpan="5" className="no-dues-message">
                                 No Dues applied
                             </td>
                         </tr>) : (
