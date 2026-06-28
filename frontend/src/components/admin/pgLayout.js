@@ -10,6 +10,7 @@ function PGLayout(){
                 <NavLink to={`/pg/${pgId}/rooms`}>Rooms List</NavLink>
                 <NavLink to={`/pg/${pgId}/roomtypes`}>Room Types</NavLink>
                 <NavLink to={`/pg/${pgId}/tenants`}>Tenants</NavLink>
+                <NavLink to={`/pg/${pgId}/dues`}>Dues</NavLink>
             </div>
             <div className="content">
                 <Outlet />

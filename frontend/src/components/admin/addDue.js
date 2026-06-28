@@ -1,0 +1,165 @@
+import { useEffect, useState } from "react";
+import { authFetch } from "../../api/apiClient";
+import "../../styles/addRoomModal.css";
+import ConfirmModal from "../common/confirmationModal";
+// import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../../utils/roomValidation";
+
+function AddDueModal({ pgId, onAdd, onClose }) {
+
+
+    const [tenants, setTenants] = useState([]);
+    const [closing, setClosing] = useState(false);
+    const [opening, setOpening] = useState(false);
+    const [selectedTenant, setSelectedTenant] = useState(null);
+    const [selectedDueType, setSelectedDueType] = useState("");
+    const [dueAmount, setDueAmount] = useState("");
+    const [dueDate, setDueDate] = useState("");
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetchTenants();
+    }, [])
+
+    useEffect(() => {
+        requestAnimationFrame(() => {
+            setOpening(true);
+        });
+    }, []);
+
+    const handleClose = () => {
+        setClosing(true);
+
+        setTimeout(() => {
+            onClose();
+        }, 300); // must match CSS transition
+
+    };
+
+    const fetchTenants = async () => {
+        const res = await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`);
+        if (!res.ok) {
+            throw new Error("Failed to fetch Tenants");
+        }
+        const data = await res.json();
+        setTenants(data);
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        // const rnError = validateRoomNumber(roomNumber);
+        // const rcError = validateRoomCapacity(roomCapacity);
+        // const rrError = validateRoomRent(roomRent);
+        // const finalError = {}
+
+        // if (rnError) {
+        //     finalError.roomNumber = rnError;
+        // }
+        // if (rcError) {
+        //     finalError.roomCapacity = rcError;
+        // }
+        // if (rrError) {
+        //     finalError.roomRent = rrError;
+        // }
+        // if (Object.keys(finalError).length > 0) {
+        //     setError(finalError);
+        //     return;
+        // }
+
+
+        setError({});
+        try {
+            const res = await authFetch("http://localhost:8000/api/dues/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    tenant: selectedTenant,
+                    due_type: selectedDueType,
+                    due_amount: Number(dueAmount),
+                    due_date: dueDate
+                })
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                setError(errData);
+                console.log(errData);
+                return;
+            }
+            const data = await res.json();
+            onAdd(data);
+        }
+        catch (err) {
+            setError({ detail: "Something went wrong. Please try again." });
+        }
+    }
+
+    const handleCancel = () => {
+        setShowConfirmModal(false);
+        setSelectedDueType("");
+        setSelectedTenant(null);
+    };
+
+    return (
+        <div className="add-room-modal-overlay" onClick={handleClose}>
+            <div
+                className={`add-room-modal-box ${closing ? "close" : opening ? "open" : ""
+                    }`}
+                onClick={(e) => e.stopPropagation()}
+            >
+                <h1 className="modal-header">Add Due</h1>
+
+                <form onSubmit={handleSubmit}>
+
+                    <div>Tenant</div>
+                    <select onChange={(e) => setSelectedTenant(Number(e.target.value))} className="custom-select">
+                        <option value={selectedTenant}>Select Tenant</option>
+                        {tenants.map(tenant => (
+                            <option key={tenant.id} value={tenant.id}>{tenant.first_name + " " + tenant.last_name}</option>
+                        ))}
+                    </select>
+                    <br />
+
+                    <div>Due Type</div>
+                    <select onChange={(e) => setSelectedDueType(e.target.value)} className="custom-select">
+                        <option value="">Select Due Type</option>
+                        <option value="rent">Rent</option>
+                    </select>
+                    <br />
+
+                    <div>Due Amount</div>
+                    <input
+                        placeholder="Enter Due Amount"
+                        value={dueAmount}
+                        onChange={e => {
+                            setDueAmount(e.target.value);
+                            // if (error?.roomRent) {
+                            //     const newError = { ...error };
+                            //     delete newError.roomRent;
+                            //     setError(newError);
+                            // }
+                        }
+                        }
+                    />
+                    {/* <div className="error-container">
+                        {error?.roomRent}
+                    </div> */}
+                    {/* {error?.detail && (
+                        <div className="error-container">{error.detail}</div>
+                    )} */}
+
+                    <div>Due Date</div>
+                    <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+
+                    <button type="submit">Add Due</button>
+                    <button type="button" onClick={handleClose}>Cancel</button>
+                </form>
+            </div>
+        </div>
+    )
+}
+
+export default AddDueModal;

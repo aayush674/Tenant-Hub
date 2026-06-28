@@ -8,6 +8,7 @@ import RoomTypes from "./components/admin/roomTypes";
 import TenantList from "./components/admin/tenantList";
 import PGDetails from "./components/admin/pgDetails";
 import PGLayout from "./components/admin/pgLayout";
+import Dues from "./components/admin/dues";
 
 import { ProtectedRoute } from "./api/protectedRoute";
 import TenantRoom from "./components/tenant/tenantRoom";
@@ -53,6 +54,7 @@ function Layout() {
           <Route path="rooms" element={<ProtectedRoute><RoomsList /></ProtectedRoute>} />
           <Route path="roomtypes" element={<ProtectedRoute><RoomTypes /></ProtectedRoute>} />
           <Route path="tenants" element={<ProtectedRoute><TenantList /></ProtectedRoute>} />
+          <Route path="dues" element={<ProtectedRoute><Dues /></ProtectedRoute>} />
         </Route>
         <Route
           path="/t"
