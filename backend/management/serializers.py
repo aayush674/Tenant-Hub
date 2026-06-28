@@ -70,9 +70,13 @@ class PaymentSerializer(serializers.ModelSerializer):
         return amount
 
 class DueSerializer(serializers.ModelSerializer):
+    tenant_name=serializers.SerializerMethodField()
     class Meta:
         model=Dues
         fields='__all__'
+        
+    def get_tenant_name(self, obj):
+        return f"{obj.tenant.first_name} {obj.tenant.last_name}"
 
 class MaintenanceRequestSerializer(serializers.ModelSerializer):
     class Meta:

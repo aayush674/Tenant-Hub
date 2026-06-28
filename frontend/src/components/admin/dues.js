@@ -9,6 +9,7 @@ function Dues() {
     const [pgData, setPgData] = useState(null);
     const { pgId } = useParams();
     const [dues, setDues] = useState([]);
+    const [tenants, setTenants] = useState([]);
 
     const [showAddDue, setShowAddDue] = useState(false);
 
@@ -27,9 +28,16 @@ function Dues() {
         setDues(data.results || data);
     }
 
+    const fetchTenants = async () => {
+        const res = await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`)
+        const data = await res.json();
+        setTenants(data.results || data);
+    }
+
     useEffect(() => {
         fetchPg();
         fetchDues();
+        fetchTenants();
     }, [pgId]);
 
     return (
@@ -82,10 +90,10 @@ function Dues() {
                     <thead>
                         <tr>
                             <th>Due ID</th>
-                            <th>Tenant</th>
+                            <th>Tenant Name</th>
+                            <th>Due Type</th>
                             <th>Due Amount (&#8377;)</th>
                             <th>Due Date</th>
-                            <th>Due Type</th>
                             {/* <th>Rent (&#8377;)</th> */}
                             {/* <th>Actions</th> */}
                         </tr>
@@ -102,12 +110,13 @@ function Dues() {
                             dues.map(due => (
                                 <tr key={due.id}>
                                     <td><b>{due.id}</b></td>
-                                    <td>-</td>
+                                    <td>{due.tenant_name}</td>
+                                    <td>{due.due_type === "rent"?"Rent":""}</td>
                                     <td>&#8377; {due.due_amount}</td>
                                     <td>
                                         {due.due_date}
                                     </td>
-                                    <td>{due.due_type === "rent"?"Rent":""}</td>
+                                   
                                     {/* <td>
                                         <div className="action-column">
                                             <button className="delete-room-button"
