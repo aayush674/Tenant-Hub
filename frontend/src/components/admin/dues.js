@@ -9,7 +9,6 @@ function Dues() {
     const [pgData, setPgData] = useState(null);
     const { pgId } = useParams();
     const [dues, setDues] = useState([]);
-    const [tenants, setTenants] = useState([]);
 
     const [showAddDue, setShowAddDue] = useState(false);
 
@@ -28,16 +27,9 @@ function Dues() {
         setDues(data.results || data);
     }
 
-    const fetchTenants = async () => {
-        const res = await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`)
-        const data = await res.json();
-        setTenants(data.results || data);
-    }
-
     useEffect(() => {
         fetchPg();
         fetchDues();
-        fetchTenants();
     }, [pgId]);
 
     return (
@@ -111,7 +103,7 @@ function Dues() {
                                 <tr key={due.id}>
                                     <td><b>{due.id}</b></td>
                                     <td>{due.tenant_name}</td>
-                                    <td>{due.due_type === "rent"?"Rent":""}</td>
+                                    <td>{due.due_type === "rent"?"Rent":due.due_type==="electricity"?"Electricity":""}</td>
                                     <td>&#8377; {due.due_amount}</td>
                                     <td>
                                         {due.due_date}

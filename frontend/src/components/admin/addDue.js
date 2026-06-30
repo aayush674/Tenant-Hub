@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { authFetch } from "../../api/apiClient";
 import "../../styles/addDue.css";
-import ConfirmModal from "../common/confirmationModal";
+// import ConfirmModal from "../common/confirmationModal";
 // import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../../utils/roomValidation";
 
 function AddDueModal({ pgId, onAdd, onClose }) {
@@ -14,7 +14,7 @@ function AddDueModal({ pgId, onAdd, onClose }) {
     const [selectedDueType, setSelectedDueType] = useState("");
     const [dueAmount, setDueAmount] = useState("");
     const [dueDate, setDueDate] = useState("");
-    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    // const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -98,7 +98,7 @@ function AddDueModal({ pgId, onAdd, onClose }) {
     }
 
     const handleCancel = () => {
-        setShowConfirmModal(false);
+        // setShowConfirmModal(false);
         setSelectedDueType("");
         setSelectedTenant(null);
     };
@@ -127,6 +127,7 @@ function AddDueModal({ pgId, onAdd, onClose }) {
                     <select onChange={(e) => setSelectedDueType(e.target.value)} className="custom-select">
                         <option value="">Select Due Type</option>
                         <option value="rent">Rent</option>
+                        <option value="electricity">Electricity</option>
                     </select>
                     <br />
 
