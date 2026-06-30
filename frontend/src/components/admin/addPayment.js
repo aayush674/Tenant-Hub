@@ -1,0 +1,179 @@
+import { useEffect, useState } from "react";
+import { authFetch } from "../../api/apiClient";
+import "../../styles/addDue.css";
+// import ConfirmModal from "../common/confirmationModal";
+// import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../../utils/roomValidation";
+
+function AddPaymentModal({ pgId, onAdd, onClose }) {
+
+
+    const [tenants, setTenants] = useState([]);
+    const [dues, setDues] = useState([]);
+    const [closing, setClosing] = useState(false);
+    const [opening, setOpening] = useState(false);
+    const [selectedTenant, setSelectedTenant] = useState(null);
+    const [selectedDue, setSelectedDue] = useState("");
+    const [paymentAmount, setPaymentAmount] = useState("");
+    const [paymentDate, setPaymentDate] = useState("");
+    // const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetchTenants();
+    }, [])
+
+    useEffect(() => {
+        requestAnimationFrame(() => {
+            setOpening(true);
+        });
+    }, []);
+
+    const handleClose = () => {
+        setClosing(true);
+
+        setTimeout(() => {
+            onClose();
+        }, 300); // must match CSS transition
+
+    };
+
+    const fetchTenants = async () => {
+        const res = await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`);
+        if (!res.ok) {
+            throw new Error("Failed to fetch Tenants");
+        }
+        const data = await res.json();
+        setTenants(data);
+    }
+
+    const handleSubmit = async (e) => {
+    //     e.preventDefault();
+
+    //     // const rnError = validateRoomNumber(roomNumber);
+    //     // const rcError = validateRoomCapacity(roomCapacity);
+    //     // const rrError = validateRoomRent(roomRent);
+    //     // const finalError = {}
+
+    //     // if (rnError) {
+    //     //     finalError.roomNumber = rnError;
+    //     // }
+    //     // if (rcError) {
+    //     //     finalError.roomCapacity = rcError;
+    //     // }
+    //     // if (rrError) {
+    //     //     finalError.roomRent = rrError;
+    //     // }
+    //     // if (Object.keys(finalError).length > 0) {
+    //     //     setError(finalError);
+    //     //     return;
+    //     // }
+
+
+        setError({});
+        try {
+            const res = await authFetch("http://localhost:8000/api/payments/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    due: selectedDue,
+                    payment_method: "Cash",
+                    amount: Number(paymentAmount),
+                    payment_date: paymentDate
+                })
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                setError(errData);
+                console.log(errData);
+                return;
+            }
+            const data = await res.json();
+            onAdd(data);
+        }
+        catch (err) {
+            setError({ detail: "Something went wrong. Please try again." });
+        }
+    }
+
+    const handleCancel = () => {
+        // setShowConfirmModal(false);
+        setSelectedDue("");
+        setSelectedTenant(null);
+    };
+
+    const handleTenantChange = async (tenant)=>{
+        setSelectedTenant(tenant);
+        if(!tenant){
+            setDues([]);
+            return;
+        }
+        const response = await authFetch(`http://localhost:8000/api/dues/?tenant=${tenant.target.value}`)
+        const data=await response.json();
+        setDues(data);
+    }
+
+    return (
+        <div className="add-due-modal-overlay" onClick={handleClose}>
+            <div
+                className={`add-due-modal-box ${closing ? "close" : opening ? "open" : ""
+                    }`}
+                onClick={(e) => e.stopPropagation()}
+            >
+                <h1 className="modal-header">Add Payment</h1>
+
+                <form onSubmit={handleSubmit}>
+
+                    <div>Tenant</div>
+                    <select onChange={handleTenantChange} className="custom-select">
+                        <option value={selectedTenant}>Select Tenant</option>
+                        {tenants.map(tenant => (
+                            <option key={tenant.id} value={tenant.id}>{tenant.first_name + " " + tenant.last_name}</option>
+                        ))}
+                    </select>
+                    <br />
+
+                    <div>Dues</div>
+                    <select onChange={(e)=>setSelectedDue(e.target.value)} className="custom-select">
+                        <option value={selectedDue}>Select Due</option>
+                        {dues.map(due => (
+                            <option key={due.id} value={due.id}>{due.due_amount + " (" + due.due_type + ")"}</option>
+                        ))}
+                    </select>
+                    <br />
+
+                    <div>Payment Amount</div>
+                    <input
+                        placeholder="Enter Payment Amount"
+                        value={paymentAmount}
+                        onChange={e => {
+                            setPaymentAmount(e.target.value);
+                            // if (error?.roomRent) {
+                            //     const newError = { ...error };
+                            //     delete newError.roomRent;
+                            //     setError(newError);
+                            // }
+                        }
+                        }
+                    />
+                    <div className="error-container">
+                        {/* {error?.roomRent} */}
+                    </div>
+                    {/* {error?.detail && (
+                        <div className="error-container">{error.detail}</div>
+                    )} */}
+
+                    <div>Payment Date</div>
+                    <input type="date" value={paymentDate} onChange={(e) => setPaymentDate(e.target.value)} />
+
+                    <button type="submit">Add Payment</button>
+                    <button type="button" onClick={handleClose}>Cancel</button>
+                </form>
+            </div>
+        </div>
+    )
+}
+
+export default AddPaymentModal;

@@ -60,6 +60,7 @@ class TenantSerializer(serializers.ModelSerializer):
         return Room
     
 class PaymentSerializer(serializers.ModelSerializer):
+    tenant_name=serializers.SerializerMethodField()
     class Meta:
         model = Payment
         fields = '__all__'
@@ -68,6 +69,9 @@ class PaymentSerializer(serializers.ModelSerializer):
         if amount <= 0:
             raise serializers.ValidationError("Payment amount must be a positive value.")
         return amount
+    
+    def get_tenant_name(self, obj):
+        return f"{obj.due.tenant.first_name} {obj.due.tenant.last_name}"
 
 class DueSerializer(serializers.ModelSerializer):
     tenant_name=serializers.SerializerMethodField()
