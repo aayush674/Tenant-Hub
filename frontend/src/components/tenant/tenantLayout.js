@@ -1,8 +1,7 @@
-import { useNavigate, useParams, Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink } from "react-router-dom";
 import "../../styles/tenantLayout.css";
 function TenantLayout(){
-    const navigate=useNavigate();
-    const {pgId} = useParams();
+    // const {pgId} = useParams();
     return(
         <div className="tenant-layout-container">
             <div className="tenant-sidebar">
