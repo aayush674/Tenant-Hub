@@ -151,6 +151,7 @@ function AddDueModal({ pgId, onAdd, onClose }) {
                     {/* {error?.detail && (
                         <div className="error-container">{error.detail}</div>
                     )} */}
+                    <br />
 
                     <div>Due Date</div>
                     <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />

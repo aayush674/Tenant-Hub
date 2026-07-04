@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import MaintenanceRequest, PGproperty, Payment, Room, Tenant, RoomType, Dues
+from django.db import transaction
 
 class PGpropertySerializer(serializers.ModelSerializer):
     room_count=serializers.IntegerField(read_only=True)
@@ -72,6 +73,32 @@ class PaymentSerializer(serializers.ModelSerializer):
     
     def get_tenant_name(self, obj):
         return f"{obj.due.tenant.first_name} {obj.due.tenant.last_name}"
+    
+    @transaction.atomic
+    def create(self, validated_data):
+        due=validated_data["due"]
+        amount=validated_data["amount"]
+        payment=Payment.objects.create(**validated_data)
+        due.paid_amount+=amount
+        if due.paid_amount >= due.due_amount:
+            due.status = "paid"
+        elif due.paid_amount > 0:
+            due.status = "partial"
+        else:
+            due.status = "pending"
+        
+        due.save(update_fields=["paid_amount", "status"])
+        return payment
+    
+    def validate(self, x):
+        due=x["due"]
+        amount=x["amount"]
+        remaining_amount = due.due_amount - due.paid_amount
+        if amount > remaining_amount:
+            raise serializers.ValidationError({
+                "amount": "Payment exceeds remaining due amount"
+            })        
+        return x
 
 class DueSerializer(serializers.ModelSerializer):
     tenant_name=serializers.SerializerMethodField()

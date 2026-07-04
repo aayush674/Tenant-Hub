@@ -12,7 +12,7 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
     const [closing, setClosing] = useState(false);
     const [opening, setOpening] = useState(false);
     const [selectedTenant, setSelectedTenant] = useState(null);
-    const [selectedDue, setSelectedDue] = useState("");
+    const [selectedDue, setSelectedDue] = useState({});
     const [paymentAmount, setPaymentAmount] = useState("");
     const [paymentDate, setPaymentDate] = useState("");
     // const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -47,26 +47,26 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
     }
 
     const handleSubmit = async (e) => {
-    //     e.preventDefault();
+        e.preventDefault();
 
-    //     // const rnError = validateRoomNumber(roomNumber);
-    //     // const rcError = validateRoomCapacity(roomCapacity);
-    //     // const rrError = validateRoomRent(roomRent);
-    //     // const finalError = {}
+        //     // const rnError = validateRoomNumber(roomNumber);
+        //     // const rcError = validateRoomCapacity(roomCapacity);
+        //     // const rrError = validateRoomRent(roomRent);
+        //     // const finalError = {}
 
-    //     // if (rnError) {
-    //     //     finalError.roomNumber = rnError;
-    //     // }
-    //     // if (rcError) {
-    //     //     finalError.roomCapacity = rcError;
-    //     // }
-    //     // if (rrError) {
-    //     //     finalError.roomRent = rrError;
-    //     // }
-    //     // if (Object.keys(finalError).length > 0) {
-    //     //     setError(finalError);
-    //     //     return;
-    //     // }
+        //     // if (rnError) {
+        //     //     finalError.roomNumber = rnError;
+        //     // }
+        //     // if (rcError) {
+        //     //     finalError.roomCapacity = rcError;
+        //     // }
+        //     // if (rrError) {
+        //     //     finalError.roomRent = rrError;
+        //     // }
+        //     // if (Object.keys(finalError).length > 0) {
+        //     //     setError(finalError);
+        //     //     return;
+        //     // }
 
 
         setError({});
@@ -77,7 +77,7 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    due: selectedDue,
+                    due: selectedDue.id,
                     payment_method: "Cash",
                     amount: Number(paymentAmount),
                     payment_date: paymentDate
@@ -100,18 +100,18 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
 
     const handleCancel = () => {
         // setShowConfirmModal(false);
-        setSelectedDue("");
+        setSelectedDue({});
         setSelectedTenant(null);
     };
 
-    const handleTenantChange = async (tenant)=>{
+    const handleTenantChange = async (tenant) => {
         setSelectedTenant(tenant);
-        if(!tenant){
+        if (!tenant) {
             setDues([]);
             return;
         }
         const response = await authFetch(`http://localhost:8000/api/dues/?tenant=${tenant.target.value}`)
-        const data=await response.json();
+        const data = await response.json();
         setDues(data);
     }
 
@@ -136,14 +136,34 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
                     <br />
 
                     <div>Dues</div>
-                    <select onChange={(e)=>setSelectedDue(e.target.value)} className="custom-select">
-                        <option value={selectedDue}>Select Due</option>
-                        {dues.map(due => (
-                            <option key={due.id} value={due.id}>{due.due_amount + " (" + due.due_type + ")"}</option>
-                        ))}
+                    <select
+                        value={selectedDue.id || ""}
+                        onChange={(e) => {
+                            const due = dues.find(d => d.id === Number(e.target.value));
+                            setSelectedDue(due || {})
+                        }}
+                        className="custom-select"
+                    >
+                        {dues.length > 0 ? (
+                            <>
+                                <option value="">Select Due</option>
+                                {dues.map((due) => (
+                                    <option key={due.id} value={due.id}>
+                                        {due.due_amount} ({due.due_type})
+                                    </option>
+                                ))}
+                            </>
+                        ) : (
+                            <option value="" disabled>Select Due</option>
+                        )}
                     </select>
                     <br />
-
+                    <div>Remaining Amount</div>
+                    <input
+                        value = {selectedDue.id ? (selectedDue.due_amount - selectedDue.paid_amount) : "NA"}
+                        disabled
+                    />
+                    <br />
                     <div>Payment Amount</div>
                     <input
                         placeholder="Enter Payment Amount"
