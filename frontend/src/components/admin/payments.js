@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import AddPaymentModal from "./addPayment";
@@ -12,25 +12,25 @@ function Payments(){
 
     const [showAddPayment, setShowAddPayment] = useState(false);
 
-    const fetchPg = async () => {
+    const fetchPg = useCallback(async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch PG");
         }
         const data = await res.json();
         setPgData(data);
-    }
+    }, [pgId]);
 
-    const fetchPayments = async () => {
+    const fetchPayments = useCallback(async () => {
         const res = await authFetch(`http://localhost:8000/api/payments/?pg_property=${pgId}`)
         const data = await res.json();
         setPayments(data.results || data);
-    }
+    }, [pgId]);
 
     useEffect(() => {
         fetchPg();
         fetchPayments();
-    }, [pgId]);
+    }, [pgId, fetchPayments, fetchPg]);
 
     return (
         <div className="dues-container">

@@ -1,6 +1,5 @@
 import "../../styles/addTenant.css";
 import { Country } from "country-state-city";
-import Select from "react-select";
 
 function TenantForm({
     tenantName,
@@ -29,10 +28,6 @@ function TenantForm({
     setError
 }) {
     const countries = Country.getAllCountries();
-    const countryOptions = countries.map(country => ({
-        value: country.phonecode,
-        label: `${country.name} (+${country.phonecode})`
-    }));
 
     return (
         <>

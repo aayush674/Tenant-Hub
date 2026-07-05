@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
@@ -20,28 +20,28 @@ function TenantList(){
     const [tenantToDelete, setTenantToDelete] = useState(null);
     const [permissions, setPermissions] = useState();
 
-    const fetchPg = async () => {
+    const fetchPg = useCallback(async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch PG");
         }
         const data = await res.json();
         setPgData(data);
-    }
+    }, [pgId]);
 
-    const fetchTenants = async () => {
+    const fetchTenants = useCallback(async () => {
         const res= await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`)
         const data = await res.json();
         setTenants(data.results || data);
-    }
+    }, [pgId]);
 
-    const fetchPermissions=async()=>{
+    const fetchPermissions=useCallback(async()=>{
         const res=await authFetch(
             `http://localhost:8000/auth/permissions/?pg_id=${pgId}`
         )
         const data=await res.json();
         setPermissions(data);
-    }
+    }, [pgId]);
 
     const handleDeleteTenant = (tenantToDelete) =>{
         authFetch(`http://localhost:8000/api/tenants/${tenantToDelete}/`, {
@@ -59,7 +59,7 @@ function TenantList(){
         fetchPg();
         fetchTenants();
         fetchPermissions();
-    }, [pgId]);
+    }, [pgId, fetchPermissions, fetchPg, fetchTenants]);
 
     const openEditTenant = (tenant) => {
         setEditTenantData(tenant);

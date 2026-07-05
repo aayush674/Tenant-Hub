@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { authFetch } from "../../api/apiClient";
 import "../../styles/addRoomModal.css";
-import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../../utils/roomValidation";
+import { validateRoomCapacity, validateRoomRent } from "../../utils/roomValidation";
 
 function EditRoomModal({ room, onUpdate, onClose }) {
 
-    const [roomNumber, setRoomNumber] = useState(room.room_number);
+    const roomNumber = room.room_number;
     const [roomCapacity, setCapacity] = useState(room.capacity);
     const [roomRent, setRent] = useState(room.rent);
-    const [roomType, setRoomType] = useState(room.roomType)
     const [error, setError] = useState(null);
     const [roomBalcony, setRoomBalcony] = useState(room.is_balcony_room);
     const [closing, setClosing] = useState(false);
