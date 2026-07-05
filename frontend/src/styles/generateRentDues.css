@@ -1,0 +1,56 @@
+.generate-rent-modal-overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.generate-rent-modal-box{
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 500px;
+    max-width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    
+}
+
+.generate-rent-modal-box input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  max-width: 120px;
+}
+
+.generate-rent-modal-box input:focus {
+  outline: none;
+  border-color: #987b23;
+}
+
+.generate-rent-modal-box button {
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.generate-rent-modal-box button[type="submit"] {
+  background-color: #987b23;
+  color: white;
+}
+
+.generate-rent-modal-box button[type="button"] {
+  background-color: #ddd;
+}
+
+.modal-header {
+  color: #987b23;
+}

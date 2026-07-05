@@ -1,0 +1,55 @@
+import { useState } from "react";
+import { authFetch } from "../../api/apiClient";
+import { toast } from "react-toastify";
+import "../../styles/generateRentDues.css";
+
+
+function GenerateRentDues({ pgId, onGenerate, onCancel }) {
+    const [dueDate, setDueDate] = useState("")
+
+    const generateRentDues = async () => {
+        const res = await authFetch(
+            "http://localhost:8000/api/dues/generate_rent_dues/",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    pg_property: pgId,
+                    due_date: dueDate
+                }),
+            }
+        );
+
+        const data = await res.json();
+        console.log("Before executing onGenerate");
+        onGenerate();
+        console.log("After executing onGenerate")
+        toast.success(`${data.created} dues generated.`);
+    };
+
+    return (
+        <div className="generate-rent-modal-overlay">
+            <div className="generate-rent-modal-box">
+                <h1>Generate Rent Dues in Bulk</h1>
+                <div>Due Date</div>
+                <input
+                    type="date"
+                    onChange={(e) => setDueDate(e.target.value)}
+                    required
+                />
+                <div className="modal-buttons">
+                    <button type="submit"
+                        onClick={() => {
+                            generateRentDues();
+                        }}
+                    >Generate</button>
+                    <button type="button" onClick={onCancel}>Cancel</button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default GenerateRentDues;
