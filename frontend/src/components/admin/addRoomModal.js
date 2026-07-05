@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { authFetch } from "../../api/apiClient";
 import "../../styles/addRoomModal.css";
 import ConfirmModal from "../common/confirmationModal";
@@ -16,10 +16,6 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
     const [selectedRoomType, setSelectedRoomType] = useState(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [error, setError] = useState(null);
-
-    useEffect(() => {
-        fetchRoomTypes();
-    }, [])
 
     useEffect(() => {
         requestAnimationFrame(() => {
@@ -42,14 +38,14 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
 
     };
 
-    const fetchRoomTypes = async () => {
+    const fetchRoomTypes = useCallback(async () => {
         const res = await authFetch(`http://localhost:8000/api/room-types/?pg_property=${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch room types");
         }
         const data = await res.json();
         setRoomTypes(data);
-    }
+    }, [pgId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -127,6 +123,10 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
         setShowConfirmModal(false);
         setSelectedRoomType(null);
     };
+
+    useEffect(() => {
+        fetchRoomTypes();
+    }, [fetchRoomTypes])
 
     return (
         <div className="add-room-modal-overlay" onClick={handleClose}>

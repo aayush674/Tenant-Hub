@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import AddRoomModal from "./addRoomModal";
@@ -34,7 +34,6 @@ function RoomsList() {
         const min = searchParams.get("min_price") || "";
         const max = searchParams.get("max_price") || "";
         const occupancy = searchParams.get("capacity") || "";
-        const room_floor = searchParams.get("room_floor") || "";
 
         const initialFilters = {
             minPrice: min,
@@ -46,16 +45,7 @@ function RoomsList() {
         setFilters(initialFilters);
     }, [searchParams]);
 
-    useEffect(() => {
-        fetchRooms();
-    }, [pgId, searchParams]);
-
-    useEffect(() => {
-        fetchPg();
-        fetchTenants();
-    }, [pgId]);
-
-    const fetchRooms = async () => {
+    const fetchRooms = useCallback(async () => {
         const min = searchParams.get("min_price") || "";
         const max = searchParams.get("max_price") || "";
         const occupancy = searchParams.get("capacity") || "";
@@ -74,22 +64,22 @@ function RoomsList() {
 
         const data = await res.json();
         setRooms(data.results || data);
-    };
+    },[pgId, searchParams]);
 
-    const fetchTenants = async () => {
+    const fetchTenants = useCallback(async () => {
         const res = await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`)
         const data = await res.json();
         setTenants(data.results || data);
-    }
+    }, [pgId]);
 
-    const fetchPg = async () => {
+    const fetchPg = useCallback(async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch PG");
         }
         const data = await res.json();
         setPgData(data);
-    }
+    }, [pgId]);
 
     const handleDeleteRoom = (deleteRoom) => {
         authFetch(`http://localhost:8000/api/rooms/${deleteRoom}/`, {
@@ -140,20 +130,16 @@ function RoomsList() {
     }
 
     const getFloorLabel = (floor) => {
-        if (floor == 0) return "Unspecified";
-        if (floor == 1) return "1st Floor";
-        if (floor == 2) return "2nd Floor";
-        if (floor == 3) return "3rd Floor";
+        if (floor === 0) return "Unspecified";
+        if (floor === 1) return "1st Floor";
+        if (floor === 2) return "2nd Floor";
+        if (floor === 3) return "3rd Floor";
         return `${floor}th Floor`;
     };
 
     const selectedFloor = searchParams.get("room_floor");
 
-    useEffect(() => {
-        fetchFloorCounts();
-    }, [pgId]);
-
-    const fetchFloorCounts = async () => {
+    const fetchFloorCounts = useCallback(async () => {
         const res = await authFetch(
             `http://localhost:8000/api/rooms/?pg_property=${pgId}`
         );
@@ -167,13 +153,13 @@ function RoomsList() {
         }, {});
 
         setFloorCounts(counts);
-    };
+    }, [pgId]);
 
     const getRoomTenants = (room) => {
         let cap = room.capacity;
         let roomTenants = [];
         for (const tenant of tenantData) {
-            if (cap == 0) break;
+            if (cap === 0) break;
             if (tenant.room === room.id) {
                 roomTenants.push(tenant.first_name + " " + tenant.last_name);
                 cap--;
@@ -181,6 +167,19 @@ function RoomsList() {
         }
         return roomTenants;
     }
+
+    useEffect(() => {
+        fetchRooms();
+    }, [pgId, searchParams, fetchRooms]);
+
+    useEffect(() => {
+        fetchPg();
+        fetchTenants();
+    }, [pgId, fetchPg, fetchTenants]);
+
+    useEffect(() => {
+        fetchFloorCounts();
+    }, [pgId, fetchFloorCounts]);
 
     return (
         <div className="room-list-container">
@@ -251,7 +250,7 @@ function RoomsList() {
                     }}>All ({pgData?.room_count})</button>
                 {Array.from({ length: pgData?.total_floors + 1 }, (_, i) => i).map((floor) => (
                     <button key={floor}
-                        className={selectedFloor == floor ? "active-floor" : ""}
+                        className={selectedFloor === floor ? "active-floor" : ""}
                         onClick={() => {
                             setSearchParams({
                                 ...Object.fromEntries(searchParams),
@@ -288,10 +287,10 @@ function RoomsList() {
                         rooms.map(room => (
                             <tr key={room.id}>
                                 <td><b>{room.room_number}</b></td>
-                                <td>{room.room_floor != 0 ? room.room_floor : "Unspecified"}</td>
+                                <td>{room.room_floor !== 0 ? room.room_floor : "Unspecified"}</td>
                                 <td><span className={`occupancy-chip ${room.capacity === 1 ? "single" : "double"}`}>{room.capacity === 1 ? "👤Single" : "👥Double"}</span></td>
                                 <td className="tenant-column">
-                                    {getRoomTenants(room).length == 0 ? <p>-</p> :
+                                    {getRoomTenants(room).length === 0 ? <p>-</p> :
                                         (getRoomTenants(room).join(", "))}
                                 </td>
                                 <td>{room.is_balcony_room === true ? "Yes" : "No"}</td>

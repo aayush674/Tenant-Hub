@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import AddDueModal from "./addDue";
@@ -13,25 +13,25 @@ function Dues() {
     const [showAddDue, setShowAddDue] = useState(false);
     const [showGenerateRent, setShowGenerateRent] = useState(false);
 
-    const fetchPg = async () => {
+    const fetchPg = useCallback(async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch PG");
         }
         const data = await res.json();
         setPgData(data);
-    }
+    }, [pgId]);
 
-    const fetchDues = async () => {
+    const fetchDues = useCallback(async () => {
         const res = await authFetch(`http://localhost:8000/api/dues/?pg_property=${pgId}`)
         const data = await res.json();
         setDues(data.results || data);
-    }
+    }, [pgId]);
 
     useEffect(() => {
         fetchPg();
         fetchDues();
-    }, [pgId]);
+    }, [pgId, fetchDues, fetchPg]);
 
     return (
         <div className="dues-container">

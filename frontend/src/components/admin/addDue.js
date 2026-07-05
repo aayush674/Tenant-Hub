@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { authFetch } from "../../api/apiClient";
 import "../../styles/addDue.css";
 // import ConfirmModal from "../common/confirmationModal";
@@ -18,10 +18,6 @@ function AddDueModal({ pgId, onAdd, onClose }) {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetchTenants();
-    }, [])
-
-    useEffect(() => {
         requestAnimationFrame(() => {
             setOpening(true);
         });
@@ -36,14 +32,14 @@ function AddDueModal({ pgId, onAdd, onClose }) {
 
     };
 
-    const fetchTenants = async () => {
+    const fetchTenants = useCallback(async () => {
         const res = await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch Tenants");
         }
         const data = await res.json();
         setTenants(data);
-    }
+    }, [pgId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -101,7 +97,12 @@ function AddDueModal({ pgId, onAdd, onClose }) {
         // setShowConfirmModal(false);
         setSelectedDueType("");
         setSelectedTenant(null);
+        handleClose();
     };
+
+    useEffect(() => {
+        fetchTenants();
+    }, [fetchTenants])
 
     return (
         <div className="add-due-modal-overlay" onClick={handleClose}>
@@ -148,16 +149,16 @@ function AddDueModal({ pgId, onAdd, onClose }) {
                     {/* <div className="error-container">
                         {error?.roomRent}
                     </div> */}
-                    {/* {error?.detail && (
+                    {error?.detail && (
                         <div className="error-container">{error.detail}</div>
-                    )} */}
+                    )}
                     <br />
 
                     <div>Due Date</div>
                     <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
 
                     <button type="submit">Add Due</button>
-                    <button type="button" onClick={handleClose}>Cancel</button>
+                    <button type="button" onClick={handleCancel}>Cancel</button>
                 </form>
             </div>
         </div>

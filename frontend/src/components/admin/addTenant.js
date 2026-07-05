@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { authFetch } from "../../api/apiClient";
 import "../../styles/addTenant.css";
 import TenantForm from "./tenantForm";
@@ -20,10 +20,6 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
     const [rooms, setRooms] = useState([]);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        fetchRooms();
-    }, [])
-
     const handleClose = () => {
         setClosing(true);
 
@@ -39,14 +35,14 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
         });
     }, []);
 
-    const fetchRooms = async () => {
+    const fetchRooms = useCallback(async () => {
         const res = await authFetch(`http://localhost:8000/api/rooms/?pg_property=${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch rooms");
         }
         const data = await res.json();
         setRooms(data);
-    }
+    }, [pgId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -114,6 +110,10 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
             setError({ detail: "Something went wrong. Please try again." });
         }
     }
+    
+    useEffect(() => {
+        fetchRooms();
+    }, [fetchRooms])
 
     return (
         <div className="add-tenant-modal-overlay" onClick={handleClose}>

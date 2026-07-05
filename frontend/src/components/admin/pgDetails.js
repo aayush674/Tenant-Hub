@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import "../../styles/pgDetails.css";
@@ -23,7 +23,7 @@ function PGDetails() {
     const [error, setError] = useState();
     const [editMode, setEditMode] = useState(false);
 
-    const fetchPg = async () => {
+    const fetchPg = useCallback(async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}/`);
         if (!res.ok) {
             throw new Error("Failed to fetch PG");
@@ -31,8 +31,7 @@ function PGDetails() {
         const data = await res.json();
         setPgData(data);
         setFormData(data);
-    }
-    console.log(formData);
+    }, [pgId]);
     const states = State.getStatesOfCountry("IN");
     const selectedState = states.find((state) => state.name === formData?.state)
     const cities = selectedState ? City.getCitiesOfState(
@@ -65,7 +64,6 @@ function PGDetails() {
                 console.log(errData);
                 return;
             }
-            const data = await res.json();
             setPgData(formData);
             setEditMode(false);
         }
@@ -75,7 +73,7 @@ function PGDetails() {
     }
     useEffect(() => {
         fetchPg();
-    }, [pgId]);
+    }, [pgId, fetchPg]);
 
     return (
         <div className="pg-details-container">
@@ -225,6 +223,9 @@ function PGDetails() {
                     <input disabled
                         value={formData && formData.tenant_count}
                     />
+                    <div className="error-container">
+                        {error?.detail}
+                    </div>
 
                     {editMode && <div className="edit-mode-buttons">
                         <button type="button" onClick={() => setEditMode(false)}>Cancel</button>

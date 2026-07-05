@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/pgList.css";
 import { authFetch } from "../../api/apiClient";
 import AddPG from "./addPG";
-import { FaEye, FaTrash, FaEllipsisV } from "react-icons/fa";
+import { FaEye, FaTrash } from "react-icons/fa";
 
 function PGList() {
     const navigate = useNavigate();
