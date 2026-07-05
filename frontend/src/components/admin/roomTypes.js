@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import { useParams } from "react-router-dom";
@@ -15,28 +15,28 @@ function RoomTypes() {
     const { pgId } = useParams()
     // const [roomTypes, setRoomTypes] = useState({});
 
-    useEffect(() => {
-        fetchPg();
-        fetchRoomTypes();
-    }, [pgId]);
-
-    const fetchPg = async () => {
+    const fetchPg = useCallback(async () => {
         const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch room types");
         }
         const data = await res.json();
         setPgData(data);
-    }
+    }, [pgId]);
 
-    const fetchRoomTypes = async () => {
+    const fetchRoomTypes = useCallback(async () => {
         const res= await authFetch(`http://localhost:8000/api/room-types/?pg_property=${pgId}`);
         if(!res.ok){
             throw new Error("Failed to fetch room types");
         }
         const data=await res.json();
         setRoomTypes(data);
-    }
+    }, [pgId]);
+
+    useEffect(() => {
+        fetchPg();
+        fetchRoomTypes();
+    }, [pgId, fetchPg, fetchRoomTypes]);
 
     return (
         <div className="room-type-container">
