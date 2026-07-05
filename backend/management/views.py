@@ -5,6 +5,10 @@ from .serializers import MaintenanceRequestSerializer, PGpropertySerializer, Roo
 from accounts.models import UserRole
 from accounts.utils import has_permission
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
+from datetime import date
 
 class PGpropertyViewSet(viewsets.ModelViewSet):
     queryset = PGproperty.objects.all()
@@ -178,6 +182,31 @@ class DuesViewSet(viewsets.ModelViewSet):
             queryset=queryset.filter(status=status)
         
         return queryset
+    
+    @action(detail = False, methods = ["post"])
+    def generate_rent_dues(self, request):
+        pgId=request.data["pg_property"]
+        dueDate = request.data["due_date"]
+        tenants=Tenant.objects.filter(
+            room__pg_property = pgId,
+            is_active = True
+        )
+        
+        created = 0
+        
+        for tenant in tenants:
+            Dues.objects.create(
+                tenant=tenant,
+                due_amount = tenant.room.rent,
+                due_type = "rent",
+                due_date = dueDate,
+                status = "pending"
+            )
+            created+=1
+        
+        return Response({
+            "created": created
+        })
 
 class MaintenanceRequestViewSet(viewsets.ModelViewSet):
     queryset = MaintenanceRequest.objects.all()

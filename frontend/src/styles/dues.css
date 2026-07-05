@@ -30,6 +30,11 @@
     color: #5b4914;
 }
 
+.due-header-buttons{
+    display: flex;
+    gap: 10px;
+}
+
 .add-due-btn {
     background-color: #987b23;
     color: white;

@@ -1,6 +1,7 @@
 import "./App.css";
 import Header from "./components/admin/header";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import PGList from "./components/admin/pgList";
 import Login from "./components/common/login";
 import RoomsList from "./components/admin/roomsList";
@@ -72,7 +73,11 @@ function Layout() {
           <Route path="maintenance" element={<TenantMaintainence />} />
         </Route>
       </Routes>
-
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+      />
     </>
   );
 }
