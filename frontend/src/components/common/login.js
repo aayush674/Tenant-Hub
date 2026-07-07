@@ -1,6 +1,6 @@
 import { login } from "../../api/auth.js";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "../../styles/login.css";
 import complogo from "../../assets/Tenant-Hub-Logo.png";
 
@@ -45,10 +45,10 @@ function Login() {
                 // console.log("Access Token Stored:", data.access);
                 localStorage.setItem("refresh_token", data.refresh);
                 // console.log("Refresh Token Stored:", data.refresh);
-                if(data.user.role==="TENANT"){
+                if (data.user.role === "TENANT") {
                     navigate("/t")
-                }           
-                else{
+                }
+                else {
                     navigate("/");
                 }
             }
@@ -105,6 +105,11 @@ function Login() {
                     <button type="submit" className="login-button" disabled={loading}>
                         {loading ? "Logging in..." : "Login"}
                     </button>
+                    {/* <p>
+                        Don't have an account?{" "}
+                        <NavLink to = "/signup">Sign Up</NavLink>
+                    </p> */}
+
 
                 </form>
             </div>

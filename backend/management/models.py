@@ -66,7 +66,7 @@ class Tenant(models.Model):
     room = models.ForeignKey(Room, related_name='tenants', on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     phone_country_code=models.CharField(max_length=10)
     phone_number = models.CharField(max_length=15)
     join_date = models.DateField()

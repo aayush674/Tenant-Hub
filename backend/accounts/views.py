@@ -1,21 +1,31 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import SignupSerializer
+from .serializers import SignupSerializer, UserSerializer, ActivateAccountSerializer
 from rest_framework.permissions import IsAuthenticated
-from .models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import EmailTokenObtainPairSerializer
 from rest_framework.decorators import api_view, permission_classes
 from .utils import has_permission
+from django.utils import timezone
+from accounts.models import User
 
 
 class SignupView(APIView):
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
+
         if serializer.is_valid():
-            serializer.save() # This calls the create method in the SignupSerializer, which creates a new user using the validated data.
-            return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
+            user = serializer.save()
+
+            return Response(
+                {
+                    "message": "User created successfully",
+                    "user": UserSerializer(user).data
+                },
+                status=status.HTTP_201_CREATED
+            )
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
@@ -23,7 +33,7 @@ class MeView(APIView):
     permission_classes = [IsAuthenticated] # This ensures that only authenticated users can access this view.
     def get(self, request):
         user = request.user # This gets the currently authenticated user from the request.
-        serializer = SignupSerializer(user) # This serializes the user data using the SignupSerializer.
+        serializer = UserSerializer(user) # This serializes the user data using the SignupSerializer.
         return Response(serializer.data) # This returns the data of the authenticated user in the response.
     
 
@@ -68,3 +78,40 @@ class PermissionView(APIView):
             )
             
         return Response(data)
+    
+class ActivateAccountView(APIView):
+    permission_classes = []
+    def post(self, request):
+        serializer = ActivateAccountSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        token=serializer.validated_data["token"]
+        password=serializer.validated_data["password"]
+        
+        try:
+            user=User.objects.get(invitation_token=token)
+        except User.DoesNotExist:
+            return Response(
+                {"detail": "Invalid Invitation link."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if user.invitation_expires<timezone.now():
+            return Response(
+                {"detail": "Invitation has expired."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        user.set_password(password)
+        user.is_active=True
+        user.invitation_token=None
+        user.invitation_expires=None
+        user.save()
+        return Response(
+            {"detail": "Account Activated successfully."},
+            status=status.HTTP_200_OK
+        )

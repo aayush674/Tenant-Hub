@@ -1,18 +1,33 @@
 from typing import Any, Dict
 from rest_framework import serializers
+from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import User
 
 class SignupSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only=True,
+        validators=[validate_password]
+    )
+
     class Meta:
         model = User
-        fields = ['email', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ["email", "password"]
 
     def create(self, validated_data):
-        user=User.objects.create_user(**validated_data) # This uses the create_user method from our custom UserManager to create a new user with the validated data.
-        return user
+        return User.objects.create_user(**validated_data)
 
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "email",
+            "role",
+            "first_name",
+            "last_name",
+        ]
 
 class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
     username_field = "email"
@@ -36,3 +51,10 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
         }
 
         return response
+    
+class ActivateAccountSerializer(serializers.Serializer):
+    token = serializers.UUIDField()
+    password = serializers.CharField(
+        write_only=True,
+        min_length=8
+    )
