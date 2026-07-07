@@ -3,6 +3,7 @@ import { authFetch } from "../../api/apiClient";
 import "../../styles/addTenant.css";
 import TenantForm from "./tenantForm";
 import { validateEmail, validatePhoneNumber, validateName, validateRoom, validateDate } from "../../utils/tenantValidation";
+import { toast } from "react-toastify";
 
 function AddTenantModal({ pgId, onAdd, onClose }) {
 
@@ -105,10 +106,12 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
             }
             const data = await res.json();
             onAdd(data);
+            toast.success("Tenant Created Successfully. Email has been sent for account activation.");
         }
         catch (err) {
             setError({ detail: "Something went wrong. Please try again." });
         }
+
     }
     
     useEffect(() => {

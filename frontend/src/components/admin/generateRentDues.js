@@ -23,9 +23,7 @@ function GenerateRentDues({ pgId, onGenerate, onCancel }) {
         );
 
         const data = await res.json();
-        console.log("Before executing onGenerate");
         onGenerate();
-        console.log("After executing onGenerate")
         toast.success(`${data.created} dues generated.`);
     };
 
