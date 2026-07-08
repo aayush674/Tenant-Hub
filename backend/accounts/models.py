@@ -38,6 +38,16 @@ class User(AbstractUser):
     max_length=20,
     choices=UserRole.choices,
     default=UserRole.TENANT)
+    is_active = models.BooleanField(default = False)
+    invitation_token = models.UUIDField(
+        null = True,
+        blank = True,
+        unique = True
+    )
+    invitation_expires = models.DateTimeField(
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return self.email

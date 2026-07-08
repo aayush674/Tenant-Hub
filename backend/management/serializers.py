@@ -1,6 +1,11 @@
 from rest_framework import serializers
 from .models import MaintenanceRequest, PGproperty, Payment, Room, Tenant, RoomType, Dues
 from django.db import transaction
+from accounts.models import User
+import uuid
+from datetime import timedelta
+from django.utils import timezone
+from accounts.utils import send_invitation_mail
 
 class PGpropertySerializer(serializers.ModelSerializer):
     room_count=serializers.IntegerField(read_only=True)
@@ -45,10 +50,10 @@ class TenantSerializer(serializers.ModelSerializer):
         model = Tenant
         fields = '__all__'
 
-    def validate_phone(self, phone):
-        if len(phone) < 10:
+    def validate_phone_number(self, phone_number):
+        if len(phone_number) < 10:
             raise serializers.ValidationError("Phone number must be at least 10 digits.")
-        return phone
+        return phone_number
     
     def validate_room(self, Room):
         current_active_tenants = Room.tenants.filter(is_active=True)
@@ -59,6 +64,31 @@ class TenantSerializer(serializers.ModelSerializer):
         if current_active_tenants.count() >= Room.capacity:
             raise serializers.ValidationError("Room is already at full Capacity");
         return Room
+    
+    @transaction.atomic
+    def create(self, validated_data):
+        email = validated_data["email"]
+        
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError({
+                "email": "A user with this email address already exists."
+            })
+        
+        user=User.objects.create_user(
+            email=email,
+            role="TENANT",
+            is_active=False,
+            invitation_token=uuid.uuid4(),
+            invitation_expires=timezone.now()+timedelta(days=7)
+        )
+        
+        tenant=Tenant.objects.create(
+            user=user,
+            **validated_data
+        )
+        send_invitation_mail(user)
+        
+        return tenant
     
 class PaymentSerializer(serializers.ModelSerializer):
     tenant_name=serializers.SerializerMethodField()

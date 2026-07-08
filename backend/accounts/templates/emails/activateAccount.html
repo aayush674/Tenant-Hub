@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 30px;
+        }
+
+        .card {
+            background: white;
+            max-width: 600px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        h2 {
+            color: #2d3748;
+        }
+
+        p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: #2563eb;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 13px;
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h2>Welcome to Tenant Hub 👋</h2>
+
+    <p>
+        You have been invited to join Tenant Hub.
+    </p>
+
+    <p>
+        Click the button below to activate your account.
+    </p>
+
+    <a href="{{ activation_link }}" class="button">
+        Activate Account
+    </a>
+
+    <p class="footer">
+        This invitation expires in 7 days.
+    </p>
+
+</div>
+
+</body>
+</html>
