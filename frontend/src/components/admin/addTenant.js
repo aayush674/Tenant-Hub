@@ -4,6 +4,7 @@ import "../../styles/addTenant.css";
 import TenantForm from "./tenantForm";
 import { validateEmail, validatePhoneNumber, validateName, validateRoom, validateDate } from "../../utils/tenantValidation";
 import { toast } from "react-toastify";
+import LoadingSubmitButton from "../common/loadingSubmitButton";
 
 function AddTenantModal({ pgId, onAdd, onClose }) {
 
@@ -20,6 +21,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
     const [opening, setOpening] = useState(false);
     const [rooms, setRooms] = useState([]);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const handleClose = () => {
         setClosing(true);
@@ -81,6 +83,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
 
         setError({});
         try {
+            setLoading(true);
             const res = await authFetch("http://localhost:8000/api/tenants/", {
                 method: "POST",
                 headers: {
@@ -110,6 +113,9 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
         }
         catch (err) {
             setError({ detail: "Something went wrong. Please try again." });
+        }
+        finally{
+            setLoading(false);
         }
 
     }
@@ -156,7 +162,13 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
                         setError={setError}
                     />
 
-                    <button type="submit">Add Tenant</button>
+                    {/* <button type="submit">Add Tenant</button> */}
+                    <LoadingSubmitButton 
+                        loading={loading}
+                        children="Add Tenant"
+                        loadingText="Adding Tenant"
+                        type="submit"
+                    />
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>
             </div>

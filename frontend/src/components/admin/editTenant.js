@@ -3,6 +3,8 @@ import { authFetch } from "../../api/apiClient";
 import "../../styles/addTenant.css";
 import TenantForm from "./tenantForm";
 import { validateEmail, validatePhoneNumber, validateName, validateRoom, validateDate } from "../../utils/tenantValidation";
+import { toast } from "react-toastify";
+import LoadingSubmitButton from "../common/loadingSubmitButton";
 
 function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
 
@@ -17,6 +19,7 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
     const [opening, setOpening] = useState(false);
     const [rooms, setRooms] = useState([]);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const handleClose = () => {
         setClosing(true);
@@ -77,6 +80,7 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
         }
         setError({});
         try {
+            setLoading(true);
             const res = await authFetch(`http://localhost:8000/api/tenants/${tenant.id}/`, {
                 method: "PATCH",
                 headers: {
@@ -102,9 +106,13 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
             }
             const data = await res.json();
             onEdit(data);
+            toast.success("Tenant Details updated successfully.");
         }
         catch (err) {
             setError({ detail: "Something went wrong. Please try again." });
+        }
+        finally{
+            setLoading(false);
         }
     }
 
@@ -150,7 +158,12 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
                         setError={setError}
                     />
 
-                    <button type="submit">Save Tenant</button>
+                    <LoadingSubmitButton 
+                        loading={loading}
+                        loadingText="Updating Details"
+                        children="Save Tenant"
+                        type="submit"
+                    />
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>
             </div>

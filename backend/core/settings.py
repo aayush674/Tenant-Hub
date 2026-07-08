@@ -156,7 +156,7 @@ EMAIL_USE_TLS = True
 # EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 EMAIL_HOST_USER = "tenant2.hub@gmail.com"
-EMAIL_HOST_PASSWORD = "qepi pixz gqki jort"
+EMAIL_HOST_PASSWORD = "thoi qmmj eaup ugze"
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 

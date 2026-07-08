@@ -3,6 +3,8 @@ import { authFetch } from "../../api/apiClient";
 import "../../styles/addDue.css";
 // import ConfirmModal from "../common/confirmationModal";
 // import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../../utils/roomValidation";
+import LoadingSubmitButton from "../common/loadingSubmitButton";
+import { toast } from "react-toastify";
 
 function AddPaymentModal({ pgId, onAdd, onClose }) {
 
@@ -17,6 +19,7 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
     const [paymentDate, setPaymentDate] = useState("");
     // const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         requestAnimationFrame(() => {
@@ -67,6 +70,7 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
 
         setError({});
         try {
+            setLoading(true);
             const res = await authFetch("http://localhost:8000/api/payments/", {
                 method: "POST",
                 headers: {
@@ -88,9 +92,13 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
             }
             const data = await res.json();
             onAdd(data);
+            toast.success("Payment Created successfully.");
         }
         catch (err) {
             setError({ detail: "Something went wrong. Please try again." });
+        }
+        finally{
+            setLoading(false);
         }
     }
 
@@ -123,7 +131,7 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
                     }`}
                 onClick={(e) => e.stopPropagation()}
             >
-                <h1 className="modal-header">Add Payment</h1>
+                <h1 className="modal-header">Create Payment</h1>
 
                 <form onSubmit={handleSubmit}>
 
@@ -189,7 +197,12 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
                     <div>Payment Date</div>
                     <input type="date" value={paymentDate} onChange={(e) => setPaymentDate(e.target.value)} />
 
-                    <button type="submit">Add Payment</button>
+                    <LoadingSubmitButton 
+                        loading={loading}
+                        loadingText="Creating Payment"
+                        children="Create Payment"
+                        type="submit"
+                    />
                     <button type="button" onClick={handleCancel}>Cancel</button>
                 </form>
             </div>

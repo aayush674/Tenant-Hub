@@ -23,7 +23,7 @@ input:focus {
     flex-direction: column;
 }
 
-button {
+.activate-button {
     padding: 8px;
     border: none;
     border-radius: 5px;

@@ -102,7 +102,9 @@ class PaymentSerializer(serializers.ModelSerializer):
         return amount
     
     def get_tenant_name(self, obj):
-        return f"{obj.due.tenant.first_name} {obj.due.tenant.last_name}"
+        if obj.due.tenant:
+            return f"{obj.due.tenant.first_name} {obj.due.tenant.last_name}"
+        return None
     
     @transaction.atomic
     def create(self, validated_data):
@@ -137,8 +139,10 @@ class DueSerializer(serializers.ModelSerializer):
         fields='__all__'
         
     def get_tenant_name(self, obj):
-        return f"{obj.tenant.first_name} {obj.tenant.last_name}"
-
+        if obj.tenant:
+            return f"{obj.tenant.first_name} {obj.tenant.last_name}"
+        return None
+        
 class MaintenanceRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = MaintenanceRequest

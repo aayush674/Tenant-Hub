@@ -68,7 +68,7 @@ function AccountActivate() {
                     {error}
                 </div>
 
-                <button type="submit">Activate</button>
+                <button type="submit" className="activate-button">Activate</button>
             </form>
         </div>
     )

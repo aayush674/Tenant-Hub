@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { authFetch } from "../../api/apiClient";
 import "../../styles/addRoomTypeModal.css";
+import { toast } from "react-toastify";
+import LoadingSubmitButton from "../common/loadingSubmitButton";
 
 
 function AddRoomTypeModal({ pgId, onAdd, onClose }) {
@@ -12,6 +14,7 @@ function AddRoomTypeModal({ pgId, onAdd, onClose }) {
 
     const [closing, setClosing] = useState(false);
     const [opening, setOpening] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleClose = () => {
         setClosing(true);
@@ -29,23 +32,29 @@ function AddRoomTypeModal({ pgId, onAdd, onClose }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        try {
+            setLoading(true);
+            const res = await authFetch("http://localhost:8000/api/room-types/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    pg_property: pgId,
+                    name: roomTypeTitle,
+                    capacity: roomCapacity,
+                    rent: roomRent,
+                    is_balcony_room: roomBalcony
+                })
+            });
 
-        const res = await authFetch("http://localhost:8000/api/room-types/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                pg_property: pgId,
-                name: roomTypeTitle,
-                capacity: roomCapacity,
-                rent: roomRent,
-                is_balcony_room: roomBalcony
-            })
-        });
-
-        const data = await res.json();
-        onAdd(data);
+            const data = await res.json();
+            onAdd(data);
+            toast.success("Room Type created successfully.");
+        }
+        finally{
+            setLoading(false);
+        }
     }
 
 
@@ -57,7 +66,7 @@ function AddRoomTypeModal({ pgId, onAdd, onClose }) {
                 onClick={(e) => e.stopPropagation()}
             >
                 <h1 className="modal-header">Add Room Template</h1>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div>Template Title</div>
                     <input
                         placeholder="Enter Title"
@@ -89,7 +98,12 @@ function AddRoomTypeModal({ pgId, onAdd, onClose }) {
                     />
                     <br />
 
-                    <button type="submit" onClick={handleSubmit}>Add Room Template</button>
+                    <LoadingSubmitButton 
+                        loading={loading}
+                        loadingText="Creating Room Template"
+                        children="Create Room Template"
+                        type="submit"
+                    />
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>
             </div>
