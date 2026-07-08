@@ -76,7 +76,7 @@ class Tenant(models.Model):
         return f"{self.first_name} {self.last_name} - Room {self.room.room_number}"
 
 class Dues(models.Model):
-    tenant = models.ForeignKey(Tenant, related_name='due', on_delete=models.SET_NULL, null=True)
+    tenant = models.ForeignKey(Tenant, related_name='due', on_delete=models.CASCADE, null=True)
     due_date = models.DateField()
     due_amount = models.DecimalField(max_digits=15, decimal_places=2)
     due_type = models.CharField(
