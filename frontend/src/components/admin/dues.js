@@ -56,7 +56,7 @@ function Dues() {
                     <button
                         className="add-due-btn"
                         onClick={() => setShowAddDue(true)}
-                    ><b>+ Add Due</b></button>
+                    ><b>+ Apply Due</b></button>
                 </div>
                 {showAddDue && (
                     <AddDueModal

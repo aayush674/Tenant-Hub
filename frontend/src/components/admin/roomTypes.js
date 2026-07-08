@@ -47,12 +47,12 @@ function RoomTypes() {
                 <span className="seperator"> / </span>
                 {pgData && <span>{pgData.name}</span>}
                 <span className="seperator"> / </span>
-                <span>Room Types</span>
+                <span>Room Templates</span>
 
             </div>
             <div className="room-type-header">
-                <h1>{pgData && pgData.name} - Room Types</h1>
-                <button className="add-room-type-btn" onClick={() => setShowAddRoomType(true)}><b>+ Add Room Type</b></button>
+                <h1>{pgData && pgData.name} - Room Templates</h1>
+                <button className="add-room-type-btn" onClick={() => setShowAddRoomType(true)}><b>+ Create Room Template</b></button>
                  {showAddRoomType && (
                     <AddRoomTypeModal
                         pgId={pgId}

@@ -3,6 +3,8 @@ import { authFetch } from "../../api/apiClient";
 import "../../styles/addDue.css";
 // import ConfirmModal from "../common/confirmationModal";
 // import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../../utils/roomValidation";
+import LoadingSubmitButton from "../common/loadingSubmitButton";
+import { toast } from "react-toastify";
 
 function AddDueModal({ pgId, onAdd, onClose }) {
 
@@ -16,6 +18,7 @@ function AddDueModal({ pgId, onAdd, onClose }) {
     const [dueDate, setDueDate] = useState("");
     // const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         requestAnimationFrame(() => {
@@ -66,6 +69,7 @@ function AddDueModal({ pgId, onAdd, onClose }) {
 
         setError({});
         try {
+            setLoading(true);
             const res = await authFetch("http://localhost:8000/api/dues/", {
                 method: "POST",
                 headers: {
@@ -87,9 +91,13 @@ function AddDueModal({ pgId, onAdd, onClose }) {
             }
             const data = await res.json();
             onAdd(data);
+            toast.success("Due Applied successfully.");
         }
         catch (err) {
             setError({ detail: "Something went wrong. Please try again." });
+        }
+        finally{
+            setLoading(false);
         }
     }
 
@@ -111,7 +119,7 @@ function AddDueModal({ pgId, onAdd, onClose }) {
                     }`}
                 onClick={(e) => e.stopPropagation()}
             >
-                <h1 className="modal-header">Add Due</h1>
+                <h1 className="modal-header">Apply Due</h1>
 
                 <form onSubmit={handleSubmit}>
 
@@ -157,7 +165,12 @@ function AddDueModal({ pgId, onAdd, onClose }) {
                     <div>Due Date</div>
                     <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
 
-                    <button type="submit">Add Due</button>
+                    {/* <button type="submit">Add Due</button> */}
+                    <LoadingSubmitButton 
+                        children="Apply Due"
+                        loading={loading}
+                        loadingText="Applying Due"
+                    />
                     <button type="button" onClick={handleCancel}>Cancel</button>
                 </form>
             </div>

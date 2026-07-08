@@ -49,7 +49,7 @@ function Payments(){
                 <button
                     className="add-due-btn"
                     onClick={() => setShowAddPayment(true)}
-                ><b>+ Add Payment</b></button>
+                ><b>+ Create Payment</b></button>
                 {showAddPayment && (
                     <AddPaymentModal
                         pgId={pgId}

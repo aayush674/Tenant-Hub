@@ -7,7 +7,7 @@ function PGLayout(){
             <div className="pg-sidebar">
                 <NavLink to={`/pg/${pgId}`} end>Details</NavLink>
                 <NavLink to={`/pg/${pgId}/rooms`}>Rooms List</NavLink>
-                <NavLink to={`/pg/${pgId}/roomtypes`}>Room Types</NavLink>
+                <NavLink to={`/pg/${pgId}/roomtypes`}>Room Templates</NavLink>
                 <NavLink to={`/pg/${pgId}/tenants`}>Tenants</NavLink>
                 <NavLink to={`/pg/${pgId}/dues`}>Dues</NavLink>
                 <NavLink to={`/pg/${pgId}/payments`}>Payments</NavLink>     

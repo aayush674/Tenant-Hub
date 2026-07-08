@@ -3,6 +3,8 @@ import { authFetch } from "../../api/apiClient";
 import "../../styles/addRoomModal.css";
 import ConfirmModal from "../common/confirmationModal";
 import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../../utils/roomValidation";
+import { toast } from "react-toastify";
+import LoadingSubmitButton from "../common/loadingSubmitButton";
 
 function AddRoomModal({ pgId, onAdd, onClose }) {
 
@@ -16,6 +18,7 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
     const [selectedRoomType, setSelectedRoomType] = useState(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         requestAnimationFrame(() => {
@@ -72,6 +75,7 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
 
         setError({});
         try {
+            setLoading(true);
             const res = await authFetch("http://localhost:8000/api/rooms/", {
                 method: "POST",
                 headers: {
@@ -94,9 +98,13 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
             }
             const data = await res.json();
             onAdd(data);
+            toast.success("Room added successfully.");
         }
         catch (err) {
             setError({ detail: "Something went wrong. Please try again." });
+        }
+        finally{
+            setLoading(false);
         }
     }
 
@@ -226,7 +234,11 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
                         <div className="error-container">{error.detail}</div>
                     )}
 
-                    <button type="submit">Add Room</button>
+                    <LoadingSubmitButton 
+                        loading={loading}
+                        loadingText="Adding Room"
+                        children="Add Room"
+                    />
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>
             </div>

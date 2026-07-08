@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { authFetch } from "../../api/apiClient";
 import "../../styles/addRoomModal.css";
 import { validateRoomCapacity, validateRoomRent } from "../../utils/roomValidation";
+import { toast } from "react-toastify";
+import LoadingSubmitButton from "../common/loadingSubmitButton";
 
 function EditRoomModal({ room, onUpdate, onClose }) {
 
@@ -12,6 +14,7 @@ function EditRoomModal({ room, onUpdate, onClose }) {
     const [roomBalcony, setRoomBalcony] = useState(room.is_balcony_room);
     const [closing, setClosing] = useState(false);
     const [opening, setOpening] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleClose = () => {
         setClosing(true);
@@ -45,6 +48,7 @@ function EditRoomModal({ room, onUpdate, onClose }) {
         }
         setError({});
         try {
+            setLoading(true);
             const res = await authFetch(`http://localhost:8000/api/rooms/${room.id}/`, {
                 method: "PATCH",
                 headers: {
@@ -66,8 +70,12 @@ function EditRoomModal({ room, onUpdate, onClose }) {
 
             const updatedRoom = await res.json();
             onUpdate(updatedRoom);
+            toast.success("Room edited successfully.");
         } catch (err) {
             setError({ detail: "Something went wrong. Please try again." });
+        }
+        finally{
+            setLoading(false);
         }
 
     }
@@ -82,7 +90,7 @@ function EditRoomModal({ room, onUpdate, onClose }) {
             >
                 <h1 className="modal-header">Edit Room</h1>
 
-                <form>
+                <form onSubmit={handleUpdate}>
                     <div>Room Number</div>
                     <input
                         value={roomNumber}
@@ -128,8 +136,11 @@ function EditRoomModal({ room, onUpdate, onClose }) {
                         <div className="error-container">{error.detail}</div>
                     )}
 
-
-                    <button type="submit" onClick={handleUpdate}>Save</button>
+                    <LoadingSubmitButton 
+                        loading={loading}
+                        loadingText="Editing Room"
+                        children="Save"
+                    />
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>
             </div>
