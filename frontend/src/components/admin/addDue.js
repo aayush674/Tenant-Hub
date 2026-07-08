@@ -170,6 +170,7 @@ function AddDueModal({ pgId, onAdd, onClose }) {
                         children="Apply Due"
                         loading={loading}
                         loadingText="Applying Due"
+                        type="submit"
                     />
                     <button type="button" onClick={handleCancel}>Cancel</button>
                 </form>

@@ -238,6 +238,7 @@ function AddRoomModal({ pgId, onAdd, onClose }) {
                         loading={loading}
                         loadingText="Adding Room"
                         children="Add Room"
+                        type="submit"
                     />
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>

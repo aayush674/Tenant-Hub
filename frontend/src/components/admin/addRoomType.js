@@ -102,6 +102,7 @@ function AddRoomTypeModal({ pgId, onAdd, onClose }) {
                         loading={loading}
                         loadingText="Creating Room Template"
                         children="Create Room Template"
+                        type="submit"
                     />
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>

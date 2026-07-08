@@ -201,6 +201,7 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
                         loading={loading}
                         loadingText="Creating Payment"
                         children="Create Payment"
+                        type="submit"
                     />
                     <button type="button" onClick={handleCancel}>Cancel</button>
                 </form>

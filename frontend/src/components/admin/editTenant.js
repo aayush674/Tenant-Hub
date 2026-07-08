@@ -162,6 +162,7 @@ function EditTenantModal({ tenant, pgId, onEdit, onClose }) {
                         loading={loading}
                         loadingText="Updating Details"
                         children="Save Tenant"
+                        type="submit"
                     />
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>

@@ -167,6 +167,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
                         loading={loading}
                         children="Add Tenant"
                         loadingText="Adding Tenant"
+                        type="submit"
                     />
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>

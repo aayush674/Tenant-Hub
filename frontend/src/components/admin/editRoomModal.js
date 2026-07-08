@@ -140,6 +140,7 @@ function EditRoomModal({ room, onUpdate, onClose }) {
                         loading={loading}
                         loadingText="Editing Room"
                         children="Save"
+                        type="submit"
                     />
                     <button type="button" onClick={handleClose}>Cancel</button>
                 </form>
