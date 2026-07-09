@@ -174,12 +174,16 @@ class DuesViewSet(viewsets.ModelViewSet):
         queryset=Dues.objects.all()
         tenant=self.request.query_params.get("tenant")
         status=self.request.query_params.get("status")
+        exclude_status=self.request.query_params.get("exclude_status")
         
         if tenant:
             queryset=queryset.filter(tenant_id=tenant)
         
         if status:
             queryset=queryset.filter(status=status)
+            
+        if exclude_status:
+            queryset=queryset.exclude(status=exclude_status)
         
         return queryset
     
