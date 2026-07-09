@@ -115,7 +115,7 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
             setDues([]);
             return;
         }
-        const response = await authFetch(`http://localhost:8000/api/dues/?tenant=${tenant.target.value}`)
+        const response = await authFetch(`http://localhost:8000/api/dues/?tenant=${tenant.target.value}&exclude_status=paid`)
         const data = await response.json();
         setDues(data);
     }
@@ -123,6 +123,18 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
     useEffect(() => {
         fetchTenants();
     }, [fetchTenants])
+
+    const due_type_wrapper = {
+        "rent": "Rent",
+        "electricity": "Electricity"
+    }
+
+    const due_status_wrapper = {
+        "pending": "Pending",
+        "partial": "Partially Paid",
+        "paid": "Paid",
+        "overdue": "Overdue"
+    }
 
     return (
         <div className="add-due-modal-overlay" onClick={handleClose}>
@@ -146,6 +158,7 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
 
                     <div>Dues</div>
                     <select
+                        style={{ fontFamily: "monospace" }}
                         value={selectedDue.id || ""}
                         onChange={(e) => {
                             const due = dues.find(d => d.id === Number(e.target.value));
@@ -158,7 +171,7 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
                                 <option value="">Select Due</option>
                                 {dues.map((due) => (
                                     <option key={due.id} value={due.id}>
-                                        {due.due_amount} ({due.due_type})
+                                        {`${due_type_wrapper[due.due_type].padEnd(20)} | ₹${String(due.due_amount).padEnd(20)} | ${due_status_wrapper[due.status]}`}
                                     </option>
                                 ))}
                             </>
