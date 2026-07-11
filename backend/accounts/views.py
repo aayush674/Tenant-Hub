@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import SignupSerializer, UserSerializer, ActivateAccountSerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import EmailTokenObtainPairSerializer
 from rest_framework.decorators import api_view, permission_classes
@@ -80,10 +80,12 @@ class PermissionView(APIView):
         return Response(data)
     
 class ActivateAccountView(APIView):
-    permission_classes = []
+    permission_classes = [AllowAny]
     def post(self, request):
         serializer = ActivateAccountSerializer(data=request.data)
+        print("recieved serializer")
         if not serializer.is_valid():
+            print("Inside isvalid serailizer check")
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
@@ -95,12 +97,14 @@ class ActivateAccountView(APIView):
         try:
             user=User.objects.get(invitation_token=token)
         except User.DoesNotExist:
+            print("inside does not exist block")
             return Response(
                 {"detail": "Invalid Invitation link."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
         if user.invitation_expires<timezone.now():
+            print("inside expire check")
             return Response(
                 {"detail": "Invitation has expired."},
                 status=status.HTTP_400_BAD_REQUEST
@@ -111,6 +115,7 @@ class ActivateAccountView(APIView):
         user.invitation_token=None
         user.invitation_expires=None
         user.save()
+        print("user saved")
         return Response(
             {"detail": "Account Activated successfully."},
             status=status.HTTP_200_OK
