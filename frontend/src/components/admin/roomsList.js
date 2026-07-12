@@ -10,7 +10,7 @@ import { useSearchParams } from "react-router-dom";
 import ConfirmModal from "../common/confirmationModal";
 import { FaPen, FaTrash } from "react-icons/fa";
 import FilterIcon from "../../assets/filter-svgrepo.svg"
-// import { Tooltip } from 'react-tooltip';
+import { API_BASE_URL } from "../../config";
 
 
 function RoomsList() {
@@ -59,7 +59,7 @@ function RoomsList() {
         if (room_floor) params.append("room_floor", room_floor)
 
         const res = await authFetch(
-            `http://localhost:8000/api/rooms/?pg_property=${pgId}&${params.toString()}`
+            `${API_BASE_URL}/api/rooms/?pg_property=${pgId}&${params.toString()}`
         );
 
         const data = await res.json();
@@ -67,13 +67,13 @@ function RoomsList() {
     },[pgId, searchParams]);
 
     const fetchTenants = useCallback(async () => {
-        const res = await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`)
+        const res = await authFetch(`${API_BASE_URL}/api/tenants/?pg_property=${pgId}`)
         const data = await res.json();
         setTenants(data.results || data);
     }, [pgId]);
 
     const fetchPg = useCallback(async () => {
-        const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
+        const res = await authFetch(`${API_BASE_URL}/api/pgs/${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch PG");
         }
@@ -82,7 +82,7 @@ function RoomsList() {
     }, [pgId]);
 
     const handleDeleteRoom = (deleteRoom) => {
-        authFetch(`http://localhost:8000/api/rooms/${deleteRoom}/`, {
+        authFetch(`${API_BASE_URL}/api/rooms/${deleteRoom}/`, {
             method: "DELETE",
         })
             .then(() => {
@@ -141,7 +141,7 @@ function RoomsList() {
 
     const fetchFloorCounts = useCallback(async () => {
         const res = await authFetch(
-            `http://localhost:8000/api/rooms/?pg_property=${pgId}`
+            `${API_BASE_URL}/api/rooms/?pg_property=${pgId}`
         );
 
         const data = await res.json();

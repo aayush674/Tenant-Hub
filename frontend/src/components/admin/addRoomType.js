@@ -3,6 +3,7 @@ import { authFetch } from "../../api/apiClient";
 import "../../styles/addRoomTypeModal.css";
 import { toast } from "react-toastify";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
+import { API_BASE_URL } from "../../config";
 
 
 function AddRoomTypeModal({ pgId, onAdd, onClose }) {
@@ -34,7 +35,7 @@ function AddRoomTypeModal({ pgId, onAdd, onClose }) {
         e.preventDefault();
         try {
             setLoading(true);
-            const res = await authFetch("http://localhost:8000/api/room-types/", {
+            const res = await authFetch(`${API_BASE_URL}/api/room-types/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

@@ -4,6 +4,7 @@ import { authFetch } from "../../api/apiClient";
 import "../../styles/pgDetails.css";
 import { FaPen } from "react-icons/fa";
 import { State, City } from "country-state-city";
+import { API_BASE_URL } from "../../config";
 
 function PGDetails() {
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ function PGDetails() {
     const [editMode, setEditMode] = useState(false);
 
     const fetchPg = useCallback(async () => {
-        const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}/`);
+        const res = await authFetch(`${API_BASE_URL}/api/pgs/${pgId}/`);
         if (!res.ok) {
             throw new Error("Failed to fetch PG");
         }
@@ -42,7 +43,7 @@ function PGDetails() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}/`, {
+            const res = await authFetch(`${API_BASE_URL}/api/pgs/${pgId}/`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
