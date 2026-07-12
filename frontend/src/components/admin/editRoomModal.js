@@ -4,6 +4,7 @@ import "../../styles/addRoomModal.css";
 import { validateRoomCapacity, validateRoomRent } from "../../utils/roomValidation";
 import { toast } from "react-toastify";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
+import { API_BASE_URL } from "../../config";
 
 function EditRoomModal({ room, onUpdate, onClose }) {
 
@@ -49,7 +50,7 @@ function EditRoomModal({ room, onUpdate, onClose }) {
         setError({});
         try {
             setLoading(true);
-            const res = await authFetch(`http://localhost:8000/api/rooms/${room.id}/`, {
+            const res = await authFetch(`${API_BASE_URL}/api/rooms/${room.id}/`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"

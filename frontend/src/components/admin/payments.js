@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import AddPaymentModal from "./addPayment";
 import "../../styles/dues.css";
+import { API_BASE_URL } from "../../config";
 
 function Payments(){
     const navigate = useNavigate();
@@ -13,7 +14,7 @@ function Payments(){
     const [showAddPayment, setShowAddPayment] = useState(false);
 
     const fetchPg = useCallback(async () => {
-        const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
+        const res = await authFetch(`${API_BASE_URL}/api/pgs/${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch PG");
         }
@@ -22,7 +23,7 @@ function Payments(){
     }, [pgId]);
 
     const fetchPayments = useCallback(async () => {
-        const res = await authFetch(`http://localhost:8000/api/payments/?pg_property=${pgId}`)
+        const res = await authFetch(`${API_BASE_URL}/api/payments/?pg_property=${pgId}`)
         const data = await res.json();
         setPayments(data.results || data);
     }, [pgId]);

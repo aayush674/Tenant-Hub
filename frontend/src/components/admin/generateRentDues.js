@@ -2,6 +2,7 @@ import { useState } from "react";
 import { authFetch } from "../../api/apiClient";
 import { toast } from "react-toastify";
 import "../../styles/generateRentDues.css";
+import { API_BASE_URL } from "../../config";
 
 
 function GenerateRentDues({ pgId, onGenerate, onCancel }) {
@@ -9,7 +10,7 @@ function GenerateRentDues({ pgId, onGenerate, onCancel }) {
 
     const generateRentDues = async () => {
         const res = await authFetch(
-            "http://localhost:8000/api/dues/generate_rent_dues/",
+            `${API_BASE_URL}/api/dues/generate_rent_dues/`,
             {
                 method: "POST",
                 headers: {

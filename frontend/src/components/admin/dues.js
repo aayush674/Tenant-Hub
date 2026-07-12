@@ -4,6 +4,7 @@ import { authFetch } from "../../api/apiClient";
 import AddDueModal from "./addDue";
 import "../../styles/dues.css";
 import GenerateRentDues from "./generateRentDues";
+import { API_BASE_URL } from "../../config";
 
 function Dues() {
     const navigate = useNavigate();
@@ -14,7 +15,7 @@ function Dues() {
     const [showGenerateRent, setShowGenerateRent] = useState(false);
 
     const fetchPg = useCallback(async () => {
-        const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
+        const res = await authFetch(`${API_BASE_URL}/api/pgs/${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch PG");
         }
@@ -23,7 +24,7 @@ function Dues() {
     }, [pgId]);
 
     const fetchDues = useCallback(async () => {
-        const res = await authFetch(`http://localhost:8000/api/dues/?pg_property=${pgId}`)
+        const res = await authFetch(`${API_BASE_URL}/api/dues/?pg_property=${pgId}`)
         const data = await res.json();
         setDues(data.results || data);
     }, [pgId]);

@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import "../../styles/roomTypes.css";
 import AddRoomTypeModal from "./addRoomType";
 import { FaPen, FaTrash } from "react-icons/fa";
+import { API_BASE_URL } from "../../config";
 
 
 function RoomTypes() {
@@ -16,7 +17,7 @@ function RoomTypes() {
     // const [roomTypes, setRoomTypes] = useState({});
 
     const fetchPg = useCallback(async () => {
-        const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
+        const res = await authFetch(`${API_BASE_URL}/api/pgs/${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch room types");
         }
@@ -25,7 +26,7 @@ function RoomTypes() {
     }, [pgId]);
 
     const fetchRoomTypes = useCallback(async () => {
-        const res= await authFetch(`http://localhost:8000/api/room-types/?pg_property=${pgId}`);
+        const res= await authFetch(`${API_BASE_URL}/api/room-types/?pg_property=${pgId}`);
         if(!res.ok){
             throw new Error("Failed to fetch room types");
         }

@@ -1,9 +1,8 @@
 // import { authFetch } from "./apiClient";
-
-const API_BASE = "http://127.0.0.1:8000/auth";
+import { API_BASE_URL } from "../config";
 
 export async function signup(email, password) {
-    const response = await fetch(`${API_BASE}/signup/`, {
+    const response = await fetch(`${API_BASE_URL}/auth/signup/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -17,7 +16,7 @@ export async function signup(email, password) {
 }
 
 export async function login(email, password) {
-  const res = await fetch(`${API_BASE}/login/`, {
+  const res = await fetch(`${API_BASE_URL}/auth/login/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -32,7 +31,7 @@ export const refreshAccessToken = async () => {
 
     const refresh = localStorage.getItem("refresh");
 
-    const response = await fetch("http://localhost:8000/api/token/refresh/", {
+    const response = await fetch(`${API_BASE_URL}/api/token/refresh/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
