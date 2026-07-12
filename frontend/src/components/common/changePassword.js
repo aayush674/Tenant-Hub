@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { authFetch } from "../../api/apiClient";
 import "../../styles/changePassword.css";
+import { API_BASE_URL } from "../../config";
 
 
 function ChangePassword({ show, onClose }) {
@@ -8,7 +9,7 @@ function ChangePassword({ show, onClose }) {
     const [newpass, setnewpass] = useState("");
 
     const handleChangePassword = async (oldpass, newpass) => {
-        const res = await authFetch("http://localhost:8000/auth/change-password/", {
+        const res = await authFetch(`${API_BASE_URL}/auth/change-password/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

@@ -7,6 +7,7 @@ import EditTenantModal from "./editTenant";
 import "../../styles/tenantList.css";
 import { FaPen, FaTrash } from "react-icons/fa";
 import ConfirmModal from "../common/confirmationModal";
+import { API_BASE_URL } from "../../config";
 
 function TenantList(){
     const { pgId } = useParams()
@@ -21,7 +22,7 @@ function TenantList(){
     const [permissions, setPermissions] = useState();
 
     const fetchPg = useCallback(async () => {
-        const res = await authFetch(`http://localhost:8000/api/pgs/${pgId}`);
+        const res = await authFetch(`${API_BASE_URL}/api/pgs/${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch PG");
         }
@@ -30,21 +31,21 @@ function TenantList(){
     }, [pgId]);
 
     const fetchTenants = useCallback(async () => {
-        const res= await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`)
+        const res= await authFetch(`${API_BASE_URL}/api/tenants/?pg_property=${pgId}`)
         const data = await res.json();
         setTenants(data.results || data);
     }, [pgId]);
 
     const fetchPermissions=useCallback(async()=>{
         const res=await authFetch(
-            `http://localhost:8000/auth/permissions/?pg_id=${pgId}`
+            `${API_BASE_URL}/auth/permissions/?pg_id=${pgId}`
         )
         const data=await res.json();
         setPermissions(data);
     }, [pgId]);
 
     const handleDeleteTenant = (tenantToDelete) =>{
-        authFetch(`http://localhost:8000/api/tenants/${tenantToDelete}/`, {
+        authFetch(`${API_BASE_URL}/api/tenants/${tenantToDelete}/`, {
             method: "DELETE",
         })
             .then(() => {

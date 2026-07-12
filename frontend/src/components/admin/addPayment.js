@@ -5,6 +5,7 @@ import "../../styles/addDue.css";
 // import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../../utils/roomValidation";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
 import { toast } from "react-toastify";
+import { API_BASE_URL } from "../../config";
 
 function AddPaymentModal({ pgId, onAdd, onClose }) {
 
@@ -37,7 +38,7 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
     };
 
     const fetchTenants = useCallback(async () => {
-        const res = await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`);
+        const res = await authFetch(`${API_BASE_URL}/api/tenants/?pg_property=${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch Tenants");
         }
@@ -71,7 +72,7 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
         setError({});
         try {
             setLoading(true);
-            const res = await authFetch("http://localhost:8000/api/payments/", {
+            const res = await authFetch(`${API_BASE_URL}/api/payments/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -115,7 +116,7 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
             setDues([]);
             return;
         }
-        const response = await authFetch(`http://localhost:8000/api/dues/?tenant=${tenant.target.value}&exclude_status=paid`)
+        const response = await authFetch(`${API_BASE_URL}/api/dues/?tenant=${tenant.target.value}&exclude_status=paid`)
         const data = await response.json();
         setDues(data);
     }

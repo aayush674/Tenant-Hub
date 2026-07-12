@@ -5,6 +5,7 @@ import "../../styles/addDue.css";
 // import { validateRoomCapacity, validateRoomNumber, validateRoomRent } from "../../utils/roomValidation";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
 import { toast } from "react-toastify";
+import { API_BASE_URL } from "../../config";
 
 function AddDueModal({ pgId, onAdd, onClose }) {
 
@@ -36,7 +37,7 @@ function AddDueModal({ pgId, onAdd, onClose }) {
     };
 
     const fetchTenants = useCallback(async () => {
-        const res = await authFetch(`http://localhost:8000/api/tenants/?pg_property=${pgId}`);
+        const res = await authFetch(`${API_BASE_URL}/api/tenants/?pg_property=${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch Tenants");
         }
@@ -70,7 +71,7 @@ function AddDueModal({ pgId, onAdd, onClose }) {
         setError({});
         try {
             setLoading(true);
-            const res = await authFetch("http://localhost:8000/api/dues/", {
+            const res = await authFetch(`${API_BASE_URL}/api/dues/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

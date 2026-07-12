@@ -5,6 +5,7 @@ import TenantForm from "./tenantForm";
 import { validateEmail, validatePhoneNumber, validateName, validateRoom, validateDate } from "../../utils/tenantValidation";
 import { toast } from "react-toastify";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
+import { API_BASE_URL } from "../../config";
 
 function AddTenantModal({ pgId, onAdd, onClose }) {
 
@@ -39,7 +40,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
     }, []);
 
     const fetchRooms = useCallback(async () => {
-        const res = await authFetch(`http://localhost:8000/api/rooms/?pg_property=${pgId}`);
+        const res = await authFetch(`${API_BASE_URL}/api/rooms/?pg_property=${pgId}`);
         if (!res.ok) {
             throw new Error("Failed to fetch rooms");
         }
@@ -84,7 +85,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
         setError({});
         try {
             setLoading(true);
-            const res = await authFetch("http://localhost:8000/api/tenants/", {
+            const res = await authFetch(`${API_BASE_URL}/api/tenants/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

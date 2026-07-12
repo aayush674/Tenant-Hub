@@ -6,6 +6,7 @@ import "../../styles/pgList.css";
 import { authFetch } from "../../api/apiClient";
 import AddPG from "./addPG";
 import { FaEye, FaTrash } from "react-icons/fa";
+import { API_BASE_URL } from "../../config";
 
 function PGList() {
     const navigate = useNavigate();
@@ -20,7 +21,7 @@ function PGList() {
     const [showActionDropdownId, setShowActionDropdownId] = useState(null);
 
     useEffect(() => {
-        authFetch("http://localhost:8000/api/pgs/")
+        authFetch(`${API_BASE_URL}/api/pgs/`)
             .then((res) => res.json())
             .then((data) => {
                 setPgs(data);
@@ -53,7 +54,7 @@ function PGList() {
     }, []);
 
     const deletePG = () => {
-        authFetch(`http://localhost:8000/api/pgs/${pgToDelete}/`, {
+        authFetch(`${API_BASE_URL}/api/pgs/${pgToDelete}/`, {
             method: "DELETE",
         })
             .then(() => {

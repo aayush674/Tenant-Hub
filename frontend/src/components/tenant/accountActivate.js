@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../styles/accountActivate.css";
+import { API_BASE_URL } from "../../config";
 
 function AccountActivate() {
     const { token } = useParams();
@@ -24,7 +25,7 @@ function AccountActivate() {
         }
 
         const response = await fetch(
-            "http://localhost:8000/auth/activate/",
+            `${API_BASE_URL}/auth/activate/`,
             {
                 method: "POST",
                 headers: {
