@@ -60,3 +60,6 @@ node_modules/
 
 # Ignore Postman as well
 postman/
+
+# Safety for production data
+backend/data.json
