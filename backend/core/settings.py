@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,9 +30,25 @@ SECRET_KEY = os.getenv(
 )
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "True") == "True"
-ALLOWED_HOSTS = [
-    "tenant-hub.onrender.com",
-]
+
+if DEBUG:
+    ALLOWED_HOSTS = [
+        "127.0.0.1",
+        "localhost",
+    ]
+
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
+else:
+    ALLOWED_HOSTS = [
+        "tenant-hub.onrender.com",
+    ]
+
+    CORS_ALLOWED_ORIGINS = [
+        "https://tenant-hubs.vercel.app",
+    ]
 
 # Application definition
 
@@ -127,10 +145,6 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-CORS_ALLOWED_ORIGINS = [
-    "https://tenant-hubs.vercel.app/",
-]
-
 
 # This tells Django Rest Framework: For protected APIs, expect JWT Tokens for authentication, and use the JWTAuthentication class to handle that authentication. So requests must send "Authorization: Bearer <token>" header otherwise Django will reject the request as unauthorized.
 REST_FRAMEWORK = {
@@ -166,4 +180,6 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-FRONTEND_URL = "http://localhost:3000"
+FRONTEND_URL = os.getenv(
+    "FRONTEND_URL"
+)
