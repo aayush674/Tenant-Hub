@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import PGList from "./components/admin/pgList";
 import Login from "./components/common/login";
 import SignUp from "./components/common/signup";
+import Dashboard from "./components/admin/dashboard";
 import AccountActivate from "./components/tenant/accountActivate";
 import RoomsList from "./components/admin/roomsList";
 import RoomTypes from "./components/admin/roomTypes";
@@ -21,17 +22,6 @@ import TenantDues from "./components/tenant/tenantDues";
 import TenantMaintainence from "./components/tenant/tenantMaintainence";
 import TenantLayout from "./components/tenant/tenantLayout";
 import TenantHeader from "./components/tenant/tenantHeader";
-
-function App() {
-  return (
-
-    <div className="page-box">
-
-
-    </div>
-
-  );
-}
 
 function Layout() {
   const location = useLocation();
@@ -54,7 +44,7 @@ function Layout() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element = {<SignUp />} />
         <Route path="/activate/:token" element = {<AccountActivate />} />
-        <Route path="/" element={<ProtectedRoute><App /></ProtectedRoute>} />
+        <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/pg-list" element={<ProtectedRoute><PGList /></ProtectedRoute>} />
         <Route path="/pg/:pgId" element={<ProtectedRoute><PGLayout /></ProtectedRoute>}>
           <Route index element={<ProtectedRoute><PGDetails /></ProtectedRoute>}></Route>

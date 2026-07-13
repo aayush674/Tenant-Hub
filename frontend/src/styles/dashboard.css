@@ -1,0 +1,25 @@
+.dashboard-container{
+    font-family: "Lexend", sans-serif;
+}
+
+.dashboard-header{
+    margin: 20px;
+}
+
+.dashboard-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: 100%; or min-height: 100vh if you want vertical centering */
+}
+
+.coming-soon-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #cb9f58;
+    padding: 10px 20px;
+    width: fit-content;
+    border-radius: 8px; /* optional */
+}
+
