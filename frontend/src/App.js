@@ -23,17 +23,6 @@ import TenantMaintainence from "./components/tenant/tenantMaintainence";
 import TenantLayout from "./components/tenant/tenantLayout";
 import TenantHeader from "./components/tenant/tenantHeader";
 
-function App() {
-  return (
-
-    <div className="page-box">
-
-
-    </div>
-
-  );
-}
-
 function Layout() {
   const location = useLocation();
   const isTenantRoute = location.pathname.startsWith("/t");
