@@ -123,7 +123,7 @@ function Dues() {
                                 <tr key={due.id}>
                                     <td><b>{due.id}</b></td>
                                     <td>{due.tenant_name}</td>
-                                    <td>{due.due_type === "rent" ? "Rent" : due.due_type === "electricity" ? "Electricity" : ""}</td>
+                                    <td>{due.due_type === "rent" ? "Rent" : due.due_type === "electricity" ? "Electricity" : due.due_type === "security" ? "Security" : ""}</td>
                                     <td>&#8377; {due.due_amount}</td>
                                     <td>
                                         {due.due_date}
