@@ -89,7 +89,7 @@ class TenantSerializer(serializers.ModelSerializer):
         
         Dues.objects.create(
             tenant = tenant,
-            due_amount = 5000,
+            due_amount = (tenant.room.rent)/2,
             due_date = timezone.now().date() + timedelta(days=3),
             due_type = "security"
         )
