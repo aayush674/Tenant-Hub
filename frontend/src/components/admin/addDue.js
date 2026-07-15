@@ -138,6 +138,7 @@ function AddDueModal({ pgId, onAdd, onClose }) {
                         <option value="">Select Due Type</option>
                         <option value="rent">Rent</option>
                         <option value="electricity">Electricity</option>
+                        <option value="security">Security</option>
                     </select>
                     <br />
 

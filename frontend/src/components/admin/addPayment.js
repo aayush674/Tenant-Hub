@@ -127,7 +127,8 @@ function AddPaymentModal({ pgId, onAdd, onClose }) {
 
     const due_type_wrapper = {
         "rent": "Rent",
-        "electricity": "Electricity"
+        "electricity": "Electricity",
+        "security": "Security"
     }
 
     const due_status_wrapper = {
