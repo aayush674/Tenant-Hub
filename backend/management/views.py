@@ -92,11 +92,11 @@ class TenantViewSet(viewsets.ModelViewSet):
         user=self.request.user
 
         if user.role==UserRole.OWNER:
-            return Tenant.objects.filter(
+            queryset = Tenant.objects.filter(
                 room__pg_property__owner=user
             )
         
-        if user.role == UserRole.EMPLOYEE:
+        elif user.role == UserRole.EMPLOYEE:
             assigned_pg_ids = []
 
             for assignment in user.pg_assignments.all():
@@ -109,16 +109,24 @@ class TenantViewSet(viewsets.ModelViewSet):
                         assignment.pg_id
                     )
                     
-            return Tenant.objects.filter(
+            queryset = Tenant.objects.filter(
                 room__pg_property__id__in=assigned_pg_ids
             )
         
-        if user.role == UserRole.TENANT:
-            return Tenant.objects.filter(
+        elif user.role == UserRole.TENANT:
+            queryset = Tenant.objects.filter(
                 user=user
             )
         
-        return Tenant.objects.none()
+        
+        else:
+            queryset = Tenant.objects.none()
+            
+        pg_property = self.request.query_params.get("pg_property")
+        if pg_property:
+            queryset = queryset.filter(room__pg_property__id = pg_property)
+            
+        return queryset
 
     def perform_create(self, serializer):
         user=self.request.user
@@ -166,7 +174,14 @@ class TenantViewSet(viewsets.ModelViewSet):
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+    def get_queryset(self):
+        queryset=self.queryset
+        pg_property = self.request.query_params.get("pg_property")
+        if pg_property:
+            queryset = queryset.filter(due__tenant__room__pg_property = pg_property)
     
+        return queryset
+
 class DuesViewSet(viewsets.ModelViewSet):
     serializer_class=DueSerializer
     queryset=Dues.objects.all()
@@ -175,6 +190,7 @@ class DuesViewSet(viewsets.ModelViewSet):
         tenant=self.request.query_params.get("tenant")
         status=self.request.query_params.get("status")
         exclude_status=self.request.query_params.get("exclude_status")
+        pg_property = self.request.query_params.get("pg_property")
         
         if tenant:
             queryset=queryset.filter(tenant_id=tenant)
@@ -184,6 +200,9 @@ class DuesViewSet(viewsets.ModelViewSet):
             
         if exclude_status:
             queryset=queryset.exclude(status=exclude_status)
+        
+        if pg_property:
+            queryset=queryset.filter(tenant__room__pg_property = pg_property)
         
         return queryset
     
