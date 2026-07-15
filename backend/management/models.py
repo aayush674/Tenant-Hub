@@ -85,6 +85,7 @@ class Dues(models.Model):
             ("rent", "Rent"),
             ("electricity", "Electricity"),
             ("maintenance", "Maintenance"),
+            ("security", "Security"),
             ("other", "Other"),
         ]
     )

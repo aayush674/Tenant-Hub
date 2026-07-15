@@ -86,6 +86,14 @@ class TenantSerializer(serializers.ModelSerializer):
             user=user,
             **validated_data
         )
+        
+        Dues.objects.create(
+            tenant = tenant,
+            due_amount = 5000,
+            due_date = timezone.now().date() + timedelta(days=3),
+            due_type = "security"
+        )
+        
         send_invitation_mail(user)
         
         return tenant
