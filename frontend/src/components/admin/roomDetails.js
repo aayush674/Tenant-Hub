@@ -16,6 +16,7 @@ function RoomDetails() {
     const [editMode, setEditMode] = useState(false);
     const [error, setError] = useState({});
     const [loading, setLoading] = useState(false);
+    const [roomTenants, setRoomTenants] = useState([]);
 
     const fetchPg = useCallback(async () => {
         const res = await authFetch(`${API_BASE_URL}/api/pgs/${pgId}/`);
@@ -24,7 +25,6 @@ function RoomDetails() {
         }
         const data = await res.json();
         setPgData(data);
-        // setFormData(data);
     }, [pgId]);
 
     const fetchCurrentRoom = useCallback(async () => {
@@ -35,7 +35,17 @@ function RoomDetails() {
         const data = await res.json();
         setRoomData(data);
         setFormData(data);
-    }, [pgId]);
+    }, [roomId]);
+
+    const fetchRoomTenants = useCallback(async () => {
+        const res = await authFetch(`${API_BASE_URL}/api/tenants/?room=${roomId}`);
+        if (!res.ok) {
+            throw new Error("Failed to fetch Room Tenants");
+        }
+        const data = await res.json();
+        setRoomTenants(data);
+        console.log(roomTenants);
+    }, [roomId])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -83,7 +93,8 @@ function RoomDetails() {
     useEffect(() => {
         fetchPg();
         fetchCurrentRoom();
-    }, [fetchCurrentRoom, fetchPg])
+        fetchRoomTenants();
+    }, [fetchCurrentRoom, fetchPg, fetchRoomTenants])
 
     return (
         <div className="room-details-container">
@@ -102,113 +113,147 @@ function RoomDetails() {
             <div className="room-details-header">
                 <h1>Room No. {roomData && roomData.room_number}</h1>
             </div>
-
-            <div className="form-header-block">
-                {!editMode && <div>
-                    <button className="edit-button" onClick={() => setEditMode(true)}><FaPen />Edit Details</button>
-                </div>}
-            </div>
-            <div className={`room-details-form ${editMode ? 'enabled' : 'disabled'}`}>
-                <form onSubmit={handleSubmit}>
-                    <div>Room Number</div>
-                    <input
-                        className={`room-details-input ${editMode ? 'enabled' : 'disabled'}`}
-                        disabled={!editMode}
-                        placeholder="Enter Room Number"
-                        value={formData && formData.room_number}
-                        onChange={e => {
-                            setFormData({
-                                ...formData,
-                                name: e.target.value
-                            })
-                            if (error?.roomNumber) {
-                                const newError = { ...error };
-                                delete newError.roomNumber;
-                                setError(newError);
-                            }
-                        }}
-                    />
-                    <div className="error-container">
-                        {error?.roomNumber}
-                    </div>
-                    <div>Room Occupancy Type: </div>
-                    <div className="occupancy-toggle">
-
-                        <button
-                            type="button"
-                            className={formData.capacity === 1 ? "active" : ""}
-                            disabled={!editMode}
-                            onClick={() => setFormData({
-                                ...formData,
-                                capacity: 1
-                            })}
-                        >👤Single</button>
-                        <button
-                            type="button"
-                            className={formData.capacity === 2 ? "active" : ""}
-                            disabled={!editMode}
-                            onClick={() => setFormData({
-                                ...formData,
-                                capacity: 2
-                            })}
-                        >👥Double</button>
-                    </div>
-                    <div className="error-container">
-                        {error?.roomCapacity}
-                    </div>
-
-                    <div className="balcony-checkbox">
+            <div className="room-basic-details">
+                <h2>Basic Details</h2>
+                <div className="form-header-block">
+                    {!editMode && <div>
+                        <button className="edit-button" onClick={() => setEditMode(true)}><FaPen />Edit Details</button>
+                    </div>}
+                </div>
+                <div className={`room-details-form ${editMode ? 'enabled' : 'disabled'}`}>
+                    <form onSubmit={handleSubmit}>
+                        <div>Room Number</div>
                         <input
-                            type="checkbox"
-                            checked={formData.is_balcony_room}
-                            onChange={e => setFormData({
-                                ...formData,
-                                is_balcony_room: e.target.checked
-                            })}
+                            className={`room-details-input ${editMode ? 'enabled' : 'disabled'}`}
+                            disabled={!editMode}
+                            placeholder="Enter Room Number"
+                            value={formData && formData.room_number}
+                            onChange={e => {
+                                setFormData({
+                                    ...formData,
+                                    name: e.target.value
+                                })
+                                if (error?.roomNumber) {
+                                    const newError = { ...error };
+                                    delete newError.roomNumber;
+                                    setError(newError);
+                                }
+                            }}
+                        />
+                        <div className="error-container">
+                            {error?.roomNumber}
+                        </div>
+                        <div>Room Occupancy Type: </div>
+                        <div className="occupancy-toggle">
+
+                            <button
+                                type="button"
+                                className={formData.capacity === 1 ? "active" : ""}
+                                disabled={!editMode}
+                                onClick={() => setFormData({
+                                    ...formData,
+                                    capacity: 1
+                                })}
+                            >👤Single</button>
+                            <button
+                                type="button"
+                                className={formData.capacity === 2 ? "active" : ""}
+                                disabled={!editMode}
+                                onClick={() => setFormData({
+                                    ...formData,
+                                    capacity: 2
+                                })}
+                            >👥Double</button>
+                        </div>
+                        <div className="error-container">
+                            {error?.roomCapacity}
+                        </div>
+
+                        <div className="balcony-checkbox">
+                            <input
+                                type="checkbox"
+                                checked={formData.is_balcony_room}
+                                onChange={e => setFormData({
+                                    ...formData,
+                                    is_balcony_room: e.target.checked
+                                })}
+                                disabled={!editMode}
+                            />
+                            <label>Balcony room</label>
+                        </div>
+
+                        <div>Room Rent</div>
+                        <input
+                            placeholder="Enter Room Rent"
+                            value={formData.rent}
+                            onChange={e => {
+                                setFormData({
+                                    ...formData,
+                                    rent: e.target.value
+                                })
+                                if (error?.roomRent) {
+                                    const newError = { ...error };
+                                    delete newError.roomRent;
+                                    setError(newError);
+                                }
+                            }
+                            }
                             disabled={!editMode}
                         />
-                        <label>Balcony room</label>
-                    </div>
+                        <div className="error-container">
+                            {error?.roomRent}
+                        </div>
+                        {error?.detail && (
+                            <div className="error-container">{error.detail}</div>
+                        )}
 
-                    <div>Room Rent</div>
-                    <input
-                        placeholder="Enter Room Rent"
-                        value={formData.rent}
-                        onChange={e => {
-                            setFormData({
-                                ...formData,
-                                rent: e.target.value
-                            })
-                            if (error?.roomRent) {
-                                const newError = { ...error };
-                                delete newError.roomRent;
-                                setError(newError);
-                            }
-                        }
-                        }
-                        disabled={!editMode}
-                    />
-                    <div className="error-container">
-                        {error?.roomRent}
-                    </div>
-                    {error?.detail && (
-                        <div className="error-container">{error.detail}</div>
+                        {editMode && <div className="edit-mode-buttons">
+                            <button type="button" onClick={() => {
+                                setEditMode(false);
+                                setFormData(roomData);
+                            }}>Cancel</button>
+                            {/* <button type="submit">Submit</button> */}
+                            <LoadingSubmitButton
+                                loading={loading}
+                                loadingText="Saving changes"
+                                children="Save"
+                                type="submit"
+                            />
+                        </div>}
+                    </form>
+                </div>
+            </div>
+            <div className="room-tenant-details">
+                <h2>Tenant Details</h2>
+                <div>Total Room Capacity</div>
+                <input
+                    className={`tenant-details-input`}
+                    disabled
+                    value={formData && formData.capacity}
+                />
+
+                <div>Available Room Capacity</div>
+                <input
+                    className={`tenant-details-input`}
+                    disabled
+                    value={formData && roomTenants && (formData.capacity - roomTenants.length)}
+                />
+
+                <div>Tenant Names</div>
+                <div className="card-block">
+                    {roomTenants.length === 0 ? (
+                        <div>
+                            No Tenant Available
+                        </div>
+                    ) : (
+                        roomTenants.map(tenant => (
+                            <div key={tenant.id} className="tenant-card">
+                                {tenant.first_name + " " + tenant.last_name}
+                            </div>
+                        ))
                     )}
 
-                    {editMode && <div className="edit-mode-buttons">
-                        <button type="button" onClick={() => {
-                            setEditMode(false);
-                            setFormData(roomData);
-                        }}>Cancel</button>
-                        {/* <button type="submit">Submit</button> */}
-                        <LoadingSubmitButton 
-                            loading={loading}
-                            loadingText="Saving changes"
-                            children="Save"
-                            type="submit"
-                        />
-                    </div>}
-                </form>
+                </div>
             </div>
         </div>
     )
