@@ -8,6 +8,7 @@ import SignUp from "./components/common/signup";
 import Dashboard from "./components/admin/dashboard";
 import AccountActivate from "./components/tenant/accountActivate";
 import RoomsList from "./components/admin/roomsList";
+import RoomDetails from "./components/admin/roomDetails";
 import RoomTypes from "./components/admin/roomTypes";
 import TenantList from "./components/admin/tenantList";
 import PGDetails from "./components/admin/pgDetails";
@@ -49,6 +50,7 @@ function Layout() {
         <Route path="/pg/:pgId" element={<ProtectedRoute><PGLayout /></ProtectedRoute>}>
           <Route index element={<ProtectedRoute><PGDetails /></ProtectedRoute>}></Route>
           <Route path="rooms" element={<ProtectedRoute><RoomsList /></ProtectedRoute>} />
+          <Route path="rooms/:roomId" element={<ProtectedRoute><RoomDetails /></ProtectedRoute>} />
           <Route path="roomtypes" element={<ProtectedRoute><RoomTypes /></ProtectedRoute>} />
           <Route path="tenants" element={<ProtectedRoute><TenantList /></ProtectedRoute>} />
           <Route path="dues" element={<ProtectedRoute><Dues /></ProtectedRoute>} />
