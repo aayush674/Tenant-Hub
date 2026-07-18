@@ -5,6 +5,7 @@ import "../../styles/pgDetails.css";
 import { FaPen } from "react-icons/fa";
 import { State, City } from "country-state-city";
 import { API_BASE_URL } from "../../config";
+import { toast } from "react-toastify";
 
 function PGDetails() {
     const navigate = useNavigate();
@@ -67,6 +68,7 @@ function PGDetails() {
             }
             setPgData(formData);
             setEditMode(false);
+            toast.success("Details updated successfully!")
         }
         catch (err) {
             setError({ detail: "Something went wrong. Please try again." });
@@ -229,7 +231,10 @@ function PGDetails() {
                     </div>
 
                     {editMode && <div className="edit-mode-buttons">
-                        <button type="button" onClick={() => setEditMode(false)}>Cancel</button>
+                        <button type="button" onClick={() => {
+                            setEditMode(false);
+                            setFormData(pgData);
+                        }}>Cancel</button>
                         <button type="submit">Submit</button>
                     </div>}
                 </form>

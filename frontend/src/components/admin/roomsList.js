@@ -4,7 +4,7 @@ import { authFetch } from "../../api/apiClient";
 import AddRoomModal from "./addRoomModal";
 import "../../styles/roomsList.css";
 import { useNavigate } from "react-router-dom";
-import EditRoomModal from "./editRoomModal";
+// import EditRoomModal from "./editRoomModal";
 import RoomListFilterModal from "./roomListFilterModal";
 import { useSearchParams } from "react-router-dom";
 import ConfirmModal from "../common/confirmationModal";
@@ -18,8 +18,8 @@ function RoomsList() {
     const [rooms, setRooms] = useState([]);
     const [showAddRoom, setShowAddRoom] = useState(false);
     const [pgData, setPgData] = useState(null);
-    const [showEditModal, setShowEditModal] = useState(false);
-    const [editRoomData, setEditRoomData] = useState(null);
+    // const [showEditModal, setShowEditModal] = useState(false);
+    // const [editRoomData, setEditRoomData] = useState(null);
     const [showFilterModal, setShowFilterModal] = useState(false);
     const navigate = useNavigate();
     const [filters, setFilters] = useState({ occupancyType: "", minPrice: "", maxPrice: "" });
@@ -98,14 +98,14 @@ function RoomsList() {
 
     };
 
-    const openEditRoom = (room) => {
-        setEditRoomData(room);
-        setShowEditModal(true);
-    }
+    // const openEditRoom = (room) => {
+    //     setEditRoomData(room);
+    //     setShowEditModal(true);
+    // }
 
-    const updateRoom = (updatedRoom) => {
-        setRooms(prev => prev.map(room => room.id === updatedRoom.id ? updatedRoom : room));
-    }
+    // const updateRoom = (updatedRoom) => {
+    //     setRooms(prev => prev.map(room => room.id === updatedRoom.id ? updatedRoom : room));
+    // }
 
     const handleApplyFilters = () => {
 
@@ -211,7 +211,7 @@ function RoomsList() {
                     />
                 )}
 
-                {showEditModal && (
+                {/* {showEditModal && (
                     <EditRoomModal
                         room={editRoomData}
                         onUpdate={(updatedRoom) => {
@@ -220,7 +220,7 @@ function RoomsList() {
                         }}
                         onClose={() => setShowEditModal(false)}
                     />
-                )}
+                )} */}
 
             </div>
             <div>
@@ -306,8 +306,10 @@ function RoomsList() {
                                         ><FaTrash /> Delete</button>
 
                                         <button className="edit-room-button"
-                                            onClick={() => openEditRoom(room)}
-                                        ><FaPen /> Edit</button>
+                                            onClick={() => {
+                                                navigate(`/pg/${pgId}/rooms/${room.id}`);
+                                            }}
+                                        ><FaPen /> Manage</button>
                                     </div>
                                     <ConfirmModal
                                         show={showDeleteConfirmModal}
