@@ -12,7 +12,6 @@ export const authFetch = async (url, options = {}) => {
     });
 
     if (response.status === 401) {
-        // console.log("Access Token Expired or Invalid.");
 
         try {
             const newAccessToken = await refreshAccessToken();

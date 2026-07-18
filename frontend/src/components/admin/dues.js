@@ -87,10 +87,8 @@ function Dues() {
                     <GenerateRentDues 
                         pgId= {pgId}
                         onGenerate = {()=>{
-                            console.log("Inside onGenerate at start")
                             setShowGenerateRent(false);
                             fetchDues();
-                            console.log("Inside onGenerate at end")
                         }}
                         onCancel = {()=> setShowGenerateRent(false)}
                     />
