@@ -70,7 +70,6 @@ function Login() {
 
         if (access_token && refresh_token) {
             navigate("/");
-            console.log("Inside useeffect")
         }
     }, [navigate]);
 

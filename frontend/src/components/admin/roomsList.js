@@ -29,11 +29,13 @@ function RoomsList() {
     const [roomToDelete, setRoomToDelete] = useState(null);
     const [floorCounts, setFloorCounts] = useState({});
     const [tenantData, setTenants] = useState([]);
+    const [selectedFloorstate, setSelectedFloorState] = useState("");
 
     useEffect(() => {
         const min = searchParams.get("min_price") || "";
         const max = searchParams.get("max_price") || "";
         const occupancy = searchParams.get("capacity") || "";
+        const selectedFloor = searchParams.get("room_floor");
 
         const initialFilters = {
             minPrice: min,
@@ -43,6 +45,7 @@ function RoomsList() {
 
         setDraftFilters(initialFilters);
         setFilters(initialFilters);
+        setSelectedFloorState(selectedFloor!==null ? Number(selectedFloor) : "");
     }, [searchParams]);
 
     const fetchRooms = useCallback(async () => {
@@ -136,8 +139,6 @@ function RoomsList() {
         if (floor === 3) return "3rd Floor";
         return `${floor}th Floor`;
     };
-
-    const selectedFloor = searchParams.get("room_floor");
 
     const fetchFloorCounts = useCallback(async () => {
         const res = await authFetch(
@@ -242,7 +243,7 @@ function RoomsList() {
 
             <div className="floor-navigation-box">
                 <button
-                    className={!selectedFloor ? "active-floor" : ""}
+                    className={selectedFloorstate === "" ? "active-floor" : ""}
                     onClick={() => {
                         const params = Object.fromEntries(searchParams);
                         delete params.room_floor;
@@ -250,7 +251,7 @@ function RoomsList() {
                     }}>All ({pgData?.room_count})</button>
                 {Array.from({ length: pgData?.total_floors + 1 }, (_, i) => i).map((floor) => (
                     <button key={floor}
-                        className={selectedFloor === floor ? "active-floor" : ""}
+                        className={selectedFloorstate === floor ? "active-floor" : ""}
                         onClick={() => {
                             setSearchParams({
                                 ...Object.fromEntries(searchParams),
