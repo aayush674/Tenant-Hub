@@ -1,10 +1,9 @@
-.room-details-container{
+.tenant-details-container{
     font-family: "Lexend", sans-serif;
     padding: 10px 30px;
 }
 
 .nav-path {
-    /* color: #5b4914; */
     color: #434242;
     font-size: 14px;
     margin-bottom: 0px;
@@ -19,13 +18,13 @@
     text-decoration: underline;
 }
 
-.room-details-header {
+.tenant-details-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.room-details-header h1 {
+.tenant-details-header h1 {
     color: #5b4914;
 }
 
@@ -67,37 +66,13 @@
     font-weight: 600;
 }
 
-.room-details-input, .occupancy-toggle, .checkbox{
-    text-align: left;
-}
-
 .edit-mode-footer-container{
     min-height: 75px;
 }
 
-.room-basic-details, .room-tenant-details{
+.tenant-basic-details{
     background-color: #e3e3e3;
     padding: 20px;
     border-radius: 15px;
     margin-bottom: 20px;
-}
-
-.card-block{
-    display: flex;
-    gap: 20px;
-}
-
-.tenant-card{
-    background-color: #ffe4bf;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ffc675;
-    display: flex;
-    gap: 10px;
-    transition: all 0.2s ease;
-}
-
-.tenant-card:hover{
-    background-color: #ffc675;
-    cursor: pointer;
 }

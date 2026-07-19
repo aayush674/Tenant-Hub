@@ -7,6 +7,7 @@ import { validateRoomCapacity, validateRoomRent } from "../../utils/roomValidati
 import { toast } from "react-toastify";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
 import "../../styles/roomDetails.css"
+import { FaUpRightFromSquare } from "react-icons/fa6";
 
 function RoomDetails() {
     const navigate = useNavigate();
@@ -45,8 +46,7 @@ function RoomDetails() {
         }
         const data = await res.json();
         setRoomTenants(data);
-        console.log(roomTenants);
-    }, [roomId, roomTenants])
+    }, [roomId])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -147,7 +147,7 @@ function RoomDetails() {
                             </div>
                         </div>
                         <div className="form-row">
-                            <div className="form-labels">Room Occupancy Type:</div>
+                            <div className="form-labels">Room Occupancy Type</div>
                             <div className="occupancy-toggle">
                                 <button
                                     type="button"
@@ -271,9 +271,15 @@ function RoomDetails() {
                             </div>
                         ) : (
                             roomTenants.map(tenant => (
-                                <div key={tenant.id} className="tenant-card">
-                                    {tenant.first_name + " " + tenant.last_name}
-                                </div>
+                                <button
+                                    className="tenant-card"
+                                    onClick={() => window.open(`/pg/${pgId}/tenant/${tenant.id}`, "_blank")}
+                                >
+                                    <FaUpRightFromSquare />
+                                    <div key={tenant.id}>
+                                        {tenant.first_name + " " + tenant.last_name}
+                                    </div>
+                                </button>
                             ))
                         )}
 

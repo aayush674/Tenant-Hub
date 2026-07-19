@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import AddTenantModal from "./addTenant";
-import EditTenantModal from "./editTenant";
 import "../../styles/tenantList.css";
 import { FaPen, FaTrash } from "react-icons/fa";
 import ConfirmModal from "../common/confirmationModal";
@@ -15,8 +14,8 @@ function TenantList(){
     const [pgData, setPgData] = useState();
     const [showAddTenant, setShowAddTenant] = useState(false);
     const [tenants, setTenants]=useState([]);
-    const [showEditTenant, setShowEditTenant] = useState(false);
-    const [editTenantData, setEditTenantData] = useState(null);
+    // const [showEditTenant, setShowEditTenant] = useState(false);
+    // const [editTenantData, setEditTenantData] = useState(null);
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
     const [tenantToDelete, setTenantToDelete] = useState(null);
     const [permissions, setPermissions] = useState();
@@ -62,10 +61,10 @@ function TenantList(){
         fetchPermissions();
     }, [pgId, fetchPermissions, fetchPg, fetchTenants]);
 
-    const openEditTenant = (tenant) => {
-        setEditTenantData(tenant);
-        setShowEditTenant(true);
-    }
+    // const openEditTenant = (tenant) => {
+    //     setEditTenantData(tenant);
+    //     setShowEditTenant(true);
+    // }
 
     return(
         <div className="tenant-list-container">
@@ -96,7 +95,7 @@ function TenantList(){
                     />
                 )}
 
-                {showEditTenant && (
+                {/* {showEditTenant && (
                     <EditTenantModal
                         pgId={pgId}
                         tenant={editTenantData}
@@ -106,7 +105,7 @@ function TenantList(){
                         }}
                         onClose={() => setShowEditTenant(false)}
                     />
-                )}
+                )} */}
 
             </div>
 
@@ -147,8 +146,8 @@ function TenantList(){
                                     ><FaTrash/> Delete</button>}
 
                                     {(permissions?.edit_tenants) && <button className="edit-tenant-button"
-                                    onClick={() => openEditTenant(tenant)}
-                                    ><FaPen/> Edit</button>}
+                                    onClick={() => navigate(`/pg/${pgId}/tenant/${tenant.id}`)}
+                                    ><FaPen/> Manage</button>}
                                     
 
                                 </div>
