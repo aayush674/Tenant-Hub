@@ -125,6 +125,10 @@ class TenantViewSet(viewsets.ModelViewSet):
         pg_property = self.request.query_params.get("pg_property")
         if pg_property:
             queryset = queryset.filter(room__pg_property__id = pg_property)
+        
+        room = self.request.query_params.get("room")
+        if room:
+            queryset=queryset.filter(room = room)
             
         return queryset
 
