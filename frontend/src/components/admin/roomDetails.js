@@ -116,7 +116,7 @@ function RoomDetails() {
             </div>
             <div className="room-basic-details">
                 <div className="basic-details-header">
-                    <h2>Basic Details</h2>
+                    <h2><u>Basic Details</u></h2>
                     {!editMode && <div>
                         <button className="edit-room-button" onClick={() => setEditMode(true)}><FaPen />Edit Details</button>
                     </div>}
@@ -243,7 +243,7 @@ function RoomDetails() {
                 </div>
             </div>
             <div className="room-tenant-details">
-                <h2>Tenant Details</h2>
+                <h2><u>Tenant Details</u></h2>
                 <div className="form-row">
                     <div className="form-labels">Total Room Capacity</div>
                     <input
