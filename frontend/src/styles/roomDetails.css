@@ -1,0 +1,95 @@
+.room-details-container{
+    font-family: "Lexend", sans-serif;
+    padding: 10px 30px;
+}
+
+.nav-path {
+    /* color: #5b4914; */
+    color: #434242;
+    font-size: 14px;
+    margin-bottom: 0px;
+}
+
+.navigator {
+    cursor: pointer;
+    color: #987b23;
+}
+
+.navigator:hover {
+    text-decoration: underline;
+}
+
+.room-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.room-details-header h1 {
+    color: #5b4914;
+}
+
+.basic-details-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.edit-room-button{
+    color: blue;
+    background-color: #f2f2fe;
+    border: 1px solid #cacafe;
+    border-radius: 6px;
+    font-weight: 600;
+    font-family: "Lexend", sans-serif;
+    min-height: 32px;
+    min-width: 100px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.edit-button:hover{
+    background-color: #d1d1ff;
+    border-color: #a5a5fc;
+}
+
+.form-row{
+     display: grid;
+    grid-template-columns: 220px 1fr;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #e5e5e5;
+    column-gap: 24px;
+}
+
+.form-labels{
+    font-weight: 600;
+}
+
+.room-details-input, .occupancy-toggle, .checkbox{
+    text-align: left;
+}
+
+.edit-mode-footer-container{
+    min-height: 75px;
+}
+
+.room-basic-details, .room-tenant-details{
+    background-color: #e3e3e3;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.card-block{
+    display: flex;
+    gap: 20px;
+}
+
+.tenant-card{
+    background-color: #ffe4bf;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ffc675;
+}
