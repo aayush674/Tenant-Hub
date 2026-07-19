@@ -46,7 +46,7 @@ function RoomDetails() {
         const data = await res.json();
         setRoomTenants(data);
         console.log(roomTenants);
-    }, [roomId])
+    }, [roomId, roomTenants])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
