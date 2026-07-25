@@ -17,12 +17,6 @@
     padding: 20px 0;
 }
 
-.content {
-    flex: 1;
-    padding: 24px;
-    overflow-y: auto;
-}
-
 .tenant-sidebar a {
     border: none;
     background: transparent;

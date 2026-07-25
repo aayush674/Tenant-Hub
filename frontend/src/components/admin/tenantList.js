@@ -146,7 +146,7 @@ function TenantList(){
                                     ><FaTrash/> Delete</button>}
 
                                     {(permissions?.edit_tenants) && <button className="edit-tenant-button"
-                                    onClick={() => navigate(`/pg/${pgId}/tenant/${tenant.id}`)}
+                                    onClick={() => navigate(`/pg/${pgId}/tenants/${tenant.id}`)}
                                     ><FaPen/> Manage</button>}
                                     
 
