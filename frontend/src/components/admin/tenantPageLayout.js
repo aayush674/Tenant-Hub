@@ -6,6 +6,7 @@ function TenantPageLayout(){
         <div className="pg-layout-container">
             <div className="pg-sidebar">
                 <NavLink to={`/pg/${pgId}/tenants/${tenantId}`} end>Details</NavLink>
+                <NavLink to={`/pg/${pgId}/tenants/${tenantId}/dues`} end>Dues</NavLink>
                 {/* <NavLink to={`/pg/${pgId}/rooms`}>Rooms List</NavLink> */}
                 {/* <NavLink to={`/pg/${pgId}/roomtypes`}>Room Templates</NavLink>
                 <NavLink to={`/pg/${pgId}/tenants`}>Tenants</NavLink>

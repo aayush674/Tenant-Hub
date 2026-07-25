@@ -15,6 +15,7 @@ import RoomTypes from "./components/admin/roomTypes";
 import TenantList from "./components/admin/tenantList";
 import TenantPageLayout from "./components/admin/tenantPageLayout";
 import TenantDetails from "./components/admin/tenantDetails";
+import TenantWiseDues from "./components/admin/tenantDues";
 import PGDetails from "./components/admin/pgDetails";
 import PGLayout from "./components/admin/pgLayout";
 import Dues from "./components/admin/dues";
@@ -62,6 +63,7 @@ function Layout() {
           <Route path="tenants" element={<ProtectedRoute><TenantList /></ProtectedRoute>} />
           <Route path="tenants/:tenantId" element={<ProtectedRoute><TenantPageLayout /></ProtectedRoute>}>
             <Route index element={<ProtectedRoute><TenantDetails /></ProtectedRoute>}></Route>
+            <Route path="dues" element={<ProtectedRoute><TenantWiseDues /></ProtectedRoute>}></Route>
           </Route>
           <Route path="dues" element={<ProtectedRoute><Dues /></ProtectedRoute>} />
           <Route path="payments" element={<ProtectedRoute><Payments /></ProtectedRoute>} />
