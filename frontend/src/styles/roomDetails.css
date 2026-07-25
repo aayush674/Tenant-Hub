@@ -3,22 +3,6 @@
     padding: 10px 30px;
 }
 
-.nav-path {
-    /* color: #5b4914; */
-    color: #434242;
-    font-size: 14px;
-    margin-bottom: 0px;
-}
-
-.navigator {
-    cursor: pointer;
-    color: #987b23;
-}
-
-.navigator:hover {
-    text-decoration: underline;
-}
-
 .room-details-header {
     display: flex;
     justify-content: space-between;

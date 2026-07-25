@@ -3,22 +3,6 @@
     font-family: "Lexend", sans-serif;
 }
 
-.dues-nav-path {
-    /* color: #5b4914; */
-    color: #434242;
-    font-size: 14px;
-    margin-bottom: 0px;
-}
-
-.dues-navigator {
-    cursor: pointer;
-    color: #987b23;
-}
-
-.dues-navigator:hover {
-    text-decoration: underline;
-}
-
 .dues-header {
     display: flex;
     justify-content: space-between;

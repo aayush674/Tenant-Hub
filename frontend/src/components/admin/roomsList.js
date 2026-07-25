@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import AddRoomModal from "./addRoomModal";
 import "../../styles/roomsList.css";
+import "../../styles/common_styles/navigator.css";
 import { useNavigate } from "react-router-dom";
 // import EditRoomModal from "./editRoomModal";
 import RoomListFilterModal from "./roomListFilterModal";
@@ -184,10 +185,10 @@ function RoomsList() {
 
     return (
         <div className="room-list-container">
-            <div className="room-list-nav-path">
-                <span onClick={() => navigate("/")} className="room-list-navigator">Home</span>
+            <div className="nav-path">
+                <span onClick={() => navigate("/")} className="navigator">Home</span>
                 <span className="seperator"> / </span>
-                <span onClick={() => navigate("/pg-list")} className="room-list-navigator">PG List</span>
+                <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>
                 <span className="seperator"> / </span>
                 {pgData && <span>{pgData.name}</span>}
                 <span className="seperator"> / </span>
