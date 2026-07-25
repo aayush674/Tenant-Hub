@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import AddDueModal from "./addDue";
 import "../../styles/dues.css";
+import "../../styles/common_styles/navigator.css";
 import GenerateRentDues from "./generateRentDues";
 import { API_BASE_URL } from "../../config";
 
@@ -36,10 +37,10 @@ function Dues() {
 
     return (
         <div className="dues-container">
-            <div className="dues-nav-path">
-                <span onClick={() => navigate("/")} className="dues-navigator">Home</span>
+            <div className="nav-path">
+                <span onClick={() => navigate("/")} className="navigator">Home</span>
                 <span className="seperator"> / </span>
-                <span onClick={() => navigate("/pg-list")} className="dues-navigator">PG List</span>
+                <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>
                 <span className="seperator"> / </span>
                 {pgData && <span>{pgData.name}</span>}
                 <span className="seperator"> / </span>

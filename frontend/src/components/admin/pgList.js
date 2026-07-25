@@ -3,6 +3,7 @@ import ConfirmModal from "../common/confirmationModal";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/pgList.css";
+import "../../styles/common_styles/navigator.css";
 import { authFetch } from "../../api/apiClient";
 import AddPG from "./addPG";
 import { FaEye, FaTrash } from "react-icons/fa";

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import { useParams } from "react-router-dom";
 import "../../styles/roomTypes.css";
+import "../../styles/common_styles/navigator.css";
 import AddRoomTypeModal from "./addRoomType";
 import { FaPen, FaTrash } from "react-icons/fa";
 import { API_BASE_URL } from "../../config";
@@ -41,10 +42,10 @@ function RoomTypes() {
 
     return (
         <div className="room-type-container">
-            <div className="room-type-nav-path">
-                <span onClick={() => navigate("/")} className="room-type-navigator">Home</span>
+            <div className="nav-path">
+                <span onClick={() => navigate("/")} className="navigator">Home</span>
                 <span className="seperator"> / </span>
-                <span onClick={() => navigate("/pg-list")} className="room-type-navigator">PG List</span>
+                <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>
                 <span className="seperator"> / </span>
                 {pgData && <span>{pgData.name}</span>}
                 <span className="seperator"> / </span>

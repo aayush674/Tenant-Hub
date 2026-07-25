@@ -66,21 +66,6 @@ tbody tr:hover {
     color: #5b4914;
 }
 
-.room-type-nav-path{
-    color: #434242;
-    font-size: 14px;
-    margin-bottom: 0px;
-}
-
-.room-type-navigator {
-    cursor: pointer;
-    color: #987b23;
-}
-
-.room-type-navigator:hover {
-    text-decoration: underline;
-}
-
 .occupancy-chip {
     padding: 3px 8px;
     border-radius: 6px;

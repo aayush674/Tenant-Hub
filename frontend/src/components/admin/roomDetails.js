@@ -7,6 +7,7 @@ import { validateRoomCapacity, validateRoomRent } from "../../utils/roomValidati
 import { toast } from "react-toastify";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
 import "../../styles/roomDetails.css"
+import "../../styles/common_styles/navigator.css";
 import { FaUpRightFromSquare } from "react-icons/fa6";
 
 function RoomDetails() {

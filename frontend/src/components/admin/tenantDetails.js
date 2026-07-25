@@ -8,6 +8,7 @@ import { validateEmail, validatePhoneNumber, validateName, validateDate, validat
 import { toast } from "react-toastify";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
 import "../../styles/tenantDetails.css"
+import "../../styles/common_styles/navigator.css";
 import { Country } from "country-state-city";
 
 

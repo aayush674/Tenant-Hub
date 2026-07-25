@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import "../../styles/pgDetails.css";
+import "../../styles/common_styles/navigator.css";
 import { FaPen } from "react-icons/fa";
 import { State, City } from "country-state-city";
 import { API_BASE_URL } from "../../config";
@@ -80,7 +81,7 @@ function PGDetails() {
 
     return (
         <div className="pg-details-container">
-            <div className="details-nav-path">
+            <div className="nav-path">
                 <span onClick={() => navigate("/")} className="navigator">Home</span>
                 <span className="seperator"> / </span>
                 <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>

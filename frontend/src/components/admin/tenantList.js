@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import AddTenantModal from "./addTenant";
 import "../../styles/tenantList.css";
+import "../../styles/common_styles/navigator.css";
 import { FaPen, FaTrash } from "react-icons/fa";
 import ConfirmModal from "../common/confirmationModal";
 import { API_BASE_URL } from "../../config";
@@ -68,10 +69,10 @@ function TenantList(){
 
     return(
         <div className="tenant-list-container">
-            <div className="tenant-list-nav-path">
-                <span onClick={() => navigate("/")} className="tenant-list-navigator">Home</span>
+            <div className="nav-path">
+                <span onClick={() => navigate("/")} className="navigator">Home</span>
                 <span className="seperator"> / </span>
-                <span onClick={() => navigate("/pg-list")} className="tenant-list-navigator">PG List</span>
+                <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>
                 <span className="seperator"> / </span>
                 {pgData && <span>{pgData.name}</span>}
                 <span className="seperator"> / </span>
