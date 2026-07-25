@@ -8,9 +8,13 @@ import SignUp from "./components/common/signup";
 import Dashboard from "./components/admin/dashboard";
 import AccountActivate from "./components/tenant/accountActivate";
 import RoomsList from "./components/admin/roomsList";
+import RoomLayout from "./components/admin/roomLayout";
 import RoomDetails from "./components/admin/roomDetails";
+import RoomMaintainence from "./components/admin/roomMaintainence";
 import RoomTypes from "./components/admin/roomTypes";
 import TenantList from "./components/admin/tenantList";
+import TenantPageLayout from "./components/admin/tenantPageLayout";
+import TenantDetails from "./components/admin/tenantDetails";
 import PGDetails from "./components/admin/pgDetails";
 import PGLayout from "./components/admin/pgLayout";
 import Dues from "./components/admin/dues";
@@ -50,12 +54,18 @@ function Layout() {
         <Route path="/pg/:pgId" element={<ProtectedRoute><PGLayout /></ProtectedRoute>}>
           <Route index element={<ProtectedRoute><PGDetails /></ProtectedRoute>}></Route>
           <Route path="rooms" element={<ProtectedRoute><RoomsList /></ProtectedRoute>} />
-          <Route path="rooms/:roomId" element={<ProtectedRoute><RoomDetails /></ProtectedRoute>} />
+          <Route path="rooms/:roomId" element={<ProtectedRoute><RoomLayout /></ProtectedRoute>}>
+            <Route index element={<ProtectedRoute><RoomDetails /></ProtectedRoute>}></Route>
+            <Route path="maintainence" element={<ProtectedRoute><RoomMaintainence /></ProtectedRoute>}></Route>
+          </Route>
           <Route path="roomtypes" element={<ProtectedRoute><RoomTypes /></ProtectedRoute>} />
           <Route path="tenants" element={<ProtectedRoute><TenantList /></ProtectedRoute>} />
+          <Route path="tenants/:tenantId" element={<ProtectedRoute><TenantPageLayout /></ProtectedRoute>}>
+            <Route index element={<ProtectedRoute><TenantDetails /></ProtectedRoute>}></Route>
+          </Route>
           <Route path="dues" element={<ProtectedRoute><Dues /></ProtectedRoute>} />
           <Route path="payments" element={<ProtectedRoute><Payments /></ProtectedRoute>} />
-        </Route>
+        </Route>        
         <Route
           path="/t"
           element={

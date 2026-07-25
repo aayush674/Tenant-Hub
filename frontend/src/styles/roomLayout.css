@@ -1,0 +1,65 @@
+.room-layout-container {
+    display: flex;
+    font-family: "Lexend", sans-serif;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.room-sidebar {
+    position: sticky;
+    top: 70px;
+    width: 220px;
+    min-width: 220px;
+    flex-shrink: 0;
+    height: fit-content;
+    background: #fff;
+    border-right: 1px solid #e5e5e5;
+    padding: 20px 0px 0px 20px;
+}
+
+.room-sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 24px;
+    text-decoration: none;
+    color: #333;
+    font-size: 15px;
+}
+
+.room-sidebar a svg,
+.room-sidebar a img,
+.room-sidebar a i {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+}
+
+
+.room-sidebar a span {
+    opacity: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity 0.2s ease 0.15s, max-width 0.2s ease 0.15s;
+    max-width: 160px;
+}
+
+.room-sidebar a.active {
+    background: #fff9ee;
+    border-right: 4px solid #eba925;
+    font-weight: 600;
+}
+
+.room-sidebar a:hover {
+    background: #fff9ee;
+}
+
+.room-content {
+    flex: 1;
+    min-width: 0;
+    padding-left: 32px;
+}
+
+.page-content {
+    padding: 24px;
+}
