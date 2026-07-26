@@ -8,11 +8,18 @@ import "../../styles/common_styles/navigator.css";
 import "../../styles/tenantDues.css";
 
 const dueTypeLabels = {
-        rent: "Rent",
-        electricity: "Electricity",
-        security: "Security",
-        maintenance: "Maintenance",
-    };
+    rent: "Rent",
+    electricity: "Electricity",
+    security: "Security",
+    maintenance: "Maintenance",
+};
+
+const dueStatusLabels = {
+    pending: "Pending",
+    partial: "Partially Paid",
+    paid: "Paid",
+    overdue: "Overdue",
+};
 
 function TenantWiseDues() {
 
@@ -42,7 +49,7 @@ function TenantWiseDues() {
     }, [tenantId]);
 
     const updateDueList = useCallback(async () => {
-        const res = await authFetch(`${API_BASE_URL}/api/dues/?tenant=${tenantId}&status=${quickFilter==="paid"? quickFilter : "!paid"}`)
+        const res = await authFetch(`${API_BASE_URL}/api/dues/?tenant=${tenantId}&status=${quickFilter === "paid" ? quickFilter : "!paid"}`)
         if (!res.ok) {
             throw new Error("Failed to fetch dues");
         }
@@ -100,6 +107,7 @@ function TenantWiseDues() {
                             <th>Due ID</th>
                             <th>Due Type</th>
                             <th>Due Amount (&#8377;)</th>
+                            <th>Due Status</th>
                             <th>Due Date</th>
                             {/* <th>Rent (&#8377;)</th> */}
                             {/* <th>Actions</th> */}
@@ -110,7 +118,7 @@ function TenantWiseDues() {
                     <tbody>
 
                         {tenantDues.length === 0 ? (<tr>
-                            <td colSpan="4" className="no-dues-message">
+                            <td colSpan="5" className="no-dues-message">
                                 No Dues Available
                             </td>
                         </tr>) : (
@@ -119,6 +127,7 @@ function TenantWiseDues() {
                                     <td><b>{due.id}</b></td>
                                     <td>{dueTypeLabels[due.due_type] ?? due.due_type}</td>
                                     <td>&#8377; {due.due_amount}</td>
+                                    <td><span className={`status-chip ${due.status}`}>{dueStatusLabels[due.status] ?? due.status}</span></td>
                                     <td>
                                         {due.due_date}
                                     </td>

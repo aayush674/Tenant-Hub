@@ -7,6 +7,13 @@ import "../../styles/common_styles/navigator.css";
 import GenerateRentDues from "./generateRentDues";
 import { API_BASE_URL } from "../../config";
 
+const dueStatusLabels = {
+    pending: "Pending",
+    partial: "Partially Paid",
+    paid: "Paid",
+    overdue: "Overdue",
+};
+
 function Dues() {
     const navigate = useNavigate();
     const [pgData, setPgData] = useState(null);
@@ -74,16 +81,6 @@ function Dues() {
                     />
                 )}
 
-                {/* {showEditModal && (
-                    <EditRoomModal
-                        room={editRoomData}
-                        onUpdate={(updatedRoom) => {
-                            updateRoom(updatedRoom);
-                            setShowEditModal(false);
-                        }}
-                        onClose={() => setShowEditModal(false)}
-                    />
-                )} */}
                 {showGenerateRent && (
                     <GenerateRentDues 
                         pgId= {pgId}
@@ -104,6 +101,7 @@ function Dues() {
                             <th>Tenant Name</th>
                             <th>Due Type</th>
                             <th>Due Amount (&#8377;)</th>
+                            <th>Due Status</th>
                             <th>Due Date</th>
                             {/* <th>Rent (&#8377;)</th> */}
                             {/* <th>Actions</th> */}
@@ -124,6 +122,7 @@ function Dues() {
                                     <td>{due.tenant_name}</td>
                                     <td>{due.due_type === "rent" ? "Rent" : due.due_type === "electricity" ? "Electricity" : due.due_type === "security" ? "Security" : ""}</td>
                                     <td>&#8377; {due.due_amount}</td>
+                                    <td>{dueStatusLabels[due.status] ?? due.status}</td>
                                     <td>
                                         {due.due_date}
                                     </td>
