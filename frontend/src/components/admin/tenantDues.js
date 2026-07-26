@@ -5,6 +5,14 @@ import { API_BASE_URL } from "../../config";
 import { useParams } from "react-router-dom";
 
 import "../../styles/common_styles/navigator.css";
+import "../../styles/tenantDues.css";
+
+const dueTypeLabels = {
+        rent: "Rent",
+        electricity: "Electricity",
+        security: "Security",
+        maintenance: "Maintenance",
+    };
 
 function TenantWiseDues() {
 
@@ -12,13 +20,8 @@ function TenantWiseDues() {
     const { pgId, tenantId } = useParams();
     const [pgData, setPgData] = useState();
     const [tenantDues, setTenantDues] = useState([]);
-    const [tenantData, setTenantData] = useState({});
-
-    const fetchTenantDues = useCallback(async () => {
-        const res = await authFetch(`${API_BASE_URL}/api/dues/?tenant=${tenantId}`)
-        const data = await res.json();
-        setTenantDues(data.results || data);
-    }, [tenantId]);
+    const [tenantData, setTenantData] = useState(null);
+    const [quickFilter, setQuickFilter] = useState("pending");
 
     const fetchPg = useCallback(async () => {
         const res = await authFetch(`${API_BASE_URL}/api/pgs/${pgId}/`);
@@ -38,11 +41,24 @@ function TenantWiseDues() {
         setTenantData(data);
     }, [tenantId]);
 
+    const updateDueList = useCallback(async () => {
+        const res = await authFetch(`${API_BASE_URL}/api/dues/?tenant=${tenantId}&status=${quickFilter==="paid"? quickFilter : "!paid"}`)
+        if (!res.ok) {
+            throw new Error("Failed to fetch dues");
+        }
+        const data = await res.json();
+        setTenantDues(data.results || data);
+    }, [tenantId, quickFilter])
+
     useEffect(() => {
         fetchPg();
         fetchCurrentTenant();
-        fetchTenantDues();
-    }, [fetchPg, fetchCurrentTenant, fetchTenantDues]);
+    }, [fetchPg, fetchCurrentTenant]);
+
+    useEffect(() => {
+        updateDueList();
+    }, [updateDueList]);
+
     return (
         <div className="tenant-dues-container">
             <div className="nav-path">
@@ -61,6 +77,56 @@ function TenantWiseDues() {
             </div>
             <div className="tenant-dues-header">
                 <h1>Tenant {tenantData && tenantData.first_name + " " + tenantData.last_name + " - Dues"}</h1>
+            </div>
+            <div className="quick-filter">
+                <button
+                    className={quickFilter === "pending" ? "active" : ""}
+                    onClick={() => {
+                        setQuickFilter("pending");
+                    }}
+                >Due</button>
+                <button
+                    className={quickFilter === "paid" ? "active" : ""}
+                    onClick={() => {
+                        setQuickFilter("paid");
+                    }}
+                >Paid</button>
+            </div>
+            <div className="due-list-table">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Due ID</th>
+                            <th>Due Type</th>
+                            <th>Due Amount (&#8377;)</th>
+                            <th>Due Date</th>
+                            {/* <th>Rent (&#8377;)</th> */}
+                            {/* <th>Actions</th> */}
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {tenantDues.length === 0 ? (<tr>
+                            <td colSpan="4" className="no-dues-message">
+                                No Dues Available
+                            </td>
+                        </tr>) : (
+                            tenantDues.map(due => (
+                                <tr key={due.id}>
+                                    <td><b>{due.id}</b></td>
+                                    <td>{dueTypeLabels[due.due_type] ?? due.due_type}</td>
+                                    <td>&#8377; {due.due_amount}</td>
+                                    <td>
+                                        {due.due_date}
+                                    </td>
+                                </tr>
+                            )))}
+                    </tbody>
+                </table>
+
             </div>
         </div>
     )

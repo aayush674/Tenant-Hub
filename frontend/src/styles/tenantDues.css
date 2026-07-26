@@ -1,0 +1,21 @@
+
+.quick-filter{
+    display: flex;
+    gap: 10px;
+    margin: 10px 0px;
+}
+
+.quick-filter button{
+    min-width: 110px;
+    padding: 10px 0px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    border: 1px solid #987b23;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.quick-filter button.active{
+    background-color: #987b23;
+    color: #ffffff;
+}
