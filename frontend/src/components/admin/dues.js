@@ -7,6 +7,13 @@ import "../../styles/common_styles/navigator.css";
 import GenerateRentDues from "./generateRentDues";
 import { API_BASE_URL } from "../../config";
 
+const dueTypeLabels = {
+    rent: "Rent",
+    electricity: "Electricity",
+    security: "Security",
+    maintenance: "Maintenance",
+};
+
 const dueStatusLabels = {
     pending: "Pending",
     partial: "Partially Paid",
@@ -120,9 +127,9 @@ function Dues() {
                                 <tr key={due.id}>
                                     <td><b>{due.id}</b></td>
                                     <td>{due.tenant_name}</td>
-                                    <td>{due.due_type === "rent" ? "Rent" : due.due_type === "electricity" ? "Electricity" : due.due_type === "security" ? "Security" : ""}</td>
+                                    <td>{dueTypeLabels[due.due_type] ?? due.due_type}</td>
                                     <td>&#8377; {due.due_amount}</td>
-                                    <td>{dueStatusLabels[due.status] ?? due.status}</td>
+                                    <td><span className={`status-chip ${due.status}`}>{dueStatusLabels[due.status] ?? due.status}</span></td>
                                     <td>
                                         {due.due_date}
                                     </td>

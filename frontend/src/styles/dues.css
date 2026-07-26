@@ -176,3 +176,25 @@ tbody tr:hover {
 .tenant-column{
     width: 200px;
 }
+
+.status-chip{
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-chip.partial{
+    background-color: #f9ffd4;
+    color: #979122;
+}
+
+.status-chip.paid{
+    background-color: #c7ffdc;
+    color: #148f12;
+}
+
+.status-chip.pending{
+    background-color: #e8f0fe;
+    color: #1a73e8;
+}
