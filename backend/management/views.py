@@ -199,7 +199,9 @@ class DuesViewSet(viewsets.ModelViewSet):
         if tenant:
             queryset=queryset.filter(tenant_id=tenant)
         
-        if status:
+        if status == "!paid":
+            queryset=queryset.exclude(status="paid")
+        elif status:
             queryset=queryset.filter(status=status)
             
         if exclude_status:

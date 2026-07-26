@@ -7,6 +7,20 @@ import "../../styles/common_styles/navigator.css";
 import GenerateRentDues from "./generateRentDues";
 import { API_BASE_URL } from "../../config";
 
+const dueTypeLabels = {
+    rent: "Rent",
+    electricity: "Electricity",
+    security: "Security",
+    maintenance: "Maintenance",
+};
+
+const dueStatusLabels = {
+    pending: "Pending",
+    partial: "Partially Paid",
+    paid: "Paid",
+    overdue: "Overdue",
+};
+
 function Dues() {
     const navigate = useNavigate();
     const [pgData, setPgData] = useState(null);
@@ -74,16 +88,6 @@ function Dues() {
                     />
                 )}
 
-                {/* {showEditModal && (
-                    <EditRoomModal
-                        room={editRoomData}
-                        onUpdate={(updatedRoom) => {
-                            updateRoom(updatedRoom);
-                            setShowEditModal(false);
-                        }}
-                        onClose={() => setShowEditModal(false)}
-                    />
-                )} */}
                 {showGenerateRent && (
                     <GenerateRentDues 
                         pgId= {pgId}
@@ -104,6 +108,7 @@ function Dues() {
                             <th>Tenant Name</th>
                             <th>Due Type</th>
                             <th>Due Amount (&#8377;)</th>
+                            <th>Due Status</th>
                             <th>Due Date</th>
                             {/* <th>Rent (&#8377;)</th> */}
                             {/* <th>Actions</th> */}
@@ -122,8 +127,9 @@ function Dues() {
                                 <tr key={due.id}>
                                     <td><b>{due.id}</b></td>
                                     <td>{due.tenant_name}</td>
-                                    <td>{due.due_type === "rent" ? "Rent" : due.due_type === "electricity" ? "Electricity" : due.due_type === "security" ? "Security" : ""}</td>
+                                    <td>{dueTypeLabels[due.due_type] ?? due.due_type}</td>
                                     <td>&#8377; {due.due_amount}</td>
+                                    <td><span className={`status-chip ${due.status}`}>{dueStatusLabels[due.status] ?? due.status}</span></td>
                                     <td>
                                         {due.due_date}
                                     </td>
