@@ -15,7 +15,7 @@ import RoomTypes from "./components/admin/roomTypes";
 import TenantList from "./components/admin/tenantList";
 import TenantPageLayout from "./components/admin/tenantPageLayout";
 import TenantDetails from "./components/admin/tenantDetails";
-import TenantWiseDues from "./components/admin/tenantDues";
+import TenantWiseDues from "./components/admin/tenantWiseDues";
 import PGDetails from "./components/admin/pgDetails";
 import PGLayout from "./components/admin/pgLayout";
 import Dues from "./components/admin/dues";
