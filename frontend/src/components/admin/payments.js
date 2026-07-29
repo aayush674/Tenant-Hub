@@ -29,6 +29,10 @@ function Payments(){
         setPayments(data.results || data);
     }, [pgId]);
 
+    const sortedPayments = [...payments].sort((a, b) => {
+            return Number(b.id) - Number(a.id);
+    });
+
     useEffect(() => {
         fetchPg();
         fetchPayments();
@@ -96,12 +100,12 @@ function Payments(){
 
                     <tbody>
 
-                        {payments.length === 0 ? (<tr>
+                        {sortedPayments.length === 0 ? (<tr>
                             <td colSpan="5" className="no-dues-message">
                                 No Dues applied
                             </td>
                         </tr>) : (
-                            payments.map(payment => (
+                            sortedPayments.map(payment => (
                                 <tr key={payment.id}>
                                     <td><b>{payment.id}</b></td>
                                     <td>{payment.tenant_name}</td>

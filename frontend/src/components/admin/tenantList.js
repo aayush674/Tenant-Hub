@@ -56,6 +56,10 @@ function TenantList(){
             .catch((error) => console.error("Error deleting Tenant:", error));
     }
 
+    const sortedTenants = [...tenants].sort((a, b) => {
+            return new Date(b.join_date) - new Date(a.join_date);
+    });
+
     useEffect(() => {
         fetchPg();
         fetchTenants();
@@ -130,7 +134,7 @@ function TenantList(){
                 No Tenants Available
             </td>
         </tr>):(
-                    tenants.map(tenant => (
+                    sortedTenants.map(tenant => (
                         <tr key={tenant.id}>
                             <td><b>{tenant.first_name + " " + tenant.last_name}</b></td>
                             <td>{tenant.room_number}</td>
