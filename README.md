@@ -1,71 +1,6 @@
 # Tenant Hub
 
-A full-stack PG (Paying Guest) Management System called Tenant Hub built to manage properties, rooms, tenants, maintenance requests, and payments through a centralized dashboard.
-
-This project is being developed with a scalable architecture using:
-
-* Frontend: React
-* Backend: Django + Django REST Framework
-* Database: SQLite (development)
-* Authentication: Role-based access system
-
----
-
-# Features
-
-## Authentication & User Roles
-
-* Login system
-* Role-based access control
-* Global roles:
-
-  * Owner
-  * Manager
-  * Tenant
-* Protected APIs using permissions
-
----
-
-## Property Management
-
-* Create and manage PG properties
-* Store property details
-* Assign managers to properties
-* View property-wise data
-
----
-
-## Room Management
-
-* Add rooms
-* Manage room types
-* Room occupancy tracking
-* Room availability status
-
----
-
-## Tenant Management
-
-* Add tenants
-* Assign tenants to rooms
-* Maintain tenant records
-* Track tenant status
-
----
-
-## Maintenance Management
-
-* Raise maintenance requests
-* Track request status
-* Update maintenance progress
-
----
-
-## Payment Management
-
-* Record tenant payments
-* Track payment history
-* Payment status management
+A full-stack **PG (Paying Guest) and Tenant Management System** built to streamline property operations through a centralized dashboard. Tenant Hub enables property owners and managers to efficiently manage properties, rooms, tenants, rent dues, payments, maintenance requests, and user access with a scalable architecture.
 
 ---
 
@@ -73,36 +8,177 @@ This project is being developed with a scalable architecture using:
 
 ## Frontend
 
-* React
-* React Router
-* Axios
-* CSS
+- React
+- React Router
+- Axios
+- CSS
 
 ## Backend
 
-* Django
-* Django REST Framework
-* SQLite
+- Django
+- Django REST Framework
+- JWT Authentication (Simple JWT)
+
+## Database
+
+- PostgreSQL (Production)
+- SQLite (Development)
+
+## Deployment
+
+- **Frontend:** Vercel
+- **Backend:** Render
+
+---
+
+# Features
+
+## Authentication & User Management
+
+- JWT-based Authentication
+- Secure Login System
+- Email-based User Accounts
+- Role-Based Access Control
+- Protected API Endpoints
+- Invitation-based Tenant Account Creation
+- Email Verification & Account Activation
+- Token-based Account Activation Links
+
+### User Roles
+
+- Owner
+- Manager
+- Tenant
+
+---
+
+## Property Management
+
+- Create and manage multiple properties
+- Store complete property information
+- Assign managers to properties
+- Property-wise statistics
+- Property dashboard overview
+
+---
+
+## Room Management
+
+- Add and update rooms
+- Room Type management
+- Room occupancy tracking
+- Room availability status
+- Capacity management
+- Room-wise tenant listing
+
+---
+
+## Tenant Management
+
+- Add tenants
+- Assign tenants to rooms
+- Automatic user account creation for tenants
+- Tenant profile management
+- Tenant status tracking
+- Tenant dashboard
+
+---
+
+## Rent & Dues Management
+
+- Generate rent dues
+- Manual due creation
+- Multiple due types:
+  - Rent
+  - Electricity
+  - Maintenance
+  - Other
+- Due status tracking:
+  - Pending
+  - Partially Paid
+  - Paid
+- Automatic overdue detection
+- Due history
+
+---
+
+## Payment Management
+
+- Record tenant payments
+- Partial payment support
+- Automatic due updates after payment
+- Payment history
+- Payment status tracking
+
+---
+
+## Maintenance Management
+
+- Raise maintenance requests
+- Track maintenance status
+- Update request progress
+- Property-wise maintenance management
+
+---
+
+## Dashboard & UI
+
+- Responsive interface
+- Search functionality
+- Filtering
+- Pagination
+- Loading states
+- Snackbar notifications
+- Protected routes
+- Role-based navigation
+
+---
+
+# Security Features
+
+- JWT Authentication
+- Protected APIs
+- Role-based permissions
+- Property-level authorization
+- Invitation token expiration
+- Email verification before account activation
 
 ---
 
 # Project Structure
 
-```bash
+```text
 project-root/
 │
 ├── backend/
-│   ├── management/
 │   ├── accounts/
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── views.py
+│   │   ├── permissions.py
+│   │   └── urls.py
+│   │
+│   ├── management/
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── views.py
+│   │   ├── permissions.py
+│   │   └── urls.py
+│   │
 │   ├── backend/
 │   ├── manage.py
 │   └── requirements.txt
 │
 ├── frontend/
-│   ├── src/
 │   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── layouts/
+│   │   ├── services/
+│   │   └── utils/
 │   ├── package.json
-│   └── node_modules/
+│   └── .env
 │
 └── README.md
 ```
@@ -114,11 +190,9 @@ project-root/
 ## 1. Clone Repository
 
 ```bash
-git clone <your-repository-url>
+git clone <repository-url>
 cd <repository-folder>
 ```
-
----
 
 ## 2. Create Virtual Environment
 
@@ -129,14 +203,12 @@ python -m venv venv
 venv\Scripts\activate
 ```
 
-### Mac/Linux
+### Linux / macOS
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
-
----
 
 ## 3. Install Dependencies
 
@@ -144,26 +216,40 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
----
+## 4. Configure Environment Variables
 
-## 4. Run Migrations
+Create a `.env` file inside the **backend** folder.
+
+Example:
+
+```env
+SECRET_KEY=your-secret-key
+DEBUG=True
+
+DATABASE_URL=sqlite:///db.sqlite3
+
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+
+FRONTEND_URL=http://localhost:3000
+```
+
+## 5. Run Migrations
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
----
-
-## 5. Start Backend Server
+## 6. Start Backend Server
 
 ```bash
 python manage.py runserver
 ```
 
-Backend will run on:
+Backend will run at:
 
-```bash
+```
 http://127.0.0.1:8000/
 ```
 
@@ -171,123 +257,127 @@ http://127.0.0.1:8000/
 
 # Frontend Setup
 
-## 1. Move to Frontend Folder
-
 ```bash
 cd frontend
-```
-
----
-
-## 2. Install Dependencies
-
-```bash
 npm install
-```
-
----
-
-## 3. Start Frontend
-
-```bash
 npm start
 ```
 
-Frontend will run on:
+Frontend will run at:
 
-```bash
+```
 http://localhost:3000/
 ```
 
----
+Example `.env.development`
 
-# API Development
-
-The backend is developed using Django REST Framework.
-
-Key API modules include:
-
-* Authentication APIs
-* Property APIs
-* Room APIs
-* Tenant APIs
-* Maintenance APIs
-* Payment APIs
-
----
-
-# Current Development Focus
-
-* Scalable authentication architecture
-* Permission handling
-* Frontend validation
-* Error handling
-* Modular backend structure
-* Automation-ready testing workflow
-
----
-
-# Git Workflow
-
-Recommended workflow:
-
-```bash
-# Create branch
-git checkout -b feature-name
-
-# Commit changes
-git add .
-git commit -m "Your message"
-
-# Push branch
-git push origin feature-name
+```env
+REACT_APP_API_BASE_URL=http://127.0.0.1:8000
 ```
 
-After review:
+Example `.env.production`
 
-```bash
-git checkout main
-git pull origin main
+```env
+REACT_APP_API_BASE_URL=https://your-backend-url.onrender.com
 ```
 
 ---
 
-# Future Enhancements
+# REST APIs
 
-* JWT Authentication
-* Notifications system
-* Analytics dashboard
-* Rent reminders
-* Advanced reporting
-* File uploads
-* Automation testing integration
-* Deployment setup
+The backend provides REST APIs for:
+
+- Authentication
+- Account Activation
+- Properties
+- Rooms
+- Room Types
+- Tenants
+- Rent Dues
+- Payments
+- Maintenance Requests
+- User Profile
 
 ---
 
-# Learning Goals Behind Project
+# Current Development Status
 
-This project is also being used to improve practical knowledge of:
+## ✅ Completed
 
-* Full-stack development
-* Django architecture
-* REST APIs
-* Authentication systems
-* Role-based authorization
-* React state management
-* QA and testing workflows
-* Scalable project structure
+- JWT Authentication
+- Role-Based Authorization
+- Invitation-Based Tenant Accounts
+- Email Verification
+- Property Management
+- Room Management
+- Tenant Management
+- Rent Due Management
+- Payment Module
+- Maintenance Module
+- Responsive React UI
+- Pagination
+- Search & Filtering
+- Protected Routes
+- Backend Deployment (Render)
+- Frontend Deployment (Vercel)
+
+---
+
+## 🚧 In Progress
+
+- Analytics Dashboard
+- Notifications
+- Reports & Export
+- Dashboard Metrics
+- UI/UX Improvements
+- Automated Testing
+
+---
+
+# Future Roadmap
+
+- Email Notifications
+- Rent Reminder Automation
+- File Uploads
+- Payment Receipt Generation
+- Reports (PDF / Excel)
+- Occupancy Analytics
+- Revenue Dashboard
+- Audit Logs
+- Mobile Responsiveness Improvements
+- Selenium & Playwright Automation Suite
+
+---
+
+# Learning Objectives
+
+This project is built to strengthen practical experience in:
+
+- Full-Stack Development
+- React
+- Django REST Framework
+- REST API Design
+- JWT Authentication
+- Scalable Backend Architecture
+- Role-Based Authorization
+- PostgreSQL
+- Deployment
+- Software Testing
+- Test Automation
 
 ---
 
 # Author
 
-Aayush Khanna
+**Aayush Khanna**
 
 Software Quality Analyst
+
+- GitHub: *Add your GitHub profile*
+- LinkedIn: *Add your LinkedIn profile*
 
 ---
 
 # License
 
-This project is for learning and development purposes.
+This project is developed for learning, portfolio, and demonstration purposes.
