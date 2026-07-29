@@ -57,6 +57,10 @@ function TenantWiseDues() {
         setTenantDues(data.results || data);
     }, [tenantId, quickFilter])
 
+    const sortedDues = [...tenantDues].sort((a, b) => {
+            return Number(b.id) - Number(a.id);
+    });
+
     useEffect(() => {
         fetchPg();
         fetchCurrentTenant();
@@ -117,12 +121,12 @@ function TenantWiseDues() {
 
                     <tbody>
 
-                        {tenantDues.length === 0 ? (<tr>
+                        {sortedDues.length === 0 ? (<tr>
                             <td colSpan="5" className="no-dues-message">
                                 No Dues Available
                             </td>
                         </tr>) : (
-                            tenantDues.map(due => (
+                            sortedDues.map(due => (
                                 <tr key={due.id}>
                                     <td><b>{due.id}</b></td>
                                     <td>{dueTypeLabels[due.due_type] ?? due.due_type}</td>

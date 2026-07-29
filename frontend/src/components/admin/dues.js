@@ -44,6 +44,10 @@ function Dues() {
         setDues(data.results || data);
     }, [pgId]);
 
+    const sortedDues = [...dues].sort((a, b) => {
+            return Number(b.id) - Number(a.id);
+    });
+
     useEffect(() => {
         fetchPg();
         fetchDues();
@@ -118,12 +122,12 @@ function Dues() {
 
                     <tbody>
 
-                        {dues.length === 0 ? (<tr>
+                        {sortedDues.length === 0 ? (<tr>
                             <td colSpan="5" className="no-dues-message">
                                 No Dues applied
                             </td>
                         </tr>) : (
-                            dues.map(due => (
+                            sortedDues.map(due => (
                                 <tr key={due.id}>
                                     <td><b>{due.id}</b></td>
                                     <td>{due.tenant_name}</td>

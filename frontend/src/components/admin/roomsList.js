@@ -170,6 +170,10 @@ function RoomsList() {
         return roomTenants;
     }
 
+    const sortedRooms = [...rooms].sort((a, b) => {
+        return Number(a.room_number) - Number(b.room_number);
+    });
+
     useEffect(() => {
         fetchRooms();
     }, [pgId, searchParams, fetchRooms]);
@@ -281,12 +285,12 @@ function RoomsList() {
 
                 <tbody>
 
-                    {rooms.length === 0 ? (<tr>
+                    {sortedRooms.length === 0 ? (<tr>
                         <td colSpan="7" className="no-rooms-message">
                             No Rooms Available
                         </td>
                     </tr>) : (
-                        rooms.map(room => (
+                        sortedRooms.map(room => (
                             <tr key={room.id}>
                                 <td><b>{room.room_number}</b></td>
                                 <td>{room.room_floor !== 0 ? room.room_floor : "Unspecified"}</td>
