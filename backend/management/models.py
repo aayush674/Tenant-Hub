@@ -55,6 +55,14 @@ class Room(models.Model):
     def __str__(self):
         return f"{self.pg_property.name} - Room {self.room_number}"
     
+    @property
+    def available_beds(self):
+        return self.capacity - self.occupied
+    
+    @property
+    def is_available(self):
+        return self.available_beds > 0
+    
 class Tenant(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,

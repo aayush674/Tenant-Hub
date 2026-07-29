@@ -26,6 +26,9 @@ class RoomTypeSerializer(serializers.ModelSerializer):
         fields='__all__'
 
 class RoomSerializer(serializers.ModelSerializer):
+    occupied = serializers.IntegerField(read_only=True)
+    available_beds = serializers.ReadOnlyField()
+    is_available = serializers.ReadOnlyField()
     class Meta:
         model = Room
         fields = '__all__'
