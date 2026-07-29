@@ -29,6 +29,13 @@ function TenantForm({
 }) {
     const countries = Country.getAllCountries();
 
+    const sortedRooms = [...rooms].sort((a, b) => {
+        if (a.is_available === b.is_available) {
+            return Number(a.room_number) - Number(b.room_number);
+        }
+        return a.is_available ? -1 : 1;
+    });
+
     return (
         <>
             <div>First Name</div>
@@ -69,8 +76,11 @@ function TenantForm({
                 onChange={(e) => setTenantRoom(e.target.value ? Number(e.target.value) : "")}
                 className="custom-select">
                 <option value="">Select Room</option>
-                {rooms.map(room => (
-                    <option key={room.id} value={room.id}>{room.room_number}</option>
+                {sortedRooms.map(room => (
+                    <option key={room.id} value={room.id} disabled={!room.is_available}>Room {room.room_number} {room.is_available
+                    ? `(${room.available_beds}/${room.capacity} Available)`
+                    : " - Occupied"
+                    }</option>
                 ))}
             </select>
             <div className="error-container">
@@ -106,29 +116,29 @@ function TenantForm({
 
             <div>Tenant Phone Number</div>
             <div className="phone-number-block">
-            <select
-                value={phoneCode}
-                onChange={e => {
-                    setTenantPhone(`${e.target.value}-${phoneNumber}`);
-                }}
-            >
-                {countries.map(country => (
-                    <option key={country.isoCode} value={country.phonecode}>+{country.phonecode}({country.name})</option>
-                ))}
-            </select>
-            <input
-                placeholder="Enter Tenant Phone Number"
-                value={phoneNumber}
-                onChange={e => {
-                    setTenantPhone(`${phoneCode}-${e.target.value}`);
-                    if (error?.phone) {
-                        const newError = { ...error };
-                        delete newError.phone;
-                        setError(newError);
+                <select
+                    value={phoneCode}
+                    onChange={e => {
+                        setTenantPhone(`${e.target.value}-${phoneNumber}`);
+                    }}
+                >
+                    {countries.map(country => (
+                        <option key={country.isoCode} value={country.phonecode}>+{country.phonecode}({country.name})</option>
+                    ))}
+                </select>
+                <input
+                    placeholder="Enter Tenant Phone Number"
+                    value={phoneNumber}
+                    onChange={e => {
+                        setTenantPhone(`${phoneCode}-${e.target.value}`);
+                        if (error?.phone) {
+                            const newError = { ...error };
+                            delete newError.phone;
+                            setError(newError);
+                        }
                     }
-                }
-                }
-            />
+                    }
+                />
             </div>
             <div className="error-container">
                 {error?.phone_number}

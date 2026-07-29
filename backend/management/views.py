@@ -67,7 +67,12 @@ class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomSerializer
     
     def get_queryset(self):
-        queryset=Room.objects.all()
+        queryset = Room.objects.annotate(
+            occupied=Count(
+                "tenants",
+                filter = Q(tenants__is_active = True)
+                )
+        )
         pg_property=self.request.query_params.get("pg_property") # type: ignore
         max_price=self.request.query_params.get("max_price")
         min_price=self.request.query_params.get("min_price")
