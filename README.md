@@ -373,8 +373,8 @@ This project is built to strengthen practical experience in:
 
 Software Quality Analyst
 
-- GitHub: *Add your GitHub profile*
-- LinkedIn: *Add your LinkedIn profile*
+- GitHub: *https://github.com/aayush674/*
+- LinkedIn: *https://www.linkedin.com/in/aayush-02z01/*
 
 ---
 
