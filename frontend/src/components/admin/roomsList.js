@@ -12,6 +12,7 @@ import ConfirmModal from "../common/confirmationModal";
 import { FaPen, FaTrash } from "react-icons/fa";
 import FilterIcon from "../../assets/filter-svgrepo.svg"
 import { API_BASE_URL } from "../../config";
+import TableComponent from "../common/tableComponent";
 
 
 function RoomsList() {
@@ -187,36 +188,106 @@ function RoomsList() {
         fetchFloorCounts();
     }, [pgId, fetchFloorCounts]);
 
-    return (
-        <div className="room-list-container">
-            <div className="nav-path">
-                <span onClick={() => navigate("/")} className="navigator">Home</span>
-                <span className="seperator"> / </span>
-                <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>
-                <span className="seperator"> / </span>
-                {pgData && <span>{pgData.name}</span>}
-                <span className="seperator"> / </span>
-                <span>Rooms</span>
+    const columns = [
+      {
+        header: "Room",
+        render: (room) => <b>{room.room_number}</b>,
+      },
+      {
+        header: "Floor",
+        render: (room) =>
+          room.room_floor !== 0 ? room.room_floor : "Unspecified",
+      },
+      {
+        header: "Capacity",
+        render: (room) => (
+          <span
+            className={`occupancy-chip ${
+              room.capacity === 1 ? "single" : "double"
+            }`}
+          >
+            {room.capacity === 1 ? "👤 Single" : "👥 Double"}
+          </span>
+        ),
+      },
+      {
+        header: "Tenants",
+        render: (room) => {
+          const tenants = getRoomTenants(room);
 
+          return (
+            <div className="tenant-column">
+              {tenants.length === 0 ? "-" : tenants.join(", ")}
             </div>
-            <div className="room-list-header">
-                <h1>{pgData && pgData.name} - Rooms</h1>
-                <button className="add-room-btn" onClick={() => setShowAddRoom(true)}><b>+ Add Room</b></button>
-                {showAddRoom && (
-                    <AddRoomModal
-                        pgId={pgId}
-                        onAdd={
-                            (room) => {
-                                setShowAddRoom(false);
-                                fetchRooms();
-                                fetchFloorCounts();
-                            }
-                        }
-                        onClose={() => setShowAddRoom(false)}
-                    />
-                )}
+          );
+        },
+      },
+      {
+        header: "Balcony",
+        render: (room) => (room.is_balcony_room ? "Yes" : "No"),
+      },
+      {
+        header: "Rent (\u20B9)",
+        render: (room) => `\u20B9 ${room.rent}`,
+      },
+      {
+        header: "Actions",
+        render: (room) => (
+          <div className="action-column">
+            <button
+              className="delete-room-button"
+              onClick={() => {
+                setShowDeleteConfirmModal(true);
+                setRoomToDelete(room.id);
+              }}
+            >
+              <FaTrash /> Delete
+            </button>
 
-                {/* {showEditModal && (
+            <button
+              className="edit-room-button"
+              onClick={() => navigate(`/pg/${pgId}/rooms/${room.id}`)}
+            >
+              <FaPen /> Manage
+            </button>
+          </div>
+        ),
+      },
+    ];
+
+    return (
+      <div className="room-list-container">
+        <div className="nav-path">
+          <span onClick={() => navigate("/")} className="navigator">
+            Home
+          </span>
+          <span className="seperator"> / </span>
+          <span onClick={() => navigate("/pg-list")} className="navigator">
+            PG List
+          </span>
+          <span className="seperator"> / </span>
+          {pgData && <span>{pgData.name}</span>}
+          <span className="seperator"> / </span>
+          <span>Rooms</span>
+        </div>
+        <div className="room-list-header">
+          <h1>{pgData && pgData.name} - Rooms</h1>
+          <button className="add-room-btn" onClick={() => setShowAddRoom(true)}>
+            <b>+ Add Room</b>
+          </button>
+          {showAddRoom && (
+            <AddRoomModal
+              pgId={pgId}
+              onAdd={(room) => {
+                setShowAddRoom(false);
+                fetchRooms();
+                fetchFloorCounts();
+              }}
+              onClose={() => setShowAddRoom(false)}
+            />
+          )}
+
+          {/* {showEditModal && (
                     <EditRoomModal
                         room={editRoomData}
                         onUpdate={(updatedRoom) => {
@@ -226,110 +297,70 @@ function RoomsList() {
                         onClose={() => setShowEditModal(false)}
                     />
                 )} */}
-
-            </div>
-            <div>
-                <button className="filter-button"
-                    onClick={() => {
-                        setDraftFilters(filters);
-                        setShowFilterModal(true);
-                    }}>
-                    <img src={FilterIcon} alt="Filter" className="filter-icon" />
-                    Filters</button>
-                <RoomListFilterModal
-                    isOpen={showFilterModal}
-                    onClose={() => setShowFilterModal(false)}
-                    filters={draftFilters}
-                    setFilters={setDraftFilters}
-                    onApply={handleApplyFilters}
-                    onReset={handleResetFilters}
-                />
-            </div>
-
-            <div className="floor-navigation-box">
-                <button
-                    className={selectedFloorstate === "" ? "active-floor" : ""}
-                    onClick={() => {
-                        const params = Object.fromEntries(searchParams);
-                        delete params.room_floor;
-                        setSearchParams(params);
-                    }}>All ({pgData?.room_count})</button>
-                {Array.from({ length: pgData?.total_floors + 1 }, (_, i) => i).map((floor) => (
-                    <button key={floor}
-                        className={selectedFloorstate === floor ? "active-floor" : ""}
-                        onClick={() => {
-                            setSearchParams({
-                                ...Object.fromEntries(searchParams),
-                                room_floor: floor
-                            });
-                        }}>
-                        {getFloorLabel(floor)} ({floorCounts[floor] || 0})
-                    </button>
-                ))}
-            </div>
-
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Room</th>
-                        <th>Floor</th>
-                        <th>Capacity</th>
-                        <th>Tenants</th>
-                        <th>Balcony Room</th>
-                        <th>Rent (&#8377;)</th>
-                        <th>Actions</th>
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    {sortedRooms.length === 0 ? (<tr>
-                        <td colSpan="7" className="no-rooms-message">
-                            No Rooms Available
-                        </td>
-                    </tr>) : (
-                        sortedRooms.map(room => (
-                            <tr key={room.id}>
-                                <td><b>{room.room_number}</b></td>
-                                <td>{room.room_floor !== 0 ? room.room_floor : "Unspecified"}</td>
-                                <td><span className={`occupancy-chip ${room.capacity === 1 ? "single" : "double"}`}>{room.capacity === 1 ? "👤Single" : "👥Double"}</span></td>
-                                <td className="tenant-column">
-                                    {getRoomTenants(room).length === 0 ? <p>-</p> :
-                                        (getRoomTenants(room).join(", "))}
-                                </td>
-                                <td>{room.is_balcony_room === true ? "Yes" : "No"}</td>
-                                <td>&#8377; {room.rent}</td>
-                                <td>
-                                    <div className="action-column">
-                                        <button className="delete-room-button"
-                                            onClick={() => {
-                                                setShowDeleteConfirmModal(true)
-                                                setRoomToDelete(room.id)
-                                            }}
-                                        ><FaTrash /> Delete</button>
-
-                                        <button className="edit-room-button"
-                                            onClick={() => {
-                                                navigate(`/pg/${pgId}/rooms/${room.id}`);
-                                            }}
-                                        ><FaPen /> Manage</button>
-                                    </div>
-                                    <ConfirmModal
-                                        show={showDeleteConfirmModal}
-                                        title="Delete Room"
-                                        message="Are you sure you want to delete this room? The action once done can not be reverted."
-                                        onConfirm={() => handleDeleteRoom(roomToDelete)}
-                                        onCancel={() => setShowDeleteConfirmModal(false)}
-                                    />
-                                </td>
-                            </tr>
-                        )))}
-                </tbody>
-            </table>
         </div>
-    )
+        <div>
+          <button
+            className="filter-button"
+            onClick={() => {
+              setDraftFilters(filters);
+              setShowFilterModal(true);
+            }}
+          >
+            <img src={FilterIcon} alt="Filter" className="filter-icon" />
+            Filters
+          </button>
+          <RoomListFilterModal
+            isOpen={showFilterModal}
+            onClose={() => setShowFilterModal(false)}
+            filters={draftFilters}
+            setFilters={setDraftFilters}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+          />
+        </div>
+
+        <div className="floor-navigation-box">
+          <button
+            className={selectedFloorstate === "" ? "active-floor" : ""}
+            onClick={() => {
+              const params = Object.fromEntries(searchParams);
+              delete params.room_floor;
+              setSearchParams(params);
+            }}
+          >
+            All ({pgData?.room_count})
+          </button>
+          {Array.from({ length: pgData?.total_floors + 1 }, (_, i) => i).map(
+            (floor) => (
+              <button
+                key={floor}
+                className={selectedFloorstate === floor ? "active-floor" : ""}
+                onClick={() => {
+                  setSearchParams({
+                    ...Object.fromEntries(searchParams),
+                    room_floor: floor,
+                  });
+                }}
+              >
+                {getFloorLabel(floor)} ({floorCounts[floor] || 0})
+              </button>
+            ),
+          )}
+        </div>
+        <TableComponent
+          columns={columns}
+          data={sortedRooms}
+          emptyMessage="No Rooms Available"
+        />
+        <ConfirmModal
+          show={showDeleteConfirmModal}
+          title="Delete Room"
+          message="Are you sure you want to delete this room? The action once done can not be reverted."
+          onConfirm={() => handleDeleteRoom(roomToDelete)}
+          onCancel={() => setShowDeleteConfirmModal(false)}
+        />
+      </div>
+    );
 }
 
 export default RoomsList;
