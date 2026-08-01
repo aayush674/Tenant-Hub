@@ -104,41 +104,6 @@
   border-color: #a5fca5;
 }
 
-.pg-list-container table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 2px solid #5b4914;
-}
-
-.pg-list-container thead {
-  background-color: #b79739;
-}
-
-.pg-list-container th {
-  text-align: left;
-  padding: 12px;
-  border-bottom: 2px solid #ddd;
-}
-
-.pg-list-container td {
-  padding: 12px;
-  border-bottom: 1px solid #987b23;
-}
-
-.pg-list-container tbody tr {
-  transition: background-color 0.15s ease;
-  cursor: pointer;
-}
-
-/* Normal hover */
-.pg-list-container tbody tr:hover td {
-  background-color: #ccb673;
-}
-
-.pg-list-container.dropdown-open tbody tr td {
-  background-color: white !important;
-}
-
 .pg-row-more-menu {
   position: relative;
 }

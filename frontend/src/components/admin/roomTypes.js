@@ -7,6 +7,7 @@ import "../../styles/common_styles/navigator.css";
 import AddRoomTypeModal from "./addRoomType";
 import { FaPen, FaTrash } from "react-icons/fa";
 import { API_BASE_URL } from "../../config";
+import TableComponent from "../common/tableComponent";
 
 
 function RoomTypes() {
@@ -39,6 +40,46 @@ function RoomTypes() {
         fetchPg();
         fetchRoomTypes();
     }, [pgId, fetchPg, fetchRoomTypes]);
+
+    const columns = [
+      {
+        header: "Template Name",
+        render: (roomType) => roomType.name,
+      },
+      {
+        header: "Capacity",
+        render: (roomType) => (
+          <span
+            className={`occupancy-chip ${roomType.capacity === 1 ? "single" : "double"}`}
+          >
+            {roomType.capacity === 1 ? "👤Single" : "👥Double"}
+          </span>
+        ),
+      },
+      {
+        header: "Balcony Room",
+        render: (roomType) =>
+          roomType.is_balcony_room === true ? "Yes" : "No",
+      },
+      {
+        header: "Rent",
+        render: (roomType) => roomType.rent,
+      },
+      {
+        header: "Actions",
+        render: (roomType) => (
+          <div className="action-column">
+            <button className="delete-room-type-button">
+              <FaTrash /> Delete
+            </button>
+
+            <button className="edit-room-type-button">
+              <FaPen /> Edit
+            </button>
+          </div>
+        ),
+      },
+    ];
 
     return (
         <div className="room-type-container">
@@ -95,41 +136,11 @@ function RoomTypes() {
             />
             </div> */}
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Capacity</th>
-                        <th>Balcony Room</th>
-                        <th>Rent</th>
-                        <th>Actions</th>
-                    </tr>
-
-                </thead>
-
-                <tbody>
-                    {roomTypes.map(roomType => (
-                        <tr key={roomType.id}>
-                            <td><b>{roomType.name}</b></td>
-                            <td><span className={`occupancy-chip ${roomType.capacity === 1 ? "single" : "double"}`}>{roomType.capacity === 1 ? "👤Single" : "👥Double"}</span></td>
-                            <td>{roomType.is_balcony_room === true ? "Yes" : "No"}</td>
-                            <td>{roomType.rent}</td>
-                            <td>
-                                <div className="action-column">
-                                    
-                                    <button className="delete-room-type-button"
-                                            
-                                        ><FaTrash /> Delete</button>
-
-                                        <button className="edit-room-type-button"
-                                            
-                                        ><FaPen /> Edit</button>
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <TableComponent
+                columns={columns}
+                data={roomTypes}
+                emptyMessage={"No Room Template Available"}
+            />
         </div>
     )
 }

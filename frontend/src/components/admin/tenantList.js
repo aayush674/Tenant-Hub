@@ -8,6 +8,8 @@ import "../../styles/common_styles/navigator.css";
 import { FaPen, FaTrash } from "react-icons/fa";
 import ConfirmModal from "../common/confirmationModal";
 import { API_BASE_URL } from "../../config";
+import TableComponent from "../common/tableComponent";
+import "../../styles/tableComponent.css"
 
 function TenantList(){
     const { pgId } = useParams()
@@ -51,7 +53,7 @@ function TenantList(){
             .then(() => {
                 setShowDeleteConfirmModal(false);
                 setTenantToDelete(null);
-                fetchTenants();                
+                fetchTenants();
             })
             .catch((error) => console.error("Error deleting Tenant:", error));
     }
@@ -66,111 +68,111 @@ function TenantList(){
         fetchPermissions();
     }, [pgId, fetchPermissions, fetchPg, fetchTenants]);
 
-    // const openEditTenant = (tenant) => {
-    //     setEditTenantData(tenant);
-    //     setShowEditTenant(true);
-    // }
+    const columns = [
+      {
+        header: "Tenant Name",
+        render: (tenant) => <b>{tenant.first_name + " " + tenant.last_name}</b>,
+      },
+      {
+        header: "Room Number",
+        render: (tenant) => tenant.room_number
+      },
+      {
+        header: "Email",
+        render: (tenant) => tenant.email
+      },
+      {
+        header: "Joining Date",
+        render: (tenant) => tenant.join_date
+      },
+      {
+        header: "Phone Number",
+        render: (tenant) => tenant.phone_country_code + "-" + tenant.phone_number
+      }
+    ];
+    if (permissions?.edit_tenants || permissions?.delete_tenants) {
+      columns.push({
+        header: "Actions",
+        render: (tenant) => (
+          <div className="action-column">
+            {permissions?.delete_tenants && (
+              <button
+                className="delete-tenant-button"
+                onClick={() => {
+                  setShowDeleteConfirmModal(true);
+                  setTenantToDelete(tenant.id);
+                }}
+              >
+                <FaTrash /> Delete
+              </button>
+            )}
 
-    return(
-        <div className="tenant-list-container">
-            <div className="nav-path">
-                <span onClick={() => navigate("/")} className="navigator">Home</span>
-                <span className="seperator"> / </span>
-                <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>
-                <span className="seperator"> / </span>
-                {pgData && <span>{pgData.name}</span>}
-                <span className="seperator"> / </span>
-                <span>Tenants</span>
+            {permissions?.edit_tenants && (
+              <button
+                className="edit-tenant-button"
+                onClick={() => navigate(`/pg/${pgId}/tenants/${tenant.id}`)}
+              >
+                <FaPen /> Manage
+              </button>
+            )}
+          </div>
+        ),
+      });
+    }
 
-            </div>
-             <div className="tenant-list-header">
-                <h1>{pgData && pgData.name} - Tenant List</h1>
-                {permissions?.add_tenants && <button className="add-tenant-btn" onClick={() => setShowAddTenant(true)}><b>+ Add Tenant</b></button>}
-                {showAddTenant && (
-                    <AddTenantModal
-                        pgId={pgId}
-                        onAdd={
-                            async (tenant) => {
-                                setShowAddTenant(false);
-                                await fetchTenants();
-                                // fetchFloorCounts();
-                            }
-                        }
-                        onClose={() => setShowAddTenant(false)}
-                    />
-                )}
-
-                {/* {showEditTenant && (
-                    <EditTenantModal
-                        pgId={pgId}
-                        tenant={editTenantData}
-                        onEdit={async () => {
-                            setShowEditTenant(false);
-                            await fetchTenants();
-                        }}
-                        onClose={() => setShowEditTenant(false)}
-                    />
-                )} */}
-
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tenant Name</th>
-                        <th>Room Number</th>
-                        <th>Email</th>
-                        <th>Joining Date</th>
-                        <th>Phone Number</th>
-                        {(permissions?.edit_tenants || permissions?.delete_tenants) && <th>Actions</th>}
-                    </tr>
-
-                </thead>
-
-                <tbody>
-                    
-                    {tenants.length===0?( <tr>
-            <td colSpan="6" className="no-tenants-message">
-                No Tenants Available
-            </td>
-        </tr>):(
-                    sortedTenants.map(tenant => (
-                        <tr key={tenant.id}>
-                            <td><b>{tenant.first_name + " " + tenant.last_name}</b></td>
-                            <td>{tenant.room_number}</td>
-                            <td>{tenant.email}</td>
-                            <td>{tenant.join_date}</td>
-                            <td>{`${tenant.phone_country_code}-${tenant.phone_number}`}</td>
-                            {(permissions?.edit_tenants || permissions?.delete_tenants) && <td>
-                                <div className="action-column">
-                                    {(permissions?.delete_tenants) && <button className="delete-tenant-button"
-                                    onClick={()=>{
-                                        setShowDeleteConfirmModal(true)
-                                        setTenantToDelete(tenant.id)
-                                    }}
-                                    ><FaTrash/> Delete</button>}
-
-                                    {(permissions?.edit_tenants) && <button className="edit-tenant-button"
-                                    onClick={() => navigate(`/pg/${pgId}/tenants/${tenant.id}`)}
-                                    ><FaPen/> Manage</button>}
-                                    
-
-                                </div>
-                                <ConfirmModal
-                                    show={showDeleteConfirmModal}
-                                    title="Delete Tenant"
-                                    message="Are you sure you want to remove this Tenant? The action once done can not be reverted."
-                                    onConfirm={() => handleDeleteTenant(tenantToDelete)}
-                                    onCancel={() => setShowDeleteConfirmModal(false)}
-                                />
-                            </td>   }
-                        </tr>
-                    )))}
-                </tbody>
-            </table>
-
+    return (
+      <div className="tenant-list-container">
+        <div className="nav-path">
+          <span onClick={() => navigate("/")} className="navigator">
+            Home
+          </span>
+          <span className="seperator"> / </span>
+          <span onClick={() => navigate("/pg-list")} className="navigator">
+            PG List
+          </span>
+          <span className="seperator"> / </span>
+          {pgData && <span>{pgData.name}</span>}
+          <span className="seperator"> / </span>
+          <span>Tenants</span>
         </div>
-    )
+        <div className="tenant-list-header">
+          <h1>{pgData && pgData.name} - Tenant List</h1>
+          {permissions?.add_tenants && (
+            <button
+              className="add-tenant-btn"
+              onClick={() => setShowAddTenant(true)}
+            >
+              <b>+ Add Tenant</b>
+            </button>
+          )}
+          {showAddTenant && (
+            <AddTenantModal
+              pgId={pgId}
+              onAdd={async (tenant) => {
+                setShowAddTenant(false);
+                await fetchTenants();
+                // fetchFloorCounts();
+              }}
+              onClose={() => setShowAddTenant(false)}
+            />
+          )}
+        </div>
+
+        <TableComponent
+            columns={columns}
+            data={sortedTenants}
+            emptyMessage={"No Tenants Available"}
+        />
+
+        <ConfirmModal
+          show={showDeleteConfirmModal}
+          title="Delete Tenant"
+          message="Are you sure you want to remove this Tenant? The action once done can not be reverted."
+          onConfirm={() => handleDeleteTenant(tenantToDelete)}
+          onCancel={() => setShowDeleteConfirmModal(false)}
+        />
+      </div>
+    );
 }
 
 export default TenantList;

@@ -1,0 +1,76 @@
+.table-component-container {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow:
+        0 8px 24px rgba(0,0,0,.06),
+        0 2px 6px rgba(0,0,0,.04);
+}
+
+.table-component-container table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table-component-container thead tr {
+    background: #faf9f5;
+}
+
+.table-component-container th {
+    padding: 18px 22px;
+    text-align: left;
+    color: #7b6418;
+    font-size: .9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    border-bottom: 2px solid #efe5bf;
+}
+
+.table-component-container td {
+    padding: 18px 22px;
+    color: #333;
+    border-bottom: 1px solid #f3ecd2;
+    transition:
+        background-color .25s ease,
+        box-shadow .25s ease;
+}
+
+.table-component-container tbody tr {
+    transition: .25s ease;
+}
+
+.table-component-container tbody tr:hover td {
+    background: #fcf7e8;
+}
+
+.table-component-container tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-component-container tbody td:first-child {
+    position: relative;
+}
+
+.table-component-container tbody tr:hover td:first-child::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #b79739;
+    border-radius: 0 4px 4px 0;
+}
+
+.action-column button {
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease;
+}
+
+.action-column button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,.15);
+}

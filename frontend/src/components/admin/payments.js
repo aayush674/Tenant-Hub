@@ -5,6 +5,7 @@ import AddPaymentModal from "./addPayment";
 import "../../styles/dues.css";
 import "../../styles/common_styles/navigator.css";
 import { API_BASE_URL } from "../../config";
+import TableComponent from "../common/tableComponent";
 
 function Payments(){
     const navigate = useNavigate();
@@ -37,6 +38,29 @@ function Payments(){
         fetchPg();
         fetchPayments();
     }, [pgId, fetchPayments, fetchPg]);
+
+    const columns = [
+      {
+        header: "Payment ID",
+        render: (payment) => <b>{payment.id}</b>,
+      },
+      {
+        header: "Tenant Name",
+        render: (payment) => payment.tenant_name,
+      },
+      {
+        header: "Payment Amount (\u20B9)",
+        render: (payment) => `\u20B9 ${payment.amount}`,
+      },
+      {
+        header: "Payment Method",
+        render: (payment) => payment.payment_method,
+      },
+      {
+        header: "Payment Date",
+        render: (payment) => payment.payment_date,
+      },
+    ];
 
     return (
         <div className="dues-container">
@@ -84,62 +108,11 @@ function Payments(){
             </div>
             <div className="due-list-table">
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Payment ID</th>
-                            <th>Tenant Name</th>
-                            <th>Payment Amount (&#8377;)</th>
-                            <th>Payment Method</th>
-                            <th>Payment Date</th>
-                            {/* <th>Rent (&#8377;)</th> */}
-                            {/* <th>Actions</th> */}
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        {sortedPayments.length === 0 ? (<tr>
-                            <td colSpan="5" className="no-dues-message">
-                                No Dues applied
-                            </td>
-                        </tr>) : (
-                            sortedPayments.map(payment => (
-                                <tr key={payment.id}>
-                                    <td><b>{payment.id}</b></td>
-                                    <td>{payment.tenant_name}</td>
-                                    <td>&#8377; {payment.amount}</td>
-                                    <td>{payment.payment_method}</td>
-                                    <td>
-                                        {payment.payment_date}
-                                    </td>
-                                   
-                                    {/* <td>
-                                        <div className="action-column">
-                                            <button className="delete-room-button"
-                                                onClick={() => {
-                                                    setShowDeleteConfirmModal(true)
-                                                    setRoomToDelete(room.id)
-                                                }}
-                                            ><FaTrash /> Delete</button>
-
-                                            <button className="edit-room-button"
-                                                onClick={() => openEditRoom(room)}
-                                            ><FaPen /> Edit</button>
-                                        </div>
-                                        <ConfirmModal
-                                            show={showDeleteConfirmModal}
-                                            title="Delete Room"
-                                            message="Are you sure you want to delete this room? The action once done can not be reverted."
-                                            onConfirm={() => handleDeleteRoom(roomToDelete)}
-                                            onCancel={() => setShowDeleteConfirmModal(false)}
-                                        />
-                                    </td> */}
-                                </tr>
-                            )))}
-                    </tbody>
-                </table>
+               <TableComponent
+                    columns={columns}
+                    data={sortedPayments}
+                    emptyMessage={"No Payments Available"}
+               />
 
             </div>
         </div>

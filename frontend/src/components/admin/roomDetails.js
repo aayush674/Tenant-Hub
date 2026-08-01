@@ -274,7 +274,7 @@ function RoomDetails() {
                             roomTenants.map(tenant => (
                                 <button
                                     className="tenant-card"
-                                    onClick={() => window.open(`/pg/${pgId}/tenant/${tenant.id}`, "_blank")}
+                                    onClick={() => window.open(`/pg/${pgId}/tenants/${tenant.id}`, "_blank")}
                                 >
                                     <FaUpRightFromSquare />
                                     <div key={tenant.id}>

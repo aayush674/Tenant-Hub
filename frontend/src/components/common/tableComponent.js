@@ -1,3 +1,4 @@
+import "../../styles/tableComponent.css";
 function TableComponent({columns, data, emptyMessage}){
     return (
       <div className="table-component-container">
