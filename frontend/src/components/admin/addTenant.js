@@ -120,7 +120,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
         }
 
     }
-    
+
     useEffect(() => {
         fetchRooms();
     }, [fetchRooms])
@@ -164,7 +164,7 @@ function AddTenantModal({ pgId, onAdd, onClose }) {
                     />
 
                     {/* <button type="submit">Add Tenant</button> */}
-                    <LoadingSubmitButton 
+                    <LoadingSubmitButton
                         loading={loading}
                         children="Add Tenant"
                         loadingText="Adding Tenant"

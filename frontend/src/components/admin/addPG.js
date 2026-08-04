@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../../styles/addPG.css";
 import { authFetch } from "../../api/apiClient";
 import { API_BASE_URL } from "../../config";
+import "../../styles/common_styles/add-btn.css"
 
 function AddPG({ show, onClose, onAdd }) {
 

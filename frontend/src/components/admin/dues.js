@@ -7,7 +7,10 @@ import "../../styles/common_styles/navigator.css";
 import GenerateRentDues from "./generateRentDues";
 import { API_BASE_URL } from "../../config";
 import TableComponent from "../common/tableComponent";
+import { FaPlus, FaTasks } from "react-icons/fa";
 import "../../styles/tableComponent.css";
+import "../../styles/common_styles/add-btn.css";
+
 
 const dueTypeLabels = {
     rent: "Rent",
@@ -87,66 +90,72 @@ function Dues() {
     ];
 
     return (
-        <div className="dues-container">
-            <div className="nav-path">
-                <span onClick={() => navigate("/")} className="navigator">Home</span>
-                <span className="seperator"> / </span>
-                <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>
-                <span className="seperator"> / </span>
-                {pgData && <span>{pgData.name}</span>}
-                <span className="seperator"> / </span>
-                <span>Dues</span>
-
-            </div>
-            <div className="dues-header">
-                <h1>{pgData && pgData.name} - Dues</h1>
-                <div className="due-header-buttons">
-                    <button
-                        className="add-due-btn"
-                        onClick={() => setShowGenerateRent(true)}
-                    ><b>Generate Rent Due</b></button>
-
-                    <button
-                        className="add-due-btn"
-                        onClick={() => setShowAddDue(true)}
-                    ><b>+ Apply Due</b></button>
-                </div>
-                {showAddDue && (
-                    <AddDueModal
-                        pgId={pgId}
-                        onAdd={
-                            (due) => {
-                                setShowAddDue(false);
-                                fetchDues();
-                                // fetchFloorCounts();
-                            }
-                        }
-                        onClose={() => setShowAddDue(false)}
-                    />
-                )}
-
-                {showGenerateRent && (
-                    <GenerateRentDues
-                        pgId= {pgId}
-                        onGenerate = {()=>{
-                            setShowGenerateRent(false);
-                            fetchDues();
-                        }}
-                        onCancel = {()=> setShowGenerateRent(false)}
-                    />
-                )}
-            </div>
-            <div className="due-list-table">
-
-            <TableComponent
-                columns={columns}
-                data={sortedDues}
-                emptyMessage={"No Dues Available"}
-            />
-
-            </div>
+      <div className="dues-container">
+        <div className="nav-path">
+          <span onClick={() => navigate("/")} className="navigator">
+            Home
+          </span>
+          <span className="seperator"> / </span>
+          <span onClick={() => navigate("/pg-list")} className="navigator">
+            PG List
+          </span>
+          <span className="seperator"> / </span>
+          {pgData && <span>{pgData.name}</span>}
+          <span className="seperator"> / </span>
+          <span>Dues</span>
         </div>
-    )
+        <div className="dues-header">
+          <h1>{pgData && pgData.name} - Dues</h1>
+          <div className="due-header-buttons">
+            <button
+              className="add-btn"
+              onClick={() => setShowGenerateRent(true)}
+            >
+              <span className="icon">
+                <FaTasks />
+              </span>
+              <span>Generate Rent Dues</span>
+            </button>
+
+            <button className="add-btn" onClick={() => setShowAddDue(true)}>
+              <span className="icon">
+                <FaPlus />
+              </span>
+              <span>Add Due</span>
+            </button>
+          </div>
+          {showAddDue && (
+            <AddDueModal
+              pgId={pgId}
+              onAdd={(due) => {
+                setShowAddDue(false);
+                fetchDues();
+                // fetchFloorCounts();
+              }}
+              onClose={() => setShowAddDue(false)}
+            />
+          )}
+
+          {showGenerateRent && (
+            <GenerateRentDues
+              pgId={pgId}
+              onGenerate={() => {
+                setShowGenerateRent(false);
+                fetchDues();
+              }}
+              onCancel={() => setShowGenerateRent(false)}
+            />
+          )}
+        </div>
+        <div className="due-list-table">
+          <TableComponent
+            columns={columns}
+            data={sortedDues}
+            emptyMessage={"No Dues Available"}
+          />
+        </div>
+      </div>
+    );
 }
 
 export default Dues;

@@ -5,11 +5,12 @@ import { authFetch } from "../../api/apiClient";
 import AddTenantModal from "./addTenant";
 import "../../styles/tenantList.css";
 import "../../styles/common_styles/navigator.css";
-import { FaPen, FaTrash } from "react-icons/fa";
+import { FaPen, FaTrash, FaPlus } from "react-icons/fa";
 import ConfirmModal from "../common/confirmationModal";
 import { API_BASE_URL } from "../../config";
 import TableComponent from "../common/tableComponent";
 import "../../styles/tableComponent.css"
+import "../../styles/common_styles/add-btn.css";
 
 function TenantList(){
     const { pgId } = useParams()
@@ -138,12 +139,12 @@ function TenantList(){
         <div className="tenant-list-header">
           <h1>{pgData && pgData.name} - Tenant List</h1>
           {permissions?.add_tenants && (
-            <button
-              className="add-tenant-btn"
-              onClick={() => setShowAddTenant(true)}
-            >
-              <b>+ Add Tenant</b>
-            </button>
+            <button className="add-btn" onClick={() => setShowAddTenant(true)}>
+                      <span className="icon">
+                        <FaPlus />
+                      </span>
+                      <span>Add Tenant</span>
+                    </button>
           )}
           {showAddTenant && (
             <AddTenantModal

@@ -5,6 +5,9 @@ import AddPaymentModal from "./addPayment";
 import "../../styles/dues.css";
 import "../../styles/common_styles/navigator.css";
 import { API_BASE_URL } from "../../config";
+import { FaPlus } from "react-icons/fa";
+import "../../styles/tableComponent.css";
+import "../../styles/common_styles/add-btn.css";
 import TableComponent from "../common/tableComponent";
 
 function Payments(){
@@ -63,38 +66,41 @@ function Payments(){
     ];
 
     return (
-        <div className="dues-container">
-            <div className="nav-path">
-                <span onClick={() => navigate("/")} className="navigator">Home</span>
-                <span className="seperator"> / </span>
-                <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>
-                <span className="seperator"> / </span>
-                {pgData && <span>{pgData.name}</span>}
-                <span className="seperator"> / </span>
-                <span>Payments</span>
+      <div className="dues-container">
+        <div className="nav-path">
+          <span onClick={() => navigate("/")} className="navigator">
+            Home
+          </span>
+          <span className="seperator"> / </span>
+          <span onClick={() => navigate("/pg-list")} className="navigator">
+            PG List
+          </span>
+          <span className="seperator"> / </span>
+          {pgData && <span>{pgData.name}</span>}
+          <span className="seperator"> / </span>
+          <span>Payments</span>
+        </div>
+        <div className="dues-header">
+          <h1>{pgData && pgData.name} - Payments</h1>
+          <button className="add-btn" onClick={() => setShowAddPayment(true)}>
+            <span className="icon">
+              <FaPlus />
+            </span>
+            <span>Create Payment</span>
+          </button>
+          {showAddPayment && (
+            <AddPaymentModal
+              pgId={pgId}
+              onAdd={(payment) => {
+                setShowAddPayment(false);
+                fetchPayments();
+                // fetchFloorCounts();
+              }}
+              onClose={() => setShowAddPayment(false)}
+            />
+          )}
 
-            </div>
-            <div className="dues-header">
-                <h1>{pgData && pgData.name} - Payments</h1>
-                <button
-                    className="add-due-btn"
-                    onClick={() => setShowAddPayment(true)}
-                ><b>+ Create Payment</b></button>
-                {showAddPayment && (
-                    <AddPaymentModal
-                        pgId={pgId}
-                        onAdd={
-                            (payment) => {
-                                setShowAddPayment(false);
-                                fetchPayments();
-                                // fetchFloorCounts();
-                            }
-                        }
-                        onClose={() => setShowAddPayment(false)}
-                    />
-                )}
-
-                {/* {showEditModal && (
+          {/* {showEditModal && (
                     <EditRoomModal
                         room={editRoomData}
                         onUpdate={(updatedRoom) => {
@@ -104,19 +110,16 @@ function Payments(){
                         onClose={() => setShowEditModal(false)}
                     />
                 )} */}
-
-            </div>
-            <div className="due-list-table">
-
-               <TableComponent
-                    columns={columns}
-                    data={sortedPayments}
-                    emptyMessage={"No Payments Available"}
-               />
-
-            </div>
         </div>
-    )
+        <div className="due-list-table">
+          <TableComponent
+            columns={columns}
+            data={sortedPayments}
+            emptyMessage={"No Payments Available"}
+          />
+        </div>
+      </div>
+    );
 }
 
 export default Payments;
