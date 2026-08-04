@@ -38,35 +38,6 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.tenant-list-container table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 2px solid #5b4914;
-}
-
-.tenant-list-container thead {
-    background-color: #b79739;
-}
-
-.tenant-list-container th {
-    text-align: left;
-    padding: 12px;
-    border-bottom: 2px solid #ddd;
-}
-
-.tenant-list-container td {
-    padding: 12px;
-    border-bottom: 1px solid #987b23;
-}
-
-.tenant-list-container tbody tr{
-    transition: background-color 0.15s ease;
-}
-
-.tenant-list-container tbody tr:hover {
-    background-color: #ccb673;
-}
-
 .delete-tenant-button{
     color: red;
     background-color: #fef2f2;

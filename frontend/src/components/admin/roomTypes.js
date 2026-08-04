@@ -7,7 +7,10 @@ import "../../styles/common_styles/navigator.css";
 import AddRoomTypeModal from "./addRoomType";
 import { FaPen, FaTrash } from "react-icons/fa";
 import { API_BASE_URL } from "../../config";
-
+import { FaPlus } from "react-icons/fa";
+import "../../styles/tableComponent.css";
+import "../../styles/common_styles/add-btn.css";
+import TableComponent from "../common/tableComponent";
 
 function RoomTypes() {
     const [showAddRoomType, setShowAddRoomType] = useState(false);
@@ -40,35 +43,81 @@ function RoomTypes() {
         fetchRoomTypes();
     }, [pgId, fetchPg, fetchRoomTypes]);
 
+    const columns = [
+      {
+        header: "Template Name",
+        render: (roomType) => roomType.name,
+      },
+      {
+        header: "Capacity",
+        render: (roomType) => (
+          <span
+            className={`occupancy-chip ${roomType.capacity === 1 ? "single" : "double"}`}
+          >
+            {roomType.capacity === 1 ? "👤Single" : "👥Double"}
+          </span>
+        ),
+      },
+      {
+        header: "Balcony Room",
+        render: (roomType) =>
+          roomType.is_balcony_room === true ? "Yes" : "No",
+      },
+      {
+        header: "Rent",
+        render: (roomType) => roomType.rent,
+      },
+      {
+        header: "Actions",
+        render: (roomType) => (
+          <div className="action-column">
+            <button className="delete-room-type-button">
+              <FaTrash /> Delete
+            </button>
+
+            <button className="edit-room-type-button">
+              <FaPen /> Edit
+            </button>
+          </div>
+        ),
+      },
+    ];
+
     return (
-        <div className="room-type-container">
-            <div className="nav-path">
-                <span onClick={() => navigate("/")} className="navigator">Home</span>
-                <span className="seperator"> / </span>
-                <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>
-                <span className="seperator"> / </span>
-                {pgData && <span>{pgData.name}</span>}
-                <span className="seperator"> / </span>
-                <span>Room Templates</span>
+      <div className="room-type-container">
+        <div className="nav-path">
+          <span onClick={() => navigate("/")} className="navigator">
+            Home
+          </span>
+          <span className="seperator"> / </span>
+          <span onClick={() => navigate("/pg-list")} className="navigator">
+            PG List
+          </span>
+          <span className="seperator"> / </span>
+          {pgData && <span>{pgData.name}</span>}
+          <span className="seperator"> / </span>
+          <span>Room Templates</span>
+        </div>
+        <div className="room-type-header">
+          <h1>{pgData && pgData.name} - Room Templates</h1>
+          <button className="add-btn" onClick={() => setShowAddRoomType(true)}>
+            <span className="icon">
+              <FaPlus />
+            </span>
+            <span>Create Room Template</span>
+          </button>
+          {showAddRoomType && (
+            <AddRoomTypeModal
+              pgId={pgId}
+              onAdd={() => {
+                setShowAddRoomType(false);
+                fetchRoomTypes();
+              }}
+              onClose={() => setShowAddRoomType(false)}
+            />
+          )}
 
-            </div>
-            <div className="room-type-header">
-                <h1>{pgData && pgData.name} - Room Templates</h1>
-                <button className="add-room-type-btn" onClick={() => setShowAddRoomType(true)}><b>+ Create Room Template</b></button>
-                 {showAddRoomType && (
-                    <AddRoomTypeModal
-                        pgId={pgId}
-                        onAdd={
-                            () => {
-                                setShowAddRoomType(false);
-                                fetchRoomTypes();
-                            }
-                        }
-                        onClose={() => setShowAddRoomType(false)}
-                    />
-                )}
-
-                {/* {showEditModal && (
+          {/* {showEditModal && (
                     <EditRoomModal
                         room={editRoomData}
                         onUpdate={(updatedRoom) => {
@@ -78,9 +127,8 @@ function RoomTypes() {
                         onClose={() => setShowEditModal(false)}
                     />
                 )} */}
-
-            </div>
-            {/* <div className="filter-button">
+        </div>
+        {/* <div className="filter-button">
             <button onClick={() => {
                 setDraftFilters(filters);
                 setShowFilterModal(true);
@@ -95,42 +143,12 @@ function RoomTypes() {
             />
             </div> */}
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Capacity</th>
-                        <th>Balcony Room</th>
-                        <th>Rent</th>
-                        <th>Actions</th>
-                    </tr>
-
-                </thead>
-
-                <tbody>
-                    {roomTypes.map(roomType => (
-                        <tr key={roomType.id}>
-                            <td><b>{roomType.name}</b></td>
-                            <td><span className={`occupancy-chip ${roomType.capacity === 1 ? "single" : "double"}`}>{roomType.capacity === 1 ? "👤Single" : "👥Double"}</span></td>
-                            <td>{roomType.is_balcony_room === true ? "Yes" : "No"}</td>
-                            <td>{roomType.rent}</td>
-                            <td>
-                                <div className="action-column">
-                                    
-                                    <button className="delete-room-type-button"
-                                            
-                                        ><FaTrash /> Delete</button>
-
-                                        <button className="edit-room-type-button"
-                                            
-                                        ><FaPen /> Edit</button>
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    )
+        <TableComponent
+          columns={columns}
+          data={roomTypes}
+          emptyMessage={"No Room Template Available"}
+        />
+      </div>
+    );
 }
 export default RoomTypes;
