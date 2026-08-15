@@ -6,9 +6,10 @@ import "../../styles/pgList.css";
 import "../../styles/common_styles/navigator.css";
 import { authFetch } from "../../api/apiClient";
 import AddPG from "./addPG";
-import { FaEye, FaTrash } from "react-icons/fa";
+import { FaEye, FaTrash, FaPlus } from "react-icons/fa";
 import { API_BASE_URL } from "../../config";
 import TableComponent from "../common/tableComponent";
+import "../../styles/common_styles/add-btn.css";
 
 function PGList() {
     const navigate = useNavigate();
@@ -81,7 +82,7 @@ function PGList() {
       {
         header: "Actions",
         render: (pg) => (
-          <div>
+          <div className="pg-row-actions">
             <button
               className="view-pg-button"
               onClick={() => navigate(`/pg/${pg.id}`)}
@@ -120,11 +121,14 @@ function PGList() {
         {showSuccessMessage && (
           <div className="success-message">PG added successfully!</div>
         )}
-
-        <button onClick={() => setShowAddPG(true)} className="create-pg-btn">
-          <strong>+ Create PG</strong>
-        </button>
-
+        <div className="create-pg-btn">
+          <button onClick={() => setShowAddPG(true)} className="add-btn">
+            <span className="icon">
+              <FaPlus />
+            </span>
+            <span>Create PG</span>
+          </button>
+        </div>
         <AddPG
           show={showAddPG}
           onClose={() => setShowAddPG(false)}
@@ -138,9 +142,9 @@ function PGList() {
 
         <h1>PG List</h1>
         <TableComponent
-            columns={columns}
-            data={pgs}
-            emptyMessage={"No PG Available"}
+          columns={columns}
+          data={pgs}
+          emptyMessage={"No PG Available"}
         />
         <ConfirmModal
           show={showConfirmModal}
