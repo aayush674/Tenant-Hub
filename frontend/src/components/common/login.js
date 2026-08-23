@@ -5,115 +5,210 @@ import "../../styles/login.css";
 import complogo from "../../assets/Tenant-Hub-Logo.png";
 
 function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
-    const [error, setError] = useState(null);
-    const [showError, setShowError] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showError, setShowError] = useState(false);
 
-    function triggerError(message) {
-        setShowError(false);
-        setTimeout(() => {
-            setError(message);
-            setShowError(true);
-        }, 100);
+  const navigate = useNavigate();
+
+  function triggerError(message) {
+    setError(message);
+    setShowError(false);
+
+    setTimeout(() => {
+      setShowError(true);
+    }, 50);
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    setShowError(false);
+
+    if (!email.trim() || !password.trim()) {
+      triggerError("Please enter your email and password.");
+      return;
     }
 
-    async function handleSubmit(e) {
-        e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        if (!email.trim() || !password.trim()) {
-            triggerError("Please enter email and password");
-            setLoading(false);
-            return;
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            triggerError("Please enter a valid email address");
-            setLoading(false);
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const data = await login(email, password);
-            if (data.access && data.refresh) {
-                // alert("Login successful!");
-                localStorage.setItem("access_token", data.access);
-                // console.log("Access Token Stored:", data.access);
-                localStorage.setItem("refresh_token", data.refresh);
-                // console.log("Refresh Token Stored:", data.refresh);
-                if (data.user.role === "TENANT") {
-                    navigate("/t")
-                }
-                else {
-                    navigate("/");
-                }
-            }
-            else {
-                triggerError("Invalid credentials 1");
-            }
-        }
-        catch (error) {
-            triggerError("Login failed. Please try again.");
-        }
-        setLoading(false);
+    if (!emailRegex.test(email.trim())) {
+      triggerError("Please enter a valid email address.");
+      return;
     }
 
-    // Check if user is already logged in, and navigates logged in users to the home page directly
-    useEffect(() => {
-        // Check if tokens exist in localStorage
-        const access_token = localStorage.getItem("access_token");
-        const refresh_token = localStorage.getItem("refresh_token");
+    setLoading(true);
 
-        if (access_token && refresh_token) {
-            navigate("/");
+    try {
+      const data = await login(email.trim(), password);
+
+      if (data?.access && data?.refresh) {
+        localStorage.setItem("access_token", data.access);
+        localStorage.setItem("refresh_token", data.refresh);
+
+        if (data.user?.role === "TENANT") {
+          navigate("/t");
+        } else {
+          navigate("/");
         }
-    }, [navigate]);
+      } else {
+        triggerError("Invalid email or password.");
+      }
+    } catch (error) {
+      triggerError(
+        error?.response?.data?.detail ||
+          "Login failed. Please check your credentials.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
 
-    return (
-        <div className="login-container">
-            <div className="login-left">
-                <img src={complogo} alt="Tenant Hub" className="logo" />
-                <h1 className="brand-tagline">Manage Tenants. Simplify Living.</h1>
+  // Redirect users who are already logged in.
+  useEffect(() => {
+    const accessToken = localStorage.getItem("access_token");
+    const refreshToken = localStorage.getItem("refresh_token");
 
-            </div>
-            <div className="login-right">
-                <form className="login-card" onSubmit={handleSubmit} noValidate>
+    if (accessToken && refreshToken) {
+      // Keep existing behavior for now.
+      // If role information is stored separately later,
+      // this can be made fully role-aware here.
+      navigate("/");
+    }
+  }, [navigate]);
 
-                    <h2 className="login-title">Already a Member? Please proceed.</h2>
-                    <div className={`login-error-container ${showError ? "show" : ""}`}>{error || ""}</div>
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        className="login-input"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
+  return (
+    <div className="login-container">
+      {/* LEFT BRAND PANEL */}
+      <section className="login-brand-panel">
+        <div className="brand-content">
+          <div className="brand-logo-wrapper">
+            <img src={complogo} alt="Tenant Hub" className="login-logo" />
+          </div>
 
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        className="login-input"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+          <div className="brand-text">
+            <span className="brand-eyebrow">PROPERTY MANAGEMENT</span>
 
-                    <button type="submit" className="login-button" disabled={loading}>
-                        {loading ? "Logging in..." : "Login"}
-                    </button>
-                    {/* <p>
-                        Don't have an account?{" "}
-                        <NavLink to = "/signup">Sign Up</NavLink>
-                    </p> */}
+            <h1>
+              Manage Properties.
+              <br />
+              <span>Simplify Living.</span>
+            </h1>
 
+            <p>
+              One centralized platform to manage your properties, rooms,
+              tenants, payments and maintenance.
+            </p>
+          </div>
 
-                </form>
-            </div>
+          <div className="brand-footer">
+            <span className="brand-line"></span>
+            <span>Tenant Hub</span>
+          </div>
         </div>
-    );
+      </section>
+
+      {/* RIGHT LOGIN PANEL */}
+      <section className="login-form-panel">
+        <div className="login-card">
+          <div className="login-header">
+            <span className="login-eyebrow">ACCOUNT ACCESS</span>
+
+            <h2>Welcome back</h2>
+
+            <p>Sign in to continue to your dashboard.</p>
+          </div>
+
+          <form className="login-form" onSubmit={handleSubmit} noValidate>
+            {/* ERROR */}
+            <div
+              className={`login-error-container ${showError ? "show" : ""}`}
+              role="alert"
+            >
+              {error}
+            </div>
+
+            {/* EMAIL */}
+            <div className="login-field">
+              <label htmlFor="login-email">Email address</label>
+
+              <div className="input-wrapper">
+                <span className="input-icon">@</span>
+
+                <input
+                  id="login-email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+
+                    if (showError) {
+                      setShowError(false);
+                    }
+                  }}
+                  autoComplete="email"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            {/* PASSWORD */}
+            <div className="login-field">
+              <div className="password-label-row">
+                <label htmlFor="login-password">Password</label>
+              </div>
+
+              <div className="input-wrapper">
+                <span className="input-icon">•••</span>
+
+                <input
+                  id="login-password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+
+                    if (showError) {
+                      setShowError(false);
+                    }
+                  }}
+                  autoComplete="current-password"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            {/* LOGIN BUTTON */}
+            <button
+              type="submit"
+              className={`login-button ${loading ? "loading" : ""}`}
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span className="login-spinner"></span>
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  Sign in
+                  <span className="button-arrow">→</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="login-footer">
+            <span>Secure access to Tenant Hub</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }
 
 export default Login;
