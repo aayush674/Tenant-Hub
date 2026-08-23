@@ -1,368 +1,449 @@
-/* =========================
-   HEADER
-========================= */
+/* =========================================================
+   TENANT HUB — HEADER
+   ========================================================= */
 
 .header {
-  background: linear-gradient(
-    90deg,
-    #d9d1bc 0%,
-    #d6c795 100%
-  );
+    height: 74px;
+    padding: 0 32px;
 
-  border-bottom: 1px solid rgba(91, 73, 20, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 
-  color: #38342a;
+    background: #071923;
+    border-bottom: 1px solid rgba(197, 162, 74, 0.16);
 
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+    color: #f5f3ec;
 
-  height: 74px;
-  padding: 0 32px;
-
-  box-shadow: 0 4px 14px rgba(70, 60, 35, 0.12);
+    box-shadow:
+        0 4px 18px rgba(7, 25, 35, 0.18);
 }
 
 
-/* =========================
+/* =========================================================
+   HEADER LEFT
+   ========================================================= */
+
+.header-left {
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+}
+
+
+/* =========================================================
    LOGO
-========================= */
+   ========================================================= */
 
 .header-logo {
-  cursor: pointer;
+    height: 54px;
+    width: auto;
 
-  height: 60px;
+    display: block;
 
-  border-radius: 5px;
+    cursor: pointer;
 
-  transition:
-    transform 0.25s ease,
-    filter 0.25s ease;
+    border-radius: 7px;
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
 }
 
 .header-logo:hover {
-  transform: scale(1.04);
+    transform: scale(1.03);
+
+    filter:
+        drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25));
 }
 
 
-/* =========================
-   HEADER TITLE
-========================= */
-
-.header-title {
-  color: #38342a;
-
-  transition: color 0.2s ease;
-}
-
-.header-title:hover {
-  color: #755a0a;
-}
-
-
-/* =========================
+/* =========================================================
    HEADER NAVIGATION
-========================= */
+   ========================================================= */
 
 .header-nav {
-  display: flex;
-  align-items: center;
-  gap: 28px;
+    display: flex;
+    align-items: center;
+
+    gap: 32px;
 }
 
 
-/* =========================
+/* =========================================================
    NAV LINKS
-========================= */
+   ========================================================= */
 
 .nav-links {
-  display: flex;
-  align-items: center;
-  gap: 22px;
+    display: flex;
+    align-items: center;
+
+    gap: 28px;
 }
 
 .nav-links a {
-  position: relative;
+    position: relative;
 
-  text-decoration: none;
+    display: flex;
+    align-items: center;
 
-  color: #514b3b;
+    height: 74px;
 
-  padding: 8px 3px;
+    padding: 0 2px;
 
-  font-size: 14px;
-  font-weight: 500;
+    text-decoration: none;
 
-  transition:
-    color 0.2s ease;
+    color: #aab8bd;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    transition:
+        color 0.2s ease;
 }
 
 .nav-links a:hover {
-  color: #3c351f;
+    color: #f5f3ec;
 }
 
 .nav-links a.active {
-  color: #5f4908;
-  font-weight: 600;
+    color: #f5f3ec;
+    font-weight: 600;
 }
 
 
-/* =========================
-   NAV LINK UNDERLINE
-========================= */
+/* =========================================================
+   NAV ACTIVE INDICATOR
+   ========================================================= */
 
 .nav-links a::after {
-  content: "";
+    content: "";
 
-  position: absolute;
+    position: absolute;
 
-  left: 0;
-  bottom: -8px;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-  width: 0;
-  height: 3px;
+    width: 0;
+    height: 3px;
 
-  border-radius: 999px;
+    margin: auto;
 
-  background: #9c7816;
+    border-radius: 999px;
 
-  transition: width 0.25s ease;
+    background: #c5a24a;
+
+    transition:
+        width 0.25s ease;
 }
 
 .nav-links a:hover::after,
 .nav-links a.active::after {
-  width: 100%;
+    width: 100%;
 }
 
 
-/* =========================
-   LOGOUT BUTTON
-========================= */
-
-.logout-button {
-  background: rgba(255, 255, 255, 0.22);
-
-  color: #a52820 !important;
-
-  padding: 8px 16px;
-
-  border-radius: 6px;
-
-  cursor: pointer;
-
-  border: 1px solid rgba(140, 70, 60, 0.25);
-
-  font-size: 14px;
-  font-weight: 500;
-
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.15s ease;
-}
-
-.logout-button:hover {
-  background: #fff0ee !important;
-
-  border-color: #d6aaa5;
-
-  transform: translateY(-1px);
-}
-
-.logout-button:active {
-  transform: translateY(0);
-}
-
-
-/* =========================
+/* =========================================================
    PROFILE CONTAINER
-========================= */
+   ========================================================= */
 
 .profile-container {
-  position: relative;
+    position: relative;
 }
 
 
-/* =========================
+/* =========================================================
    PROFILE BUTTON
-========================= */
+   ========================================================= */
 
 .profile-icon {
-  background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  border: none;
+    gap: 10px;
 
-  cursor: pointer;
+    padding: 5px 9px 5px 6px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    background: transparent;
 
-  gap: 10px;
+    border: 1px solid transparent;
+    border-radius: 9px;
 
-  color: #3f392b;
+    color: #f5f3ec;
 
-  padding: 6px 10px;
+    cursor: pointer;
 
-  border-radius: 10px;
+    font-family: "Lexend", sans-serif;
 
-  transition:
-    background-color 0.2s ease;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .profile-icon:hover {
-  background: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.06);
+
+    border-color: rgba(197, 162, 74, 0.16);
 }
 
 
-/* =========================
-   PROFILE NAME
-========================= */
-
-.profile-name {
-  font-size: 14px;
-
-  font-weight: 500;
-
-  color: #3f392b;
-}
-
-
-/* =========================
+/* =========================================================
    PROFILE IMAGE
-========================= */
+   ========================================================= */
 
 .profile-icon img {
-  width: 38px;
-  height: 38px;
+    width: 36px;
+    height: 36px;
 
-  border-radius: 50%;
+    padding: 5px;
 
-  padding: 6px;
+    box-sizing: border-box;
 
-  background: #f7f3e8;
+    border-radius: 50%;
 
-  border: 2px solid rgba(91, 73, 20, 0.20);
+    background: #f1efe8;
 
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+    border: 1px solid rgba(197, 162, 74, 0.35);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .profile-icon:hover img {
-  transform: scale(1.06);
+    transform: scale(1.04);
 
-  box-shadow:
-    0 2px 10px rgba(70, 55, 20, 0.18);
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.25);
 }
 
 
-/* =========================
-   PROFILE DROPDOWN
-========================= */
+/* =========================================================
+   PROFILE NAME
+   ========================================================= */
 
-.profile-actions {
-  position: absolute;
+.profile-name {
+    color: #f1efe8;
 
-  top: 48px;
-  right: 0;
+    font-size: 13px;
+    font-weight: 500;
 
-  min-width: 180px;
-
-  padding: 6px;
-
-  margin-top: 8px;
-
-  background: #faf8f2;
-
-  border: 1px solid #ddd5c1;
-
-  border-radius: 10px;
-
-  overflow: hidden;
-
-  box-shadow:
-    0 10px 30px rgba(60, 50, 30, 0.16);
-
-  animation: dropdown 0.18s ease;
+    white-space: nowrap;
 }
 
 
-/* =========================
-   DROPDOWN ANIMATION
-========================= */
-
-@keyframes dropdown {
-  from {
-    opacity: 0;
-
-    transform:
-      translateY(-8px)
-      scale(0.97);
-  }
-
-  to {
-    opacity: 1;
-
-    transform:
-      translateY(0)
-      scale(1);
-  }
-}
-
-
-/* =========================
-   DROPDOWN BUTTONS
-========================= */
-
-.profile-actions button {
-  width: 100%;
-
-  padding: 12px 16px;
-
-  text-align: left;
-
-  border: none;
-
-  border-radius: 8px;
-
-  background: transparent;
-
-  color: #454033;
-
-  font-size: 14px;
-
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-
-  gap: 10px;
-
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
-}
-
-.profile-actions button:hover {
-  background: #eee8d8;
-
-  color: #705508;
-}
-
-
-/* =========================
+/* =========================================================
    PROFILE ARROW
-========================= */
+   ========================================================= */
 
 .arrow {
-  transition: transform 0.2s ease;
+    color: #9cabb0;
+
+    font-size: 16px;
+
+    transition:
+        transform 0.2s ease,
+        color 0.2s ease;
+}
+
+.profile-icon:hover .arrow {
+    color: #c5a24a;
 }
 
 .arrow.open {
-  transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+
+/* =========================================================
+   PROFILE DROPDOWN
+   ========================================================= */
+
+.profile-actions {
+    position: absolute;
+
+    top: calc(100% + 10px);
+    right: 0;
+
+    min-width: 205px;
+
+    padding: 6px;
+
+    background: #102c38;
+
+    border: 1px solid rgba(197, 162, 74, 0.18);
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.28);
+
+    animation: dropdown 0.18s ease;
+}
+
+
+/* =========================================================
+   DROPDOWN ANIMATION
+   ========================================================= */
+
+@keyframes dropdown {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(-7px)
+            scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* =========================================================
+   DROPDOWN BUTTONS
+   ========================================================= */
+
+.profile-actions button {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
+    padding: 11px 13px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: #d5dfe1;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.profile-actions button svg {
+    flex-shrink: 0;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   CHANGE PASSWORD
+   ========================================================= */
+
+.profile-actions .change-password-button:hover {
+    background: rgba(197, 162, 74, 0.10);
+
+    color: #c5a24a;
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+.profile-actions .logout-button {
+    margin-top: 3px;
+
+    color: #df8882;
+}
+
+.profile-actions .logout-button:hover {
+    background: rgba(165, 41, 32, 0.12);
+
+    color: #ff9a92;
+}
+
+
+/* =========================================================
+   DROPDOWN SEPARATOR
+   ========================================================= */
+
+.profile-actions .logout-button::before {
+    content: "";
+
+    position: absolute;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .header {
+        padding: 0 22px;
+    }
+
+    .header-nav {
+        gap: 20px;
+    }
+
+    .nav-links {
+        gap: 20px;
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    .header {
+        height: 66px;
+
+        padding: 0 16px;
+    }
+
+    .header-logo {
+        height: 48px;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .header-nav {
+        gap: 8px;
+    }
+
+    .profile-name {
+        display: none;
+    }
+
+    .profile-icon {
+        padding: 5px;
+    }
+
+    .profile-actions {
+        top: calc(100% + 8px);
+    }
 }
