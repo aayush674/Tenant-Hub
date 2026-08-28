@@ -1,0 +1,21 @@
+/* =========================================================
+   TENANT HUB THEME
+   ========================================================= */
+
+:root {
+    --th-navy: #102a36;
+    --th-navy-light: #173947;
+    --th-navy-hover: #1d4352;
+
+    --th-gold: #b28b2e;
+    --th-gold-light: #d0ad52;
+    --th-gold-pale: #eee3c5;
+
+    --th-background: #eeeae1;
+    --th-surface: #f8f6f1;
+    --th-surface-white: #ffffff;
+
+    --th-text: #173544;
+    --th-text-secondary: #68757a;
+    --th-border: #d8d2c5;
+}

@@ -1,63 +1,275 @@
-.tenant-details-container{
+/* =========================================================
+   TENANT DETAILS
+   ========================================================= */
+
+.tenant-details-container {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+    padding: 22px 32px 40px;
+
     font-family: "Lexend", sans-serif;
-    padding: 10px 30px;
+
+    background: var(--th-background);
+
+    color: var(--th-text);
 }
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
 
 .tenant-details-header {
     display: flex;
-    justify-content: space-between;
+
     align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 24px;
 }
 
 .tenant-details-header h1 {
-    color: #5b4914;
+    margin: 0;
+
+    color: var(--th-text);
+
+    font-size: 28px;
+    font-weight: 600;
+
+    letter-spacing: -0.5px;
 }
 
-.basic-details-header{
+
+/* =========================================================
+   BASIC DETAILS CARD
+   ========================================================= */
+
+.tenant-basic-details {
+    margin-bottom: 20px;
+
+    padding: 26px;
+
+    background: var(--th-surface);
+
+    border: 1px solid var(--th-border);
+
+    border-radius: var(--th-card-radius);
+
+    box-shadow: var(--th-shadow);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   BASIC DETAILS HEADER
+   ========================================================= */
+
+.basic-details-header {
     display: flex;
+
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+
+    margin-bottom: 12px;
+
+    padding-bottom: 14px;
+
+    border-bottom: 1px solid var(--th-border);
 }
 
-.edit-room-button{
-    color: blue;
-    background-color: #f2f2fe;
-    border: 1px solid #cacafe;
-    border-radius: 6px;
+.basic-details-header h2 {
+    margin: 0;
+
+    color: var(--th-text);
+
+    font-size: 18px;
     font-weight: 600;
-    font-family: "Lexend", sans-serif;
-    min-height: 32px;
+}
+
+
+/* =========================================================
+   EDIT BUTTON
+   ========================================================= */
+
+.edit-room-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
     min-width: 100px;
-    transition: all 0.2s ease;
+    min-height: 34px;
+
+    padding: 7px 14px;
+
+    color: var(--th-navy);
+
+    background: rgba(197, 162, 74, 0.10);
+
+    border: 1px solid rgba(152, 123, 35, 0.30);
+
+    border-radius: 6px;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 12px;
+    font-weight: 600;
+
     cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
 }
 
-.edit-button:hover{
-    background-color: #d1d1ff;
-    border-color: #a5a5fc;
+.edit-room-button:hover {
+    background: var(--th-gold);
+
+    border-color: var(--th-gold);
+
+    color: #ffffff;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 14px rgba(152, 123, 35, 0.18);
 }
 
-.form-row{
-     display: grid;
+.edit-room-button:active {
+    transform: translateY(0);
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   FORM ROW
+   ========================================================= */
+
+.form-row {
+    display: grid;
+
     grid-template-columns: 220px 1fr;
+
     align-items: center;
-    padding: 14px 0;
-    border-bottom: 1px solid #e5e5e5;
+
     column-gap: 24px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid var(--th-border);
 }
 
-.form-labels{
+.form-row:last-child {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   FORM LABEL
+   ========================================================= */
+
+.form-labels {
+    color: var(--th-text-muted);
+
+    font-size: 12px;
+
     font-weight: 600;
 }
 
-.edit-mode-footer-container{
-    min-height: 75px;
+
+/* =========================================================
+   FORM VALUE
+   ========================================================= */
+
+.form-row > :last-child {
+    color: var(--th-text);
+
+    font-size: 13px;
+
+    font-weight: 500;
 }
 
-.tenant-basic-details{
-    background-color: #e3e3e3;
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 20px;
+
+/* =========================================================
+   EDIT MODE FOOTER
+   ========================================================= */
+
+.edit-mode-footer-container {
+    min-height: 75px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .tenant-details-container {
+        padding: 24px 20px;
+    }
+
+    .form-row {
+        grid-template-columns: 180px 1fr;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .tenant-details-container {
+        padding: 20px 14px;
+    }
+
+    .tenant-details-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+    .tenant-details-header h1 {
+        font-size: 24px;
+    }
+
+    .tenant-basic-details {
+        padding: 20px 16px;
+    }
+
+    .basic-details-header {
+        align-items: flex-start;
+
+        gap: 12px;
+
+        flex-direction: column;
+    }
+
+    .edit-room-button {
+        width: 100%;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+
+        gap: 6px;
+
+        padding: 13px 0;
+    }
 }

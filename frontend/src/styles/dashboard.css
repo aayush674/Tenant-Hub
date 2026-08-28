@@ -1,25 +1,212 @@
-.dashboard-container{
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+.dashboard-container {
+    min-height: calc(100vh - 74px);
+
+    padding: 28px 32px;
+
+    box-sizing: border-box;
+
     font-family: "Lexend", sans-serif;
+
+    background: var(--th-background);
+
+    color: var(--th-text);
 }
 
-.dashboard-header{
-    margin: 20px;
+
+/* =========================================================
+   DASHBOARD HEADER
+   ========================================================= */
+
+.dashboard-header {
+    margin: 0 0 28px 0;
 }
+
+.dashboard-header h1 {
+    margin: 0;
+
+    color: var(--th-text);
+
+    font-size: 28px;
+    font-weight: 600;
+
+    letter-spacing: -0.5px;
+}
+
+.dashboard-header p {
+    margin: 7px 0 0;
+
+    color: var(--th-text-muted);
+
+    font-size: 13px;
+    font-weight: 400;
+}
+
+
+/* =========================================================
+   DASHBOARD BODY
+   ========================================================= */
 
 .dashboard-body {
+    min-height: calc(100vh - 180px);
+
     display: flex;
-    justify-content: center;
     align-items: center;
-    /* height: 100%; or min-height: 100vh if you want vertical centering */
+    justify-content: center;
 }
 
+
+/* =========================================================
+   COMING SOON CARD
+   ========================================================= */
+
 .coming-soon-block {
+    width: min(420px, 90%);
+
+    box-sizing: border-box;
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #cb9f58;
-    padding: 10px 20px;
-    width: fit-content;
-    border-radius: 8px; /* optional */
+    justify-content: center;
+
+    padding: 42px 45px;
+
+    background: var(--th-surface);
+
+    border: 1px solid var(--th-border);
+
+    border-radius: var(--th-card-radius);
+
+    box-shadow: var(--th-shadow);
+
+    text-align: center;
+
+    position: relative;
+    overflow: hidden;
 }
 
+
+/* Gold accent at top */
+
+.coming-soon-block::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 3px;
+
+    background: var(--th-gold);
+}
+
+
+/* =========================================================
+   COMING SOON TITLE
+   ========================================================= */
+
+.coming-soon-block h2 {
+    margin: 0 0 10px;
+
+    color: var(--th-text);
+
+    font-size: 22px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   COMING SOON DESCRIPTION
+   ========================================================= */
+
+.coming-soon-block p {
+    margin: 0;
+
+    max-width: 330px;
+
+    color: var(--th-text-muted);
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   OPTIONAL ICON
+   ========================================================= */
+
+.coming-soon-icon {
+    width: 54px;
+    height: 54px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 20px;
+
+    border-radius: 50%;
+
+    background: rgba(152, 123, 35, 0.10);
+
+    color: var(--th-gold);
+
+    font-size: 24px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .dashboard-container {
+        padding: 24px 20px;
+    }
+
+    .dashboard-header {
+        margin-bottom: 22px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 24px;
+    }
+
+    .dashboard-body {
+        min-height: calc(100vh - 160px);
+    }
+
+    .coming-soon-block {
+        padding: 35px 28px;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .dashboard-container {
+        padding: 20px 15px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 22px;
+    }
+
+    .dashboard-header p {
+        font-size: 12px;
+    }
+
+    .coming-soon-block {
+        width: 100%;
+
+        padding: 32px 22px;
+    }
+}

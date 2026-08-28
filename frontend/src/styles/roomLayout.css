@@ -1,65 +1,280 @@
+/* =========================================================
+   ROOM LAYOUT
+   ========================================================= */
+
 .room-layout-container {
     display: flex;
-    font-family: "Lexend", sans-serif;
-    align-items: flex-start;
+
     width: 100%;
+
+    min-height: calc(100vh - 74px);
+
+    font-family: "Lexend", sans-serif;
+
+    background: var(--th-background);
+
+    color: var(--th-text);
 }
+
+
+/* =========================================================
+   ROOM SIDEBAR
+   ========================================================= */
 
 .room-sidebar {
     position: sticky;
-    top: 70px;
+
+    top: 74px;
+
     width: 220px;
     min-width: 220px;
+
+    height: calc(100vh - 74px);
+
+    box-sizing: border-box;
+
     flex-shrink: 0;
-    height: fit-content;
-    background: #fff;
-    border-right: 1px solid #e5e5e5;
-    padding: 20px 0px 0px 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 18px 10px;
+
+    background: var(--th-navy);
+
+    border-right: 1px solid rgba(197, 162, 74, 0.12);
 }
 
+
+/* =========================================================
+   SIDEBAR LINKS
+   ========================================================= */
+
 .room-sidebar a {
+    position: relative;
+
     display: flex;
     align-items: center;
+
     gap: 12px;
-    padding: 14px 24px;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+
+    margin-bottom: 3px;
+
+    border-radius: 7px;
+
     text-decoration: none;
-    color: #333;
-    font-size: 15px;
+
+    color: #aab8bd;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    white-space: nowrap;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
 }
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
+.room-sidebar a:hover {
+    background: rgba(255, 255, 255, 0.055);
+
+    color: #f1efe8;
+}
+
+
+/* =========================================================
+   ACTIVE LINK
+   ========================================================= */
+
+.room-sidebar a.active {
+    background: rgba(197, 162, 74, 0.11);
+
+    color: #f5f3ec;
+
+    font-weight: 600;
+}
+
+
+/* Gold active indicator */
+
+.room-sidebar a.active::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    top: 50%;
+
+    width: 3px;
+    height: 22px;
+
+    border-radius: 0 999px 999px 0;
+
+    background: var(--th-gold-light);
+
+    transform: translateY(-50%);
+}
+
+
+/* =========================================================
+   SIDEBAR ICONS
+   ========================================================= */
 
 .room-sidebar a svg,
 .room-sidebar a img,
 .room-sidebar a i {
     flex-shrink: 0;
+
     width: 20px;
     height: 20px;
+
+    color: #899ba1;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
+
+/* Hover icon */
+
+.room-sidebar a:hover svg,
+.room-sidebar a:hover img,
+.room-sidebar a:hover i {
+    color: #d5dfe1;
+}
+
+
+/* Active icon */
+
+.room-sidebar a.active svg,
+.room-sidebar a.active img,
+.room-sidebar a.active i {
+    color: var(--th-gold-light);
+}
+
+
+/* =========================================================
+   SIDEBAR TEXT
+   ========================================================= */
 
 .room-sidebar a span {
     opacity: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    transition: opacity 0.2s ease 0.15s, max-width 0.2s ease 0.15s;
+
     max-width: 160px;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    transition:
+        opacity 0.2s ease 0.15s,
+        max-width 0.2s ease 0.15s;
 }
 
-.room-sidebar a.active {
-    background: #fff9ee;
-    border-right: 4px solid #eba925;
-    font-weight: 600;
-}
 
-.room-sidebar a:hover {
-    background: #fff9ee;
-}
+/* =========================================================
+   ROOM CONTENT
+   ========================================================= */
 
 .room-content {
     flex: 1;
+
     min-width: 0;
-    padding-left: 32px;
+
+    min-height: calc(100vh - 74px);
+
+    box-sizing: border-box;
+
+    background: var(--th-background);
+
+    padding-left: 0;
 }
 
+
+/* =========================================================
+   PAGE CONTENT
+   ========================================================= */
+
 .page-content {
-    padding: 24px;
+    box-sizing: border-box;
+
+    padding: 28px 32px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .room-sidebar {
+        width: 65px;
+        min-width: 65px;
+
+        padding: 18px 7px;
+    }
+
+    .room-sidebar a {
+        justify-content: center;
+
+        padding: 12px 0;
+
+        gap: 0;
+    }
+
+    .room-sidebar a span {
+        opacity: 0;
+
+        max-width: 0;
+
+        visibility: hidden;
+
+        transition:
+            opacity 0.1s ease,
+            max-width 0.15s ease;
+    }
+
+    .room-content {
+        min-width: 0;
+    }
+
+    .page-content {
+        padding: 24px 20px;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .room-sidebar {
+        width: 58px;
+        min-width: 58px;
+
+        padding: 14px 5px;
+    }
+
+    .room-sidebar a {
+        padding: 11px 0;
+    }
+
+    .page-content {
+        padding: 20px 14px;
+    }
 }

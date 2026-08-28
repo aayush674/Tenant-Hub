@@ -1,41 +1,155 @@
+/* =========================================================
+   TENANT PAGE LAYOUT
+   ========================================================= */
 .tenant-layout-container {
     display: flex;
-    /* min-height: calc(100vh - 70px); adjust for header height */
+    width: 100%;
+    min-height: calc(100vh - 74px);
+
+    margin: 0;
+    padding: 0;
+
     font-family: "Lexend", sans-serif;
-    align-items: flex-start;
+    background: var(--th-background);
 }
 
 .tenant-sidebar {
     position: sticky;
-    top: 70px;
-    width: 220px;
-    height: fit-content;
-    background: white;
-    border-right: 1px solid #e5e5e5;
+
+    top: 74px;
+
+    width: 190px;
+    min-width: 190px;
+
+    height: calc(100vh - 74px);
+
+    box-sizing: border-box;
+
+    padding: 18px 10px;
+
+    flex-shrink: 0;
+
+    background: var(--th-navy);
+
+    border-right: 1px solid rgba(197, 162, 74, 0.12);
+
     display: flex;
     flex-direction: column;
-    padding: 20px 0;
 }
+
+.tenant-content {
+    flex: 1;
+
+    min-width: 0;
+
+    margin: 0;
+    padding: 0;
+
+    background: var(--th-background);
+}
+
+/* =========================================================
+   SIDEBAR LINKS
+   ========================================================= */
 
 .tenant-sidebar a {
-    border: none;
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+
+    margin-bottom: 4px;
+
+    border-radius: 7px;
+
     background: transparent;
 
-    padding: 14px 24px;
-    text-align: left;
+    color: #aab8bd;
+
     text-decoration: none;
-    font-size: 15px;
-    cursor: pointer;
-    color: #333;
-    transition: background 0.2s ease;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    white-space: nowrap;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
 }
 
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
+.tenant-sidebar a:hover {
+    background: rgba(255, 255, 255, 0.055);
+
+    color: #f1efe8;
+}
+
+
+/* =========================================================
+   ACTIVE
+   ========================================================= */
+
 .tenant-sidebar a.active {
-    background: #fff9ee;
-    border-right: 4px solid #eba925;
+    background: rgba(197, 162, 74, 0.11);
+
+    color: #f5f3ec;
+
     font-weight: 600;
 }
 
-.tenant-sidebar a:hover {
-    background: #fff9ee;
+
+/* Gold active indicator */
+
+.tenant-sidebar a.active::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 50%;
+
+    width: 3px;
+    height: 22px;
+
+    border-radius: 0 999px 999px 0;
+
+    background: var(--th-gold-light);
+
+    transform: translateY(-50%);
+}
+
+
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .tenant-sidebar {
+        width: 65px;
+        min-width: 65px;
+
+        padding: 18px 7px;
+    }
+
+    .tenant-sidebar a {
+        justify-content: center;
+
+        padding: 12px 0;
+
+        font-size: 0;
+    }
 }

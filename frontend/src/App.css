@@ -11,6 +11,18 @@
   justify-content: flex-end;
 }
 
+html,
+body,
+#root {
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    background: var(--th-background);
+    color: var(--th-text);
+    font-family: "Lexend", sans-serif;
+}
 
 
 

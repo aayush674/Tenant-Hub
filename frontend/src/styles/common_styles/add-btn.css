@@ -1,78 +1,170 @@
+/* =========================================================
+   GLOBAL ADD / CREATE BUTTON
+   ========================================================= */
+
 .add-btn {
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
-    gap: 8px;
 
-    height: 46px;
-    padding: 0 20px;
+    gap: 9px;
 
-    background: #fff;
-    color: #4a4a4a;
+    min-height: 38px;
 
-    border: 1px solid #dccb96;
-    border-radius: 12px;
+    padding: 0 16px;
 
-    font-size: 15px;
+    box-sizing: border-box;
+
+    background: var(--th-gold);
+
+    color: #ffffff;
+
+    border: 1px solid var(--th-gold);
+
+    border-radius: 7px;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 12px;
+
     font-weight: 600;
+
     line-height: 1;
 
     cursor: pointer;
+
     user-select: none;
 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow:
+        0 4px 12px rgba(152, 123, 35, 0.14);
 
     transition:
-        background-color .2s ease,
-        border-color .2s ease,
-        color .2s ease,
-        box-shadow .2s ease,
-        transform .18s ease;
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.18s ease;
 }
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
 
 .add-btn:hover {
-    background: #fbf6e7;
-    border-color: #b79739;
+    background: var(--th-gold-light);
 
-    transform: translateY(-2px);
+    border-color: var(--th-gold-light);
 
-    box-shadow: 0 8px 18px rgba(183, 151, 57, 0.15);
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 7px 17px rgba(152, 123, 35, 0.22);
 }
+
+
+/* =========================================================
+   ACTIVE
+   ========================================================= */
 
 .add-btn:active {
     transform: translateY(0);
 
-    background: #f6edd0;
-
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    box-shadow:
+        0 2px 6px rgba(152, 123, 35, 0.14);
 }
+
+
+/* =========================================================
+   ICON
+   ========================================================= */
 
 .add-btn .icon {
     width: 20px;
     height: 20px;
 
     display: grid;
+
     place-items: center;
 
     flex-shrink: 0;
 
     border-radius: 50%;
 
-    background: #dccb96;
-    color: #6d5718;
+    background: rgba(255, 255, 255, 0.20);
 
-    font-size: 11px;
+    color: #ffffff;
+
+    font-size: 10px;
+
     line-height: 1;
 
     transition:
-        background-color .2s ease,
-        color .2s ease,
-        transform .2s ease;
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
+
+/* =========================================================
+   ICON HOVER
+   ========================================================= */
+
 .add-btn:hover .icon {
-    background: #b79739;
-    color: #fff;
+    background: rgba(255, 255, 255, 0.90);
+
+    color: var(--th-gold);
 
     transform: rotate(90deg);
+}
+
+
+/* =========================================================
+   DISABLED
+   ========================================================= */
+
+.add-btn:disabled {
+    opacity: 0.55;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+.add-btn:disabled:hover {
+    background: var(--th-gold);
+
+    border-color: var(--th-gold);
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+.add-btn:disabled:hover .icon {
+    transform: none;
+
+    background: rgba(255, 255, 255, 0.20);
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .add-btn {
+        min-height: 40px;
+
+        padding: 0 15px;
+
+        font-size: 12px;
+    }
 }

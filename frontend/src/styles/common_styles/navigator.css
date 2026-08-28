@@ -1,26 +1,71 @@
-/*
-PG List
-PG Details
-Rooms List
-Room Templates
-Tenants List
-Dues
-Payments
-Rooms Details
-Tenant Details
-*/
+/* =========================================================
+   BREADCRUMB / NAVIGATION PATH
+   ========================================================= */
 
 .nav-path {
-    color: #434242;
-    font-size: 14px;
-    margin-bottom: 0px;
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin-bottom: 14px;
+
+    color: var(--th-text-muted);
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    line-height: 1.5;
 }
+
+
+/* =========================================================
+   CLICKABLE NAVIGATOR
+   ========================================================= */
 
 .navigator {
+    color: var(--th-gold);
+
     cursor: pointer;
-    color: #987b23;
+
+    font-weight: 600;
+
+    transition:
+        color 0.2s ease,
+        opacity 0.2s ease;
 }
 
+
 .navigator:hover {
+    color: var(--th-gold-light);
+
     text-decoration: underline;
+
+    text-underline-offset: 3px;
+}
+
+
+/* =========================================================
+   SEPARATOR
+   ========================================================= */
+
+.seperator {
+    color: #a8aaa5;
+
+    user-select: none;
+}
+
+
+/* =========================================================
+   CURRENT PAGE
+   ========================================================= */
+
+.nav-path > span:last-child {
+    color: var(--th-text-muted);
+
+    font-weight: 500;
 }
