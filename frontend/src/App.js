@@ -1,4 +1,5 @@
 import "./App.css";
+import "./styles/common_styles/theme.css"
 import Header from "./components/admin/header";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -67,7 +68,7 @@ function Layout() {
           </Route>
           <Route path="dues" element={<ProtectedRoute><Dues /></ProtectedRoute>} />
           <Route path="payments" element={<ProtectedRoute><Payments /></ProtectedRoute>} />
-        </Route>        
+        </Route>
         <Route
           path="/t"
           element={

@@ -1,87 +1,311 @@
+/* =========================================================
+   PG LAYOUT
+   ========================================================= */
+
 .pg-layout-container {
     display: flex;
+
+    min-height: calc(100vh - 74px);
+
     font-family: "Lexend", sans-serif;
-    align-items: flex-start;
+
+    background: var(--th-background);
 }
+
+
+/* =========================================================
+   PG SIDEBAR
+   ========================================================= */
 
 .pg-sidebar {
     position: sticky;
-    top: 70px;
+    top: 74px;
+
     width: 220px;
-    height: fit-content;
-    background: white;
-    border-right: 1px solid #e5e5e5;
+
+    height: calc(100vh - 74px);
+
+    box-sizing: border-box;
+
+    background: var(--th-navy);
+
+    border-right: 1px solid rgba(197, 162, 74, 0.12);
+
     display: flex;
     flex-direction: column;
-    padding: 20px 0;
-    transition: width 0.3s ease;
+
+    padding: 18px 10px;
+
+    flex-shrink: 0;
+
+    transition:
+        width 0.3s ease;
 }
+
+
+/* =========================================================
+   COLLAPSED SIDEBAR
+   ========================================================= */
 
 .pg-sidebar.collapsed {
     width: 65px;
 }
 
+
+/* =========================================================
+   SIDEBAR LINKS
+   ========================================================= */
+
 .pg-sidebar a {
+    position: relative;
+
     display: flex;
     align-items: center;
+
     gap: 12px;
-    padding: 14px 24px;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+
+    margin-bottom: 3px;
+
     border: none;
+
+    border-radius: 7px;
+
     background: transparent;
+
     text-align: left;
     text-decoration: none;
-    font-size: 15px;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 13px;
+    font-weight: 500;
+
     cursor: pointer;
-    color: #333;
+
+    color: #aab8bd;
+
     white-space: nowrap;
-    transition: background 0.2s ease, padding 0.3s ease, gap 0.3s ease;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        padding 0.3s ease,
+        gap 0.3s ease;
 }
 
-.pg-sidebar.collapsed a {
-    justify-content: center;
-    padding: 14px 0;
-    gap: 0;
+
+/* =========================================================
+   SIDEBAR LINK HOVER
+   ========================================================= */
+
+.pg-sidebar a:hover {
+    background: rgba(255, 255, 255, 0.055);
+
+    color: #f1efe8;
 }
 
-/* Icon: fixed size so it never squishes or moves */
+
+/* =========================================================
+   ACTIVE SIDEBAR LINK
+   ========================================================= */
+
+.pg-sidebar a.active {
+    background: rgba(197, 162, 74, 0.11);
+
+    color: #f5f3ec;
+
+    font-weight: 600;
+}
+
+
+/* Gold active indicator */
+
+.pg-sidebar a.active::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 50%;
+
+    width: 3px;
+    height: 22px;
+
+    border-radius: 0 999px 999px 0;
+
+    background: var(--th-gold-light);
+
+    transform: translateY(-50%);
+}
+
+
+/* =========================================================
+   SIDEBAR ICONS
+   ========================================================= */
+
 .pg-sidebar a svg,
 .pg-sidebar a img,
 .pg-sidebar a i {
     flex-shrink: 0;
+
     width: 20px;
     height: 20px;
+
+    color: #899ba1;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
-/* Text span */
+
+/* Hover icon */
+
+.pg-sidebar a:hover svg,
+.pg-sidebar a:hover img,
+.pg-sidebar a:hover i {
+    color: #d5dfe1;
+}
+
+
+/* Active icon */
+
+.pg-sidebar a.active svg,
+.pg-sidebar a.active img,
+.pg-sidebar a.active i {
+    color: var(--th-gold-light);
+}
+
+
+/* =========================================================
+   SIDEBAR TEXT
+   ========================================================= */
+
 .pg-sidebar a span {
     opacity: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    /* EXPAND: wait for the width animation to mostly finish, then fade in */
-    transition: opacity 0.2s ease 0.15s, max-width 0.2s ease 0.15s;
+
     max-width: 160px;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    transition:
+        opacity 0.2s ease 0.15s,
+        max-width 0.2s ease 0.15s;
 }
 
-/* COLLAPSE: hide immediately, no delay, so text doesn't linger/overflow */
+
+/* =========================================================
+   COLLAPSED LINK
+   ========================================================= */
+
+.pg-sidebar.collapsed a {
+    justify-content: center;
+
+    padding: 12px 0;
+
+    gap: 0;
+}
+
+
+/* =========================================================
+   COLLAPSED TEXT
+   ========================================================= */
+
 .pg-sidebar.collapsed a span {
     opacity: 0;
+
     max-width: 0;
+
     visibility: hidden;
-    transition: opacity 0.1s ease, max-width 0.15s ease, visibility 0s linear 0.1s;
+
+    transition:
+        opacity 0.1s ease,
+        max-width 0.15s ease,
+        visibility 0s linear 0.1s;
 }
 
-.pg-sidebar a.active {
-    background: #fff9ee;
-    border-right: 4px solid #eba925;
-    font-weight: 600;
+
+/* =========================================================
+   COLLAPSED ACTIVE INDICATOR
+   ========================================================= */
+
+.pg-sidebar.collapsed a.active::before {
+    left: 0;
+
+    width: 3px;
+    height: 24px;
 }
 
-.pg-sidebar a:hover {
-    background: #fff9ee;
-}
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
 
 .content {
     flex: 1;
-    margin: 15px;
-    /* overflow-y: auto; */
+    min-width: 0;
+    min-height: calc(100vh - 74px);
+    box-sizing: border-box;
+    padding: 0;
+    background: var(--th-background);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .pg-sidebar {
+        width: 65px;
+    }
+
+    .pg-sidebar a {
+        justify-content: center;
+
+        padding: 12px 0;
+
+        gap: 0;
+    }
+
+    .pg-sidebar a span {
+        opacity: 0;
+
+        max-width: 0;
+
+        visibility: hidden;
+    }
+
+    .content {
+        padding: 20px;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .pg-sidebar {
+        width: 58px;
+
+        padding: 14px 7px;
+    }
+
+    .content {
+        padding: 16px 12px;
+    }
+}
+
+.content:has(.tenant-layout-container),
+.content:has(.room-layout-container),
+.content:has(.pg-layout-container) {
+    padding: 0;
 }

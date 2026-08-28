@@ -1,171 +1,426 @@
+/* =========================================================
+   DUES
+   ========================================================= */
+
 .dues-container {
-    padding: 10px 30px;
+    min-height: calc(100vh - 74px);
+
+    box-sizing: border-box;
+
+    padding: 28px 32px;
+
     font-family: "Lexend", sans-serif;
+
+    background: var(--th-background);
+
+    color: var(--th-text);
 }
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .dues-header {
     display: flex;
-    justify-content: space-between;
+
     align-items: center;
-    margin-bottom: 20px;
+    justify-content: space-between;
+
+    margin-bottom: 24px;
 }
 
 .dues-header h1 {
-    color: #5b4914;
+    margin: 0;
+
+    color: var(--th-text);
+
+    font-size: 28px;
+    font-weight: 600;
+
+    letter-spacing: -0.5px;
 }
 
-.due-header-buttons{
+
+/* =========================================================
+   HEADER BUTTONS
+   ========================================================= */
+
+.due-header-buttons {
     display: flex;
+
+    align-items: center;
+
     gap: 10px;
 }
 
+
+/* =========================================================
+   ADD DUE BUTTON
+   ========================================================= */
+
 .add-due-btn {
-    background-color: #987b23;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 3px;
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 38px;
+
+    padding: 0 16px;
+
+    margin-top: 0;
+
+    background: var(--th-gold);
+
+    color: #ffffff;
+
+    border: 1px solid var(--th-gold);
+
+    border-radius: 7px;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 12px;
+    font-weight: 600;
+
     cursor: pointer;
+
     flex-shrink: 0;
-    border-radius: 5px;
-    border: 2px solid #5b4914;
-    transition: all 0.2s ease;
-    margin-top: 20px;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
 }
 
 .add-due-btn:hover {
-    background-color: #5b4914;
+    background: var(--th-gold-light);
+
+    border-color: var(--th-gold-light);
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 15px rgba(152, 123, 35, 0.20);
 }
 
 .add-due-btn:active {
-    background-color: #4a3a10;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+
+    box-shadow: none;
 }
 
-/* .action-column{
-    display: flex;
-    gap: 12px;
-}
 
-.filter-button{
- background-color: #987b23;
- font-size: 2.5vh;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    cursor: pointer;
-    flex-shrink: 0;
-    border-radius: 5px;
-    border: 2px solid #5b4914;
-    transition: all 0.2s ease;
-    margin-bottom: 20px;
-    font-weight: bold;
-     display: flex;
+/* =========================================================
+   FILTER BUTTON
+   ========================================================= */
+
+.filter-button {
+    display: inline-flex;
+
     align-items: center;
+    justify-content: center;
+
     gap: 8px;
+
+    height: 38px;
+
+    padding: 0 15px;
+
+    background: var(--th-navy);
+
+    color: #f5f3ec;
+
+    border: 1px solid var(--th-navy);
+
+    border-radius: 7px;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
 }
 
 .filter-button:hover {
-    background-color: #5b4914;
-}
+    background: var(--th-navy-light);
 
-.filter-icon {
-    width: 18px;
-    height: 18px;
+    border-color: var(--th-navy-light);
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 15px rgba(7, 25, 35, 0.16);
 }
 
 .filter-button:active {
-    background-color: #4a3a10;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+
+    box-shadow: none;
 }
 
 
-.delete-room-button{
-    color: red;
-    background-color: #fef2f2;
-    border: 1px solid #fecaca;
-    border-radius: 6px;
-    font-weight: 600;
-    font-family: "Lexend", sans-serif;
+/* =========================================================
+   FILTER ICON
+   ========================================================= */
+
+.filter-icon {
+    width: 16px;
+    height: 16px;
+
+    flex-shrink: 0;
+
+    color: var(--th-gold-light);
+}
+
+
+/* =========================================================
+   DELETE BUTTON
+   ========================================================= */
+
+.delete-room-button {
+    min-width: 78px;
     min-height: 32px;
-    min-width: 85px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
 
-.delete-room-button:hover{
-    background-color: #ffd1d1;
-    border-color: #fca5a5;
-}
+    padding: 6px 12px;
 
-.edit-room-button{
-    color: blue;
-    background-color: #f2f2fe;
-    border: 1px solid #cacafe;
+    color: var(--th-danger);
+
+    background: #fff5f4;
+
+    border: 1px solid #f0cfcc;
+
     border-radius: 6px;
-    font-weight: 600;
+
     font-family: "Lexend", sans-serif;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease;
+}
+
+.delete-room-button:hover {
+    background: #ffebea;
+
+    border-color: #e4aaa5;
+
+    transform: translateY(-1px);
+}
+
+.delete-room-button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   EDIT BUTTON
+   ========================================================= */
+
+.edit-room-button {
+    min-width: 78px;
     min-height: 32px;
-    min-width: 85px;
-    transition: all 0.2s ease;
+
+    padding: 6px 12px;
+
+    color: var(--th-navy);
+
+    background: rgba(197, 162, 74, 0.10);
+
+    border: 1px solid rgba(152, 123, 35, 0.30);
+
+    border-radius: 6px;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 11px;
+    font-weight: 600;
+
     cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
 }
 
-.edit-room-button:hover{
-    background-color: #d1d1ff;
-    border-color: #a5a5fc;
-}
+.edit-room-button:hover {
+    background: var(--th-gold);
 
-.floor-navigation-box{
-    display: flex;
-    gap: 10px;
-    margin: 10px 0px;
-}
+    border-color: var(--th-gold);
 
-.floor-navigation-box button{
-    min-width: 110px;
-    padding: 10px 0px;
-    border-radius: 5px;
-    background-color: #ffffff;
-    border: 1px solid #987b23;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.floor-navigation-box button.active-floor{
-    background-color: #987b23;
     color: #ffffff;
-} */
+
+    transform: translateY(-1px);
+}
+
+.edit-room-button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   NO DUES MESSAGE
+   ========================================================= */
 
 .no-ḍues-message {
-    text-align: center;
-    padding: 20px;
-    color: #666;
-    font-weight: bold;
-}
+    display: flex;
 
-.tenant-column{
-    width: 200px;
-}
+    align-items: center;
+    justify-content: center;
 
-.status-chip{
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 12px;
+    min-height: 160px;
+
+    padding: 25px;
+
+    box-sizing: border-box;
+
+    color: var(--th-text-muted);
+
+    background: var(--th-surface);
+
+    border: 1px dashed var(--th-border);
+
+    border-radius: var(--th-card-radius);
+
+    font-size: 13px;
+
     font-weight: 500;
+
+    text-align: center;
 }
 
-.status-chip.partial{
-    background-color: #f9ffd4;
-    color: #979122;
+
+/* =========================================================
+   TENANT COLUMN
+   ========================================================= */
+
+.tenant-column {
+    width: 200px;
+
+    color: var(--th-text);
 }
 
-.status-chip.paid{
-    background-color: #c7ffdc;
-    color: #148f12;
+
+/* =========================================================
+   PAYMENT STATUS
+   ========================================================= */
+
+.status-chip {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    line-height: 1;
+
+    white-space: nowrap;
 }
 
-.status-chip.pending{
-    background-color: #e8f0fe;
-    color: #1a73e8;
+
+/* =========================================================
+   PARTIAL
+   ========================================================= */
+
+.status-chip.partial {
+    background: #fff7d9;
+
+    color: #92751b;
+
+    border: 1px solid #eadca8;
+}
+
+
+/* =========================================================
+   PAID
+   ========================================================= */
+
+.status-chip.paid {
+    background: #edf8f0;
+
+    color: #34734a;
+
+    border: 1px solid #cfe6d5;
+}
+
+
+/* =========================================================
+   PENDING
+   ========================================================= */
+
+.status-chip.pending {
+    background: #eef3ff;
+
+    color: #4166b0;
+
+    border: 1px solid #d5def2;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .dues-container {
+        padding: 24px 20px;
+    }
+}
+
+
+@media (max-width: 600px) {
+    .dues-container {
+        padding: 20px 14px;
+    }
+
+    .dues-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 14px;
+    }
+
+    .dues-header h1 {
+        font-size: 24px;
+    }
+
+    .due-header-buttons {
+        width: 100%;
+    }
+
+    .add-due-btn,
+    .filter-button {
+        flex: 1;
+    }
+
+    .tenant-column {
+        width: 160px;
+    }
 }

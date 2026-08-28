@@ -1,119 +1,309 @@
+/* =========================================================
+   ROOM TYPE
+   ========================================================= */
+
 .room-type-container {
-    padding: 10px 30px;
+    min-height: calc(100vh - 74px);
+
+    box-sizing: border-box;
+
+    padding: 28px 32px;
+
     font-family: "Lexend", sans-serif;
+
+    background: var(--th-background);
+
+    color: var(--th-text);
 }
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .room-type-header {
     display: flex;
-    justify-content: space-between;
+
     align-items: center;
-    margin-bottom: 20px;
-}
+    justify-content: space-between;
 
-.add-room-type-btn {
-    background-color: #987b23;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 3px;
-    cursor: pointer;
-    flex-shrink: 0;
-    border-radius: 5px;
-    border: 2px solid #5b4914;
-    transition: all 0.2s ease;
-    margin-top: 20px;
-}
-
-.add-room-type-btn:hover {
-    background-color: #5b4914;
-}
-
-.add-room-type-btn:active {
-    background-color: #4a3a10;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    margin-bottom: 24px;
 }
 
 .room-type-header h1 {
-    color: #5b4914;
+    margin: 0;
+
+    color: var(--th-text);
+
+    font-size: 28px;
+    font-weight: 600;
+
+    letter-spacing: -0.5px;
 }
 
-.occupancy-chip{
-    padding:6px 14px;
-    border-radius:999px;
-    font-weight:600;
-    font-size:.85rem;
-}
 
-.occupancy-chip.single{
-    background:#eef8f0;
-    color:#23843f;
-}
+/* =========================================================
+   ADD ROOM TYPE BUTTON
+   ========================================================= */
 
-.occupancy-chip.double{
-    background:#eef3ff;
-    color:#2d5fd3;
-}
+.add-room-type-btn {
+    display: inline-flex;
 
-.action-column{
-    display: flex;
-    gap: 12px;
-}
+    align-items: center;
+    justify-content: center;
 
-/* .filter-button button{
- background-color: #987b23;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 3px;
+    gap: 8px;
+
+    min-height: 38px;
+
+    padding: 0 16px;
+
+    margin-top: 0;
+
+    background: var(--th-gold);
+
+    color: #ffffff;
+
+    border: 1px solid var(--th-gold);
+
+    border-radius: 7px;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 12px;
+    font-weight: 600;
+
     cursor: pointer;
+
     flex-shrink: 0;
-    border-radius: 5px;
-    border: 2px solid #5b4914;
-    transition: all 0.2s ease;
-    margin-bottom: 20px;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
 }
 
-.filter-button button:hover {
-    background-color: #5b4914;
+
+.add-room-type-btn:hover {
+    background: var(--th-gold-light);
+
+    border-color: var(--th-gold-light);
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 15px rgba(152, 123, 35, 0.20);
 }
 
-.filter-button button:active {
-    background-color: #4a3a10;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-} */
 
-.delete-room-type-button{
-    color: red;
-    background-color: #fef2f2;
-    border: 1px solid #fecaca;
-    border-radius: 6px;
-    font-weight: 600;
+.add-room-type-btn:active {
+    transform: translateY(0);
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   OCCUPANCY CHIP
+   ========================================================= */
+
+.occupancy-chip {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 12px;
+
+    border-radius: 999px;
+
     font-family: "Lexend", sans-serif;
-    min-height: 32px;
-    min-width: 85px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
 
-.delete-room-type-button:hover{
-    background-color: #ffd1d1;
-    border-color: #fca5a5;
-}
+    font-size: 11px;
 
-.edit-room-type-button{
-    color: blue;
-    background-color: #f2f2fe;
-    border: 1px solid #cacafe;
-    border-radius: 6px;
     font-weight: 600;
-    font-family: "Lexend", sans-serif;
-    min-height: 32px;
-    min-width: 85px;
-    transition: all 0.2s ease;
-    cursor: pointer;
+
+    white-space: nowrap;
 }
 
-.edit-room-type-button:hover{
-    background-color: #d1d1ff;
-    border-color: #a5a5fc;
+
+/* Single occupancy */
+
+.occupancy-chip.single {
+    background: #eef8f0;
+
+    color: #34734a;
+
+    border: 1px solid #d2ead8;
+}
+
+
+/* Double occupancy */
+
+.occupancy-chip.double {
+    background: #eef3ff;
+
+    color: #4166b0;
+
+    border: 1px solid #d6e0f7;
+}
+
+
+/* =========================================================
+   ACTION COLUMN
+   ========================================================= */
+
+.action-column {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+/* =========================================================
+   DELETE ROOM TYPE
+   ========================================================= */
+
+.delete-room-type-button {
+    min-width: 78px;
+    min-height: 32px;
+
+    padding: 6px 12px;
+
+    color: var(--th-danger);
+
+    background: #fff5f4;
+
+    border: 1px solid #f0cfcc;
+
+    border-radius: 6px;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+.delete-room-type-button:hover {
+    background: #ffebea;
+
+    border-color: #e4aaa5;
+
+    transform: translateY(-1px);
+}
+
+
+.delete-room-type-button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   EDIT ROOM TYPE
+   ========================================================= */
+
+.edit-room-type-button {
+    min-width: 78px;
+    min-height: 32px;
+
+    padding: 6px 12px;
+
+    color: var(--th-navy);
+
+    background: rgba(197, 162, 74, 0.10);
+
+    border: 1px solid rgba(152, 123, 35, 0.30);
+
+    border-radius: 6px;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+.edit-room-type-button:hover {
+    background: var(--th-gold);
+
+    border-color: var(--th-gold);
+
+    color: #ffffff;
+
+    transform: translateY(-1px);
+}
+
+
+.edit-room-type-button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .room-type-container {
+        padding: 24px 20px;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .room-type-container {
+        padding: 20px 14px;
+    }
+
+    .room-type-header {
+        align-items: flex-start;
+
+        gap: 14px;
+
+        flex-direction: column;
+    }
+
+    .room-type-header h1 {
+        font-size: 24px;
+    }
+
+    .add-room-type-btn {
+        width: 100%;
+    }
+
+    .action-column {
+        gap: 5px;
+    }
+
+    .edit-room-type-button,
+    .delete-room-type-button {
+        min-width: 62px;
+
+        padding: 5px 8px;
+
+        font-size: 10px;
+    }
 }

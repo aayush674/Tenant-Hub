@@ -14,13 +14,12 @@
     top: 0;
     z-index: 1000;
 
-    background: #071923;
-    border-bottom: 1px solid rgba(197, 162, 74, 0.16);
+    background: #102a36;
+    border-bottom: 1px solid rgba(208, 173, 82, 0.18);
 
-    color: #f5f3ec;
+    color: #f3f0e8;
 
-    box-shadow:
-        0 4px 18px rgba(7, 25, 35, 0.18);
+    box-shadow: 0 3px 12px rgba(16, 42, 54, 0.14);
 }
 
 
@@ -98,7 +97,7 @@
 
     text-decoration: none;
 
-    color: #aab8bd;
+    color: #c2ced1;
 
     font-size: 14px;
     font-weight: 500;
@@ -108,11 +107,11 @@
 }
 
 .nav-links a:hover {
-    color: #f5f3ec;
+    color: #ffffff;
 }
 
 .nav-links a.active {
-    color: #f5f3ec;
+    color: #d0ad52;
     font-weight: 600;
 }
 
