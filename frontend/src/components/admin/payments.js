@@ -100,16 +100,6 @@ function Payments(){
             />
           )}
 
-          {/* {showEditModal && (
-                    <EditRoomModal
-                        room={editRoomData}
-                        onUpdate={(updatedRoom) => {
-                            updateRoom(updatedRoom);
-                            setShowEditModal(false);
-                        }}
-                        onClose={() => setShowEditModal(false)}
-                    />
-                )} */}
         </div>
         <div className="due-list-table">
           <TableComponent

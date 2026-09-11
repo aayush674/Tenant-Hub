@@ -43,7 +43,7 @@ class RoomSerializer(serializers.ModelSerializer):
         if rent <= 0:
             raise serializers.ValidationError("Rent must be a positive value.")
         return rent
-    
+
 class TenantSerializer(serializers.ModelSerializer):
     room_number = serializers.CharField(
         source="room.room_number",
@@ -57,7 +57,7 @@ class TenantSerializer(serializers.ModelSerializer):
         if len(phone_number) < 10:
             raise serializers.ValidationError("Phone number must be at least 10 digits.")
         return phone_number
-    
+
     def validate_room(self, Room):
         current_active_tenants = Room.tenants.filter(is_active=True)
 
@@ -67,16 +67,16 @@ class TenantSerializer(serializers.ModelSerializer):
         if current_active_tenants.count() >= Room.capacity:
             raise serializers.ValidationError("Room is already at full Capacity");
         return Room
-    
+
     @transaction.atomic
     def create(self, validated_data):
         email = validated_data["email"]
-        
+
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError({
                 "email": "A user with this email address already exists."
             })
-        
+
         user=User.objects.create_user(
             email=email,
             role="TENANT",
@@ -84,39 +84,39 @@ class TenantSerializer(serializers.ModelSerializer):
             invitation_token=uuid.uuid4(),
             invitation_expires=timezone.now()+timedelta(days=7)
         )
-        
+
         tenant=Tenant.objects.create(
             user=user,
             **validated_data
         )
-        
+
         Dues.objects.create(
             tenant = tenant,
             due_amount = (tenant.room.rent)/2,
             due_date = timezone.now().date() + timedelta(days=3),
             due_type = "security"
         )
-        
+
         send_invitation_mail(user)
-        
+
         return tenant
-    
+
 class PaymentSerializer(serializers.ModelSerializer):
     tenant_name=serializers.SerializerMethodField()
     class Meta:
         model = Payment
         fields = '__all__'
-    
+
     def validate_amount(self, amount):
         if amount <= 0:
             raise serializers.ValidationError("Payment amount must be a positive value.")
         return amount
-    
+
     def get_tenant_name(self, obj):
         if obj.due.tenant:
             return f"{obj.due.tenant.first_name} {obj.due.tenant.last_name}"
         return None
-    
+
     @transaction.atomic
     def create(self, validated_data):
         due=validated_data["due"]
@@ -129,10 +129,10 @@ class PaymentSerializer(serializers.ModelSerializer):
             due.status = "partial"
         else:
             due.status = "pending"
-        
+
         due.save(update_fields=["paid_amount", "status"])
         return payment
-    
+
     def validate(self, x):
         due=x["due"]
         amount=x["amount"]
@@ -140,7 +140,7 @@ class PaymentSerializer(serializers.ModelSerializer):
         if amount > remaining_amount:
             raise serializers.ValidationError({
                 "amount": "Payment exceeds remaining due amount"
-            })        
+            })
         return x
 
 class DueSerializer(serializers.ModelSerializer):
@@ -148,12 +148,15 @@ class DueSerializer(serializers.ModelSerializer):
     class Meta:
         model=Dues
         fields='__all__'
-        
+
     def get_tenant_name(self, obj):
         if obj.tenant:
             return f"{obj.tenant.first_name} {obj.tenant.last_name}"
         return None
-        
+
+    def get_remaining_amount(self, obj):
+        return obj.due_amount - obj.paid_amount
+
 class MaintenanceRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = MaintenanceRequest
@@ -164,10 +167,9 @@ class MaintenanceRequestSerializer(serializers.ModelSerializer):
         if status not in valid_statuses:
             raise serializers.ValidationError("Not a valid status.")
         return status
-    
+
     def validate_description(self, description):
         if len(description) < 10:
             raise serializers.ValidationError("Description must be at least 10 characters long.")
         return description
-    
-    
+
