@@ -226,8 +226,44 @@
     font-weight: 650;
 }
 
-.due-detail-item.remaining strong {
-    font-size: 18px;
+.due-detail-item.remaining {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.remaining-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pay-due-btn {
+    padding: 8px 18px;
+
+    border: none;
+    border-radius: 7px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    background: #0f3d56;
+    color: #ffffff;
+
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.pay-due-btn:hover {
+    background: #092f43;
+    transform: translateY(-1px);
+}
+
+.pay-due-btn:active {
+    transform: translateY(0);
 }
 
 

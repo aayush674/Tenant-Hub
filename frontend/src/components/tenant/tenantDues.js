@@ -130,8 +130,16 @@ function TenantDues() {
                     </div>
 
                     <div className="due-detail-item remaining">
-                      <span>Remaining</span>
-                      <strong>₹{formatAmount(remaining)}</strong>
+                      <div className="remaining-info">
+                        <span>Remaining</span>
+                        <strong>₹{formatAmount(remaining)}</strong>
+                      </div>
+
+                      {remaining > 0 && (
+                        <button type="button" className="pay-due-btn">
+                          Pay Due
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
