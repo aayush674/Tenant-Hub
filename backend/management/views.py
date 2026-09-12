@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from django.db.models import Count, Q
-from .models import MaintenanceRequest, PGproperty, Room, Tenant, Payment, RoomType, Dues
+from .models import MaintenanceRequest, PGproperty, Room, Tenant, Payment, RoomType, Dues, update_overdue_dues
 from .serializers import MaintenanceRequestSerializer, PGpropertySerializer, RoomSerializer, TenantSerializer, PaymentSerializer, DueSerializer, RoomTypeSerializer
 from accounts.models import UserRole
 from accounts.utils import has_permission
@@ -192,6 +192,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
         return queryset
 
 class DuesViewSet(viewsets.ModelViewSet):
+    update_overdue_dues()
     serializer_class = DueSerializer
     queryset = Dues.objects.all()
 

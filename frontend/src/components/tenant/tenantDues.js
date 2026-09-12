@@ -20,7 +20,26 @@ function TenantDues() {
       }
 
       const data = await res.json();
-      setDues(data);
+
+      const statusPriority = {
+        overdue: 1,
+        pending: 2,
+        partial: 2,
+        paid: 3,
+      };
+
+      const sortedDues = [...data].sort((a,b) =>{
+        const priorityDiff = statusPriority[a.status] - statusPriority[b.status];
+        if(priorityDiff!==0){
+            return priorityDiff;
+        }
+        if (a.status === "paid" && b.status === "paid") {
+          return new Date(b.due_date) - new Date(a.due_date);
+        }
+        return new Date(a.due_date) - new Date(b.due_date);
+      });
+
+      setDues(sortedDues);
     } catch (err) {
       setError("Unable to load your dues.");
     } finally {
@@ -144,7 +163,7 @@ function TenantDues() {
 
                   <div className="due-details">
                     <div className="due-detail-item">
-                      <span>Due Amount</span>
+                      <span>Total Due Amount</span>
                       <strong>₹{formatAmount(dueAmount)}</strong>
                     </div>
 
@@ -155,7 +174,7 @@ function TenantDues() {
 
                     <div className="due-detail-item remaining">
                       <div className="remaining-info">
-                        <span>Remaining</span>
+                        <span>Current Due</span>
                         <strong>₹{formatAmount(remaining)}</strong>
                       </div>
 

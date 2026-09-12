@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 class PGproperty(models.Model):  # This creates a database table, django automatically creates id primary key.
     owner=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) # This creates a foreign key relationship with the User model, and related_name allows us to access properties from a user instance. Cascade means if a user is deleted, all associated properties will also be deleted.
@@ -54,15 +55,15 @@ class Room(models.Model):
 
     def __str__(self):
         return f"{self.pg_property.name} - Room {self.room_number}"
-    
+
     @property
     def available_beds(self):
         return self.capacity - self.occupied
-    
+
     @property
     def is_available(self):
         return self.available_beds > 0
-    
+
 class Tenant(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -98,7 +99,7 @@ class Dues(models.Model):
         ]
     )
     status = models.CharField(
-        max_length=20, 
+        max_length=20,
         choices=[
             ("pending", "Pending"),
             ("partial", "Partially Paid"),
@@ -111,10 +112,21 @@ class Dues(models.Model):
         default=0
     )
     created_at=models.DateTimeField(auto_now_add=True)
-    
+
     @property
     def is_overdue(self):
         return self.status!="paid" and self.due_date < timezone.now().date()
+
+    def update_status(self):
+        if self.status != "paid" and self.due_date < timezone.now().date():
+            self.status = "overdue"
+            self.save(update_fields=["status"])
+
+def update_overdue_dues():
+    Dues.objects.filter(
+        status__in=["pending", "partial"],
+        due_date__lt=timezone.now().date()
+    ).update(status="overdue")
 
 class Payment(models.Model):
     due = models.ForeignKey(
