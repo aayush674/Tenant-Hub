@@ -2,11 +2,13 @@ import { useCallback, useEffect, useState } from "react";
 import { authFetch } from "../../api/apiClient";
 import { API_BASE_URL } from "../../config";
 import "../../styles/tenant_styles/tenantDues.css";
+import TenantPaymentModal from "./tenantPaymentModal";
 
 function TenantDues() {
   const [dues, setDues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [paymentDueId, setPaymentDueId] = useState(null);
 
   const fetchDues = useCallback(async () => {
     try {
@@ -182,7 +184,7 @@ function TenantDues() {
                         <button
                           type="button"
                           className="pay-due-btn"
-                          onClick={() => handlePayDue(due.id)}
+                          onClick={() => setPaymentDueId(due.id)}
                         >
                           Pay Due
                         </button>
@@ -192,6 +194,16 @@ function TenantDues() {
                 </div>
               );
             })}
+            {paymentDueId && (
+              <TenantPaymentModal
+                dueId={paymentDueId}
+                onAdd={() => {
+                  setPaymentDueId(null);
+                  fetchDues();
+                }}
+                onClose={() => setPaymentDueId(null)}
+              />
+            )}
           </div>
         )}
       </div>

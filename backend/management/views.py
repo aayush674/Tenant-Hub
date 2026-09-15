@@ -255,40 +255,6 @@ class DuesViewSet(viewsets.ModelViewSet):
             "created": created
         })
 
-    @action(detail=True, methods=["post"])
-    def pay_due(self, request, pk=None):
-        due=self.get_object()
-        remaining_amount = due.due_amount - due.paid_amount
-
-        if remaining_amount <= 0:
-            return Response(
-                {"detail": "This due has already been fully paid."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        payment = Payment.objects.create(
-            due=due,
-            amount=remaining_amount,
-            payment_date=date.today(),
-            payment_method="online"
-        )
-
-        due.paid_amount += remaining_amount
-        if(due.due_amount == due.paid_amount):
-            due.status = "paid"
-
-        due.save(update_fields=["paid_amount", "status"])
-
-        return Response(
-            {
-                "message": "Due paid successfully.",
-                "payment": PaymentSerializer(payment).data,
-                "due": DueSerializer(due).data
-            },
-            status=status.HTTP_201_CREATED
-        )
-
-
 class MaintenanceRequestViewSet(viewsets.ModelViewSet):
     queryset = MaintenanceRequest.objects.all()
     serializer_class = MaintenanceRequestSerializer
