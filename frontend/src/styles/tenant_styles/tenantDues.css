@@ -1,0 +1,340 @@
+/* =========================================================
+   TENANT DUES PAGE
+   ========================================================= */
+
+.tenant-dues-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 40px 50px;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.tenant-dues-header {
+    margin-bottom: 28px;
+}
+
+.tenant-dues-header h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.tenant-dues-header p {
+    margin: 8px 0 0;
+    font-size: 15px;
+    line-height: 1.5;
+    opacity: 0.65;
+}
+
+
+/* =========================================================
+   TOTAL OUTSTANDING
+   ========================================================= */
+
+.total-dues-card {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 24px 28px;
+    margin-bottom: 36px;
+
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(0, 0, 0, 0.07);
+
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.total-dues-label {
+    font-size: 16px;
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+.total-dues-amount {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   DUES SECTION
+   ========================================================= */
+
+.dues-section h2 {
+    margin: 0 0 18px;
+
+    font-size: 22px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   DUES LIST
+   ========================================================= */
+
+.dues-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+
+/* =========================================================
+   DUE CARD
+   ========================================================= */
+
+.due-card {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 22px 24px;
+
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(0, 0, 0, 0.07);
+
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.045);
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.due-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.07);
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
+.due-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.due-main-info h3 {
+    margin: 0 0 6px;
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.due-date {
+    font-size: 14px;
+    opacity: 0.6;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.due-status {
+    flex-shrink: 0;
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* Pending */
+
+.due-status.pending {
+    background: rgba(245, 158, 11, 0.12);
+    color: #a16207;
+}
+
+
+/* Partially Paid */
+
+.due-status.partial {
+    background: rgba(59, 130, 246, 0.12);
+    color: #1d4ed8;
+}
+
+
+/* Paid */
+
+.due-status.paid {
+    background: rgba(34, 197, 94, 0.12);
+    color: #15803d;
+}
+
+
+/* Overdue */
+
+.due-status.overdue {
+    background: rgba(239, 68, 68, 0.12);
+    color: #b91c1c;
+}
+
+
+/* =========================================================
+   DETAILS
+   ========================================================= */
+
+.due-details {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;
+}
+
+.due-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.due-detail-item span {
+    font-size: 13px;
+    opacity: 0.55;
+}
+
+.due-detail-item strong {
+    font-size: 16px;
+    font-weight: 650;
+}
+
+.due-detail-item.remaining {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.remaining-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pay-due-btn {
+    padding: 8px 18px;
+
+    border: none;
+    border-radius: 7px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    background: #0f3d56;
+    color: #ffffff;
+
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.pay-due-btn:hover {
+    background: #092f43;
+    transform: translateY(-1px);
+}
+
+.pay-due-btn:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.no-dues {
+    padding: 40px;
+
+    text-align: center;
+
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px dashed rgba(0, 0, 0, 0.15);
+
+    font-size: 15px;
+    opacity: 0.65;
+}
+
+
+/* =========================================================
+   LOADING / ERROR
+   ========================================================= */
+
+.dues-loading,
+.dues-error {
+    padding: 40px;
+
+    text-align: center;
+
+    font-size: 15px;
+}
+
+.dues-error {
+    color: #b91c1c;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .tenant-dues-container {
+        padding: 25px 20px 40px;
+    }
+
+    .tenant-dues-header h1 {
+        font-size: 27px;
+    }
+
+    .total-dues-card {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .total-dues-amount {
+        font-size: 25px;
+    }
+
+    .due-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .due-details {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}

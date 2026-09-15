@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from django.db.models import Count, Q
-from .models import MaintenanceRequest, PGproperty, Room, Tenant, Payment, RoomType, Dues
+from .models import MaintenanceRequest, PGproperty, Room, Tenant, Payment, RoomType, Dues, update_overdue_dues
 from .serializers import MaintenanceRequestSerializer, PGpropertySerializer, RoomSerializer, TenantSerializer, PaymentSerializer, DueSerializer, RoomTypeSerializer
 from accounts.models import UserRole
 from accounts.utils import has_permission
@@ -23,31 +23,31 @@ class PGpropertyViewSet(viewsets.ModelViewSet):
                 ).annotate(
                     room_count=Count("rooms"),
                     tenant_count=Count("rooms__tenants"),
-                        # available_rooms=Count('rooms', filter=Q(rooms__is_available==True))  
+                        # available_rooms=Count('rooms', filter=Q(rooms__is_available==True))
                 )
-      
+
         if user.role==UserRole.EMPLOYEE:
             assigned_pg_ids=user.pg_assignments.values_list(
                 "pg_id",
                 flat=True
-            )  
-            
+            )
+
             return PGproperty.objects.filter(
                 id__in=assigned_pg_ids
             ).annotate(room_count=Count("rooms"),
                        tenant_count=Count("tenants"),
-                       # available_rooms=Count('rooms', filter=Q(rooms__is_available==True))  
+                       # available_rooms=Count('rooms', filter=Q(rooms__is_available==True))
                        )
-            
+
         return PGproperty.objects.none()
-        
+
         # return PGproperty.objects.filter(owner=self.request.user).annotate(
         #     room_count=Count('rooms'),
-        #     # available_rooms=Count('rooms', filter=Q(rooms__is_available==True))       
+        #     # available_rooms=Count('rooms', filter=Q(rooms__is_available==True))
         #     ) # This ensures that users can only see their own properties.
-        
-        
-        
+
+
+
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user) # This automatically sets the owner of the property to the currently authenticated user when a new property is created.
 
@@ -65,7 +65,7 @@ class RoomTypeViewSet(viewsets.ModelViewSet):
 class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
-    
+
     def get_queryset(self):
         queryset = Room.objects.annotate(
             occupied=Count(
@@ -85,7 +85,7 @@ class RoomViewSet(viewsets.ModelViewSet):
         if max_price:
             queryset=queryset.filter(rent__lte=max_price)
         if capacity:
-            queryset=queryset.filter(capacity=capacity)    
+            queryset=queryset.filter(capacity=capacity)
         if floor:
             queryset=queryset.filter(room_floor=floor)
         return queryset
@@ -100,7 +100,7 @@ class TenantViewSet(viewsets.ModelViewSet):
             queryset = Tenant.objects.filter(
                 room__pg_property__owner=user
             )
-        
+
         elif user.role == UserRole.EMPLOYEE:
             assigned_pg_ids = []
 
@@ -113,71 +113,71 @@ class TenantViewSet(viewsets.ModelViewSet):
                     assigned_pg_ids.append(
                         assignment.pg_id
                     )
-                    
+
             queryset = Tenant.objects.filter(
                 room__pg_property__id__in=assigned_pg_ids
             )
-        
+
         elif user.role == UserRole.TENANT:
             queryset = Tenant.objects.filter(
                 user=user
             )
-        
-        
+
+
         else:
             queryset = Tenant.objects.none()
-            
+
         pg_property = self.request.query_params.get("pg_property")
         if pg_property:
             queryset = queryset.filter(room__pg_property__id = pg_property)
-        
+
         room = self.request.query_params.get("room")
         if room:
             queryset=queryset.filter(room = room)
-            
+
         return queryset
 
     def perform_create(self, serializer):
         user=self.request.user
-        
+
         if user.role==UserRole.OWNER:
             serializer.save()
             return
-        
+
         room=serializer.validated_data["room"]
         pg_id=room.pg_property.id
-        
+
         if not has_permission(user, pg_id, "add_tenants"):
             raise PermissionDenied("You do not have permission to add tenants.")
 
         serializer.save()
-        
+
     def perform_update(self, serializer):
         user=self.request.user
-        
+
         if user.role==UserRole.OWNER:
             serializer.save()
             return
-        
+
         pg_id=serializer.instance.room.pg_property.id
-        
+
         if not has_permission(user, pg_id, "edit_tenants"):
             raise PermissionDenied("You do not have permission to edit tenants")
-        
+
         serializer.save()
-    
+
     def perform_destroy(self, serializer):
         user=self.request.user
-        
+
         if user.role==UserRole.OWNER:
             serializer.delete()
             return
-        
+
         pg_id=serializer.room.pg_property.id
-        
+
         if not has_permission(user, pg_id, "delete_tenants"):
             raise PermissionDenied("You do not have permission to delete tenants")
-        
+
         serializer.delete()
 
 class PaymentViewSet(viewsets.ModelViewSet):
@@ -188,35 +188,48 @@ class PaymentViewSet(viewsets.ModelViewSet):
         pg_property = self.request.query_params.get("pg_property")
         if pg_property:
             queryset = queryset.filter(due__tenant__room__pg_property = pg_property)
-    
+
         return queryset
 
 class DuesViewSet(viewsets.ModelViewSet):
-    serializer_class=DueSerializer
-    queryset=Dues.objects.all()
+    update_overdue_dues()
+    serializer_class = DueSerializer
+    queryset = Dues.objects.all()
+
     def get_queryset(self):
-        queryset=Dues.objects.all()
-        tenant=self.request.query_params.get("tenant")
-        status=self.request.query_params.get("status")
-        exclude_status=self.request.query_params.get("exclude_status")
+        user = self.request.user
+
+        # Tenant can only see their own dues
+        if user.role == UserRole.TENANT:
+            return Dues.objects.filter(
+                tenant__user=user
+            )
+
+        # Existing owner/employee filtering
+        queryset = Dues.objects.all()
+
+        tenant = self.request.query_params.get("tenant")
+        status = self.request.query_params.get("status")
+        exclude_status = self.request.query_params.get("exclude_status")
         pg_property = self.request.query_params.get("pg_property")
-        
+
         if tenant:
-            queryset=queryset.filter(tenant_id=tenant)
-        
+            queryset = queryset.filter(tenant_id=tenant)
+
         if status == "!paid":
-            queryset=queryset.exclude(status="paid")
+            queryset = queryset.exclude(status="paid")
         elif status:
-            queryset=queryset.filter(status=status)
-            
+            queryset = queryset.filter(status=status)
+
         if exclude_status:
-            queryset=queryset.exclude(status=exclude_status)
-        
+            queryset = queryset.exclude(status=exclude_status)
+
         if pg_property:
-            queryset=queryset.filter(tenant__room__pg_property = pg_property)
-        
+            queryset = queryset.filter(
+                tenant__room__pg_property=pg_property
+            )
+
         return queryset
-    
     @action(detail = False, methods = ["post"])
     def generate_rent_dues(self, request):
         pgId=request.data["pg_property"]
@@ -225,9 +238,9 @@ class DuesViewSet(viewsets.ModelViewSet):
             room__pg_property = pgId,
             is_active = True
         )
-        
+
         created = 0
-        
+
         for tenant in tenants:
             Dues.objects.create(
                 tenant=tenant,
@@ -237,7 +250,7 @@ class DuesViewSet(viewsets.ModelViewSet):
                 status = "pending"
             )
             created+=1
-        
+
         return Response({
             "created": created
         })
