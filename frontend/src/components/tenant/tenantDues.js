@@ -53,30 +53,6 @@ function TenantDues() {
     fetchDues();
   }, [fetchDues]);
 
-  const handlePayDue = async (dueId) => {
-    try {
-      const res = await authFetch(
-        `${API_BASE_URL}/api/dues/${dueId}/pay_due/`,
-        {
-          method: "POST",
-        },
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.detail || "Failed to pay due.");
-        return;
-      }
-
-      alert("Due paid successfully.");
-
-      fetchDues();
-    } catch (error) {
-      alert("Something went wrong while paying the due.");
-    }
-  };
-
   const totalOutstanding = dues.reduce((total, due) => {
     const dueAmount = Number(due.due_amount);
     const paidAmount = Number(due.paid_amount);
