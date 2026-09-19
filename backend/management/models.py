@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 class PGproperty(models.Model):  # This creates a database table, django automatically creates id primary key.
     owner=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) # This creates a foreign key relationship with the User model, and related_name allows us to access properties from a user instance. Cascade means if a user is deleted, all associated properties will also be deleted.
@@ -84,6 +85,8 @@ class Tenant(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name} - Room {self.room.room_number}"
 
+REFUNDABLE_DUE_TYPES = {"security"}
+
 class Dues(models.Model):
     tenant = models.ForeignKey(Tenant, related_name='due', on_delete=models.CASCADE, null=True)
     due_date = models.DateField()
@@ -122,6 +125,19 @@ class Dues(models.Model):
             self.status = "overdue"
             self.save(update_fields=["status"])
 
+    refunded_amount = models.DecimalField(max_digits = 15, decimal_places = 2, default = 0)
+
+    @property
+    def is_refundable(self):
+        return self.due_type in REFUNDABLE_DUE_TYPES
+
+    @property
+    def refundable_balance(self):
+        if self.is_refundable:
+            return self.paid_amount - self.refunded_amount
+        else:
+            return 0
+
 def update_overdue_dues():
     Dues.objects.filter(
         status__in=["pending", "partial"],
@@ -138,6 +154,83 @@ class Payment(models.Model):
     payment_date = models.DateField()
     payment_method = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
+
+class LedgerEntries(models.Model):
+    tenant = models.ForeignKey(
+        Tenant,
+        related_name = "ledger_entries",
+        on_delete = models.CASCADE
+    )
+    ENTRY_TYPES = [
+        ("due_charge", "Due Charge"),
+        ("payment", "Payment"),
+        ("refund", "Refund"),
+        ("adjustment", "Adjustment")
+    ]
+    entry_type = models.CharField(max_length = 20, choices = ENTRY_TYPES)
+    amount = models.DecimalField(max_digits = 20, decimal_places = 2)
+    due = models.ForeignKey(
+        Dues,
+        null = True,
+        blank = True,
+        on_delete = models.SET_NULL
+    )
+    payment = models.ForeignKey(
+        Payment,
+        null = True,
+        blank = True,
+        on_delete = models.SET_NULL
+    )
+    description = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+
+class Refund(models.Model):
+    tenant = models.ForeignKey(
+        Tenant,
+        related_name = "refunds",
+        on_delete = models.CASCADE
+    )
+    due = models.ForeignKey(
+        Dues,
+        on_delete = models.CASCADE
+    )
+    amount = models.DecimalField(max_digits = 20, decimal_places = 2)
+    reason = models.CharField(max_length = 250, blank = True)
+
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("processed", "Processed"),
+        ("rejected", "Rejected")
+    ]
+    status = models.CharField(max_length = 20, choices = STATUS_CHOICES, default = "pending")
+    processed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null = True,
+        blank = True,
+        on_delete = models.SET_NULL
+    )
+    requested_at = models.DateTimeField(auto_now_add = True)
+    processed_at = models.DateTimeField(null = True, blank = True)
+
+    def clean(self):
+        if not self.due.is_refundable:
+            raise ValidationError(f"'{self.due.get_due_type_display()}' is not a refundable due type.")
+
+        if self.amount > self.due.refundable_balance:
+            raise ValidationError(f"Requested refund amount exceeds the available Refundable amount.")
+
+    def process(self):
+        self.full_clean()
+        self.status = "processed"
+        self.processed_at = timezone.now()
+        self.save(update_fields = ["status", "processed_at"])
+        self.due.refunded_amount += self.amount
+        self.due.save(update_fields = ["refunded_amount"])
+
 
 class MaintenanceRequest(models.Model):
     room = models.ForeignKey(Room, related_name='maintenance_requests', on_delete=models.SET_NULL, null=True) # If a room is deleted, we set the room field to null instead of deleting the maintenance request.

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MaintenanceRequest, PGproperty, Payment, Room, Tenant, RoomType, Dues
+from .models import MaintenanceRequest, PGproperty, Payment, Room, Tenant, RoomType, Dues, Refund
 from django.db import transaction
 from accounts.models import User
 import uuid
@@ -156,6 +156,25 @@ class DueSerializer(serializers.ModelSerializer):
 
     def get_remaining_amount(self, obj):
         return obj.due_amount - obj.paid_amount
+
+class RefundSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Refund
+        fields = '__all__'
+        read_only_fields = ['status', "processed_at", "processed_by", "requested_at"]
+
+    def validate(self, data):
+        due = data.get("due") or (self.instance.due if self.instance else None)
+        amount = data.get("amount")
+
+        if not due.is_refundable:
+            raise serializers.ValidationError(f"'{due.get_due_type_display()}' is not defundable")
+
+        if amount > due.refundable_balance:
+            raise serializers.ValidationError("Amount exceeds Refundable balance")
+
+        return data
+
 
 class MaintenanceRequestSerializer(serializers.ModelSerializer):
     class Meta:

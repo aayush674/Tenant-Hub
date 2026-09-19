@@ -92,6 +92,64 @@
 }
 
 
+.basic-details-header-actions{
+    display: flex;
+    gap: 15px;
+}
+
+.resend-mail-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 100px;
+    min-height: 34px;
+
+    padding: 7px 14px;
+
+    color: var(--th-navy);
+
+    background: rgba(197, 162, 74, 0.10);
+
+    border: 1px solid rgba(152, 123, 35, 0.30);
+
+    border-radius: 6px;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+.resend-mail-btn:hover {
+    background: var(--th-gold);
+
+    border-color: var(--th-gold);
+
+    color: #ffffff;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 14px rgba(152, 123, 35, 0.18);
+}
+
+.resend-mail-btn:active {
+    transform: translateY(0);
+
+    box-shadow: none;
+}
+
 /* =========================================================
    EDIT BUTTON
    ========================================================= */

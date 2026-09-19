@@ -1,14 +1,19 @@
 from rest_framework import viewsets
+from django.utils import timezone
+from django.core.exceptions import ValidationError
 from django.db.models import Count, Q
-from .models import MaintenanceRequest, PGproperty, Room, Tenant, Payment, RoomType, Dues, update_overdue_dues
-from .serializers import MaintenanceRequestSerializer, PGpropertySerializer, RoomSerializer, TenantSerializer, PaymentSerializer, DueSerializer, RoomTypeSerializer
-from accounts.models import UserRole
+from .models import MaintenanceRequest, PGproperty, Room, Tenant, Payment, RoomType, Dues, update_overdue_dues, Refund
+from .serializers import MaintenanceRequestSerializer, PGpropertySerializer, RoomSerializer, TenantSerializer, PaymentSerializer, DueSerializer, RoomTypeSerializer, RefundSerializer
+from accounts.models import UserRole, User
+from accounts.serializers import UserSerializer
 from accounts.utils import has_permission
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from datetime import date
+from datetime import date, timedelta
+import uuid
+from accounts.utils import send_invitation_mail
 
 class PGpropertyViewSet(viewsets.ModelViewSet):
     queryset = PGproperty.objects.all()
@@ -180,6 +185,29 @@ class TenantViewSet(viewsets.ModelViewSet):
 
         serializer.delete()
 
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    @action(detail=False, methods = ["post"])
+    def resend_activation(self, request):
+        email = request.data.get("email")
+
+        if not email:
+            return Response({"email": "Email is not valid"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.filter(email = email, is_active = False).first()
+
+        if not user:
+            return Response({"detail": "User with this email either does not exist or is already activate"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.invitation_token = uuid.uuid4()
+        user.invitation_expires = timezone.now() + timedelta(days=7)
+        user.save(update_fields=["invitation_token", "invitation_expires"])
+        send_invitation_mail(user)
+
+        return Response({"detail": "Account activation mail sent successfully"}, status=status.HTTP_200_OK)
+
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
@@ -192,11 +220,11 @@ class PaymentViewSet(viewsets.ModelViewSet):
         return queryset
 
 class DuesViewSet(viewsets.ModelViewSet):
-    update_overdue_dues()
     serializer_class = DueSerializer
     queryset = Dues.objects.all()
 
     def get_queryset(self):
+        update_overdue_dues()
         user = self.request.user
 
         # Tenant can only see their own dues
@@ -254,6 +282,36 @@ class DuesViewSet(viewsets.ModelViewSet):
         return Response({
             "created": created
         })
+
+class RefundViewSet(viewsets.ModelViewSet):
+    queryset = Refund.objects.all()
+    serializer_class = RefundSerializer
+
+    @action(detail = True, methods = ["post"])
+    def approve(self, request, pk=None):
+        refund = self.get_object()
+        refund.status = "approved"
+        refund.save(update_fields = ["status"])
+        return Response(RefundSerializer(refund).data)
+
+    @action(detail = True, methods = ["post"])
+    def process(self, request, pk = None):
+        refund = self.get_object()
+        try:
+            refund.process()
+        except ValidationError as e:
+            return Response({"detail": str(e)}, status = 400)
+        refund.processed_by = request.user
+        refund.save(update_fields = ["processed_by"])
+        return Response(RefundSerializer(refund).data)
+
+    @action(detail = True, methods = ["post"])
+    def reject(self, request, pk = None):
+        refund = self.get_object()
+        refund.status = "rejected"
+        refund.save(update_fields = ["status"])
+        return Response(RefundSerializer(refund).data)
+
 
 class MaintenanceRequestViewSet(viewsets.ModelViewSet):
     queryset = MaintenanceRequest.objects.all()
