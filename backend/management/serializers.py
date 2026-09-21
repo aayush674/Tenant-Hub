@@ -163,6 +163,7 @@ class DueSerializer(serializers.ModelSerializer):
 
 class RefundSerializer(serializers.ModelSerializer):
     allocations = serializers.SerializerMethodField()
+    tenant_name = serializers.SerializerMethodField()
     class Meta:
         model = Refund
         fields = '__all__'
@@ -173,6 +174,9 @@ class RefundSerializer(serializers.ModelSerializer):
             {"due": alloc.due_id, "amount": alloc.amount}
             for alloc in obj.allocations.all()
         ]
+
+    def get_tenant_name(self, obj):
+        return f"{obj.tenant.first_name} {obj.tenant.last_name}"
 
     def validate(self, data):
         tenant = data.get("tenant") or (self.instance.tenant if self.instance else None)

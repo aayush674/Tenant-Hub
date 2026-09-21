@@ -69,7 +69,7 @@ function Refunds() {
       },
       {
         header: "Tenant Name",
-        render: (refund) => refund.tenant.tenant_name,
+        render: (refund) => refund.tenant_name,
       },
       {
         header: "Amount (\u20B9)",
