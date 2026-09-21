@@ -53,6 +53,37 @@ function TenantDetails() {
         setRooms(data);
     }, [pgId]);
 
+    const handleResendMail =async (e) => {
+        // e.preventDefault();
+        try {
+          const res = await authFetch(
+            `${API_BASE_URL}/api/users/resend_activation/`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: tenantData.email,
+              }),
+            },
+          );
+
+          if (!res.ok) {
+            const errData = await res.json();
+            setError(errData);
+            console.log(errData);
+            return;
+          }
+          toast.success("Account activation mail sent successfully.");
+        } catch (err) {
+          setError({ detail: "Something went wrong. Please try again." });
+        }
+        finally{
+            setLoading(false);
+        }
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const fnError = validateName(formData.first_name);
@@ -123,201 +154,234 @@ function TenantDetails() {
     console.log(Array.isArray(countries));
 
     return (
-        <div className="tenant-details-container">
-            <div className="nav-path">
-                <span onClick={() => navigate("/")} className="navigator">Home</span>
-                <span className="seperator"> / </span>
-                <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>
-                <span className="seperator"> / </span>
-                {pgData && <span>{pgData.name}</span>}
-                <span className="seperator"> / </span>
-                <span onClick={() => navigate(`/pg/${pgId}/tenants`)} className="navigator">Tenants</span>
-                <span className="seperator"> / </span>
-                {tenantData && <span>{tenantData.first_name + " " + tenantData.last_name}</span>}
-
-            </div>
-            <div className="tenant-details-header">
-                <h1>Tenant {tenantData && tenantData.first_name + " " + tenantData.last_name}</h1>
-            </div>
-            <div className="tenant-basic-details">
-                <div className="basic-details-header">
-                    <h2><u>Basic Details</u></h2>
-                    {!editMode && <div>
-                        <button className="edit-room-button" onClick={() => setEditMode(true)}><FaPen />Edit Details</button>
-                    </div>}
+      <div className="tenant-details-container">
+        <div className="nav-path">
+          <span onClick={() => navigate("/")} className="navigator">
+            Home
+          </span>
+          <span className="seperator"> / </span>
+          <span onClick={() => navigate("/pg-list")} className="navigator">
+            PG List
+          </span>
+          <span className="seperator"> / </span>
+          {pgData && <span>{pgData.name}</span>}
+          <span className="seperator"> / </span>
+          <span
+            onClick={() => navigate(`/pg/${pgId}/tenants`)}
+            className="navigator"
+          >
+            Tenants
+          </span>
+          <span className="seperator"> / </span>
+          {tenantData && (
+            <span>{tenantData.first_name + " " + tenantData.last_name}</span>
+          )}
+        </div>
+        <div className="tenant-details-header">
+          <h1>
+            Tenant{" "}
+            {tenantData && tenantData.first_name + " " + tenantData.last_name}
+          </h1>
+        </div>
+        <div className="tenant-basic-details">
+          <div className="basic-details-header">
+            <h2>
+              <u>Basic Details</u>
+            </h2>
+            <div className="basic-details-header-actions">
+                                    <LoadingSubmitButton
+                        loading={loading}
+                        children="Resend Activation Mail"
+                        loadingText="Sending mail"
+                        className="resend-mail-btn"
+                        onClick={()=> {
+                            handleResendMail();
+                            setLoading(true);
+                        }}
+                    />
+              {!editMode && (
+                <div>
+                  <button
+                    className="edit-room-button"
+                    onClick={() => setEditMode(true)}
+                  >
+                    <FaPen />
+                    Edit Details
+                  </button>
                 </div>
-                <div className={`tenant-details-form ${editMode ? 'enabled' : 'disabled'}`}>
-                    <form onSubmit={handleSubmit}>
-
-                        <div className="form-row">
-                            <div className="form-labels">First Name</div>
-                            <input
-                                placeholder="Enter First Name"
-                                value={formData.first_name}
-                                disabled={!editMode}
-                                onChange={e => {
-                                    setFormData({
-                                        ...formData,
-                                        first_name: e.target.value
-                                    })
-                                    if (error?.first_name) {
-                                        const newError = { ...error };
-                                        delete newError.first_name;
-                                        setError(newError);
-                                    }
-                                }}
-                            />
-                            <div className="error-container">
-                                {error?.first_name}
-                            </div>
-                        </div>
-                        <div className="form-row">
-                            <div className="form-labels">Last Name</div>
-                            <input
-                                placeholder="Enter Last Name"
-                                value={formData.last_name}
-                                disabled={!editMode}
-                                onChange={e => {
-                                    setFormData({
-                                        ...formData,
-                                        last_name: e.target.value
-                                    })
-                                    if (error?.last_name) {
-                                        const newError = { ...error };
-                                        delete newError.last_name;
-                                        setError(newError);
-                                    }
-                                }}
-                            />
-                            <div className="error-container">
-                                {error?.last_name}
-                            </div>
-                        </div>
-                        <div className="form-row">
-                            <div className="form-labels">Alloted Room</div>
-                            <select
-                                value={formData.room}
-                                onChange={(e) => {
-                                    setFormData({
-                                        ...formData,
-                                        room: e.target.value ? Number(e.target.value) : ""
-                                    })
-                                }}
-                                className="custom-select"
-                                disabled={!editMode}
-                            >
-                                <option value="">Select Room</option>
-                                {rooms.map(room => (
-                                    <option key={room.id} value={room.id}>{room.room_number}</option>
-                                ))}
-                            </select>
-                            <div className="error-container">
-                                {error?.room}
-                            </div>
-                        </div>
-                        <div className="form-row">
-                            <div className="form-labels">Tenant Email</div>
-                            <input
-                                placeholder="Enter Tenant Email"
-                                value={formData.email}
-                                disabled={!editMode}
-                                onChange={e => {
-                                    setFormData({
-                                        ...formData,
-                                        email: e.target.value
-                                    })
-                                    if (error?.email) {
-                                        const newError = { ...error };
-                                        delete newError.email;
-                                        setError(newError);
-                                    }
-                                }
-                                }
-                            />
-                            <div className="error-container">
-                                {error?.email}
-                            </div>
-                        </div>
-                        <div className="form-row">
-                            <div className="form-labels">Tenant Phone Number</div>
-                            <div className="phone-number-block">
-                                <select
-                                    value={formData.phone_country_code}
-                                    disabled={!editMode}
-                                    onChange={e => {
-                                        setFormData({
-                                            ...formData,
-                                            phone_country_code: e.target.value
-                                        })
-                                    }}
-                                >
-                                    {countries.map(country => (
-                                        <option key={country.isoCode} value={country.phonecode}>+{country.phonecode}({country.name})</option>
-                                    ))}
-                                </select>
-                                <input
-                                    placeholder="Enter Tenant Phone Number"
-                                    value={formData.phone_number}
-                                    disabled={!editMode}
-                                    onChange={e => {
-                                        setFormData({
-                                            ...formData,
-                                            phone_number: e.target.value
-                                        })
-                                        if (error?.phone_number) {
-                                            const newError = { ...error };
-                                            delete newError.phone_number;
-                                            setError(newError);
-                                        }
-                                    }
-                                    }
-                                />
-                            </div>
-                            <div className="error-container">
-                                {error?.phone_number}
-                            </div>
-                        </div>
-                        <div className="form-row">
-                            <div className="form-labels">Joining Date</div>
-
-                            <input
-                                type="date"
-                                value={formData.join_date}
-                                disabled={!editMode}
-                                onChange={(e) => {
-                                    setFormData({
-                                        ...formData,
-                                        join_date: e.target.value
-                                    })
-                                }} />
-                            <div className="error-container">
-                                {error?.join_date}
-                            </div>
-                        </div>
-
-                        {error?.detail && (
-                            <div className="error-container">{error.detail}</div>
-                        )}
-                        <div className="edit-mode-footer-container">
-                            {editMode && <div className="edit-mode-buttons">
-                                <button type="button" onClick={() => {
-                                    setEditMode(false);
-                                    setFormData(tenantData);
-                                    setError({});
-                                }}>Cancel</button>
-                                <LoadingSubmitButton
-                                    loading={loading}
-                                    loadingText="Saving changes"
-                                    children="Save"
-                                    type="submit"
-                                />
-                            </div>}
-                        </div>
-
-                    </form>
-                </div>
+              )}
             </div>
-            {/* <div className="room-tenant-details">
+          </div>
+          <div
+            className={`tenant-details-form ${editMode ? "enabled" : "disabled"}`}
+          >
+            <form onSubmit={handleSubmit}>
+              <div className="form-row">
+                <div className="form-labels">First Name</div>
+                <input
+                  placeholder="Enter First Name"
+                  value={formData.first_name}
+                  disabled={!editMode}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      first_name: e.target.value,
+                    });
+                    if (error?.first_name) {
+                      const newError = { ...error };
+                      delete newError.first_name;
+                      setError(newError);
+                    }
+                  }}
+                />
+                <div className="error-container">{error?.first_name}</div>
+              </div>
+              <div className="form-row">
+                <div className="form-labels">Last Name</div>
+                <input
+                  placeholder="Enter Last Name"
+                  value={formData.last_name}
+                  disabled={!editMode}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      last_name: e.target.value,
+                    });
+                    if (error?.last_name) {
+                      const newError = { ...error };
+                      delete newError.last_name;
+                      setError(newError);
+                    }
+                  }}
+                />
+                <div className="error-container">{error?.last_name}</div>
+              </div>
+              <div className="form-row">
+                <div className="form-labels">Alloted Room</div>
+                <select
+                  value={formData.room}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      room: e.target.value ? Number(e.target.value) : "",
+                    });
+                  }}
+                  className="custom-select"
+                  disabled={!editMode}
+                >
+                  <option value="">Select Room</option>
+                  {rooms.map((room) => (
+                    <option key={room.id} value={room.id}>
+                      {room.room_number}
+                    </option>
+                  ))}
+                </select>
+                <div className="error-container">{error?.room}</div>
+              </div>
+              <div className="form-row">
+                <div className="form-labels">Tenant Email</div>
+                <input
+                  placeholder="Enter Tenant Email"
+                  value={formData.email}
+                  disabled={!editMode}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      email: e.target.value,
+                    });
+                    if (error?.email) {
+                      const newError = { ...error };
+                      delete newError.email;
+                      setError(newError);
+                    }
+                  }}
+                />
+                <div className="error-container">{error?.email}</div>
+              </div>
+              <div className="form-row">
+                <div className="form-labels">Tenant Phone Number</div>
+                <div className="phone-number-block">
+                  <select
+                    value={formData.phone_country_code}
+                    disabled={!editMode}
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        phone_country_code: e.target.value,
+                      });
+                    }}
+                  >
+                    {countries.map((country) => (
+                      <option key={country.isoCode} value={country.phonecode}>
+                        +{country.phonecode}({country.name})
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    placeholder="Enter Tenant Phone Number"
+                    value={formData.phone_number}
+                    disabled={!editMode}
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        phone_number: e.target.value,
+                      });
+                      if (error?.phone_number) {
+                        const newError = { ...error };
+                        delete newError.phone_number;
+                        setError(newError);
+                      }
+                    }}
+                  />
+                </div>
+                <div className="error-container">{error?.phone_number}</div>
+              </div>
+              <div className="form-row">
+                <div className="form-labels">Joining Date</div>
+
+                <input
+                  type="date"
+                  value={formData.join_date}
+                  disabled={!editMode}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      join_date: e.target.value,
+                    });
+                  }}
+                />
+                <div className="error-container">{error?.join_date}</div>
+              </div>
+
+              {error?.detail && (
+                <div className="error-container">{error.detail}</div>
+              )}
+              <div className="edit-mode-footer-container">
+                {editMode && (
+                  <div className="edit-mode-buttons">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditMode(false);
+                        setFormData(tenantData);
+                        setError({});
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <LoadingSubmitButton
+                      loading={loading}
+                      loadingText="Saving changes"
+                      children="Save"
+                      type="submit"
+                    />
+                  </div>
+                )}
+              </div>
+            </form>
+          </div>
+        </div>
+        {/* <div className="room-tenant-details">
                 <h2><u>Tenant Details</u></h2>
                 <div className="form-row">
                     <div className="form-labels">Total Room Capacity</div>
@@ -355,8 +419,8 @@ function TenantDetails() {
                     </div>
                 </div>
             </div> */}
-        </div>
-    )
+      </div>
+    );
 }
 
 export default TenantDetails;

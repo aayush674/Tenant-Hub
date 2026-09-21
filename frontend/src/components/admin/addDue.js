@@ -47,27 +47,6 @@ function AddDueModal({ pgId, onAdd, onClose }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // const rnError = validateRoomNumber(roomNumber);
-        // const rcError = validateRoomCapacity(roomCapacity);
-        // const rrError = validateRoomRent(roomRent);
-        // const finalError = {}
-
-        // if (rnError) {
-        //     finalError.roomNumber = rnError;
-        // }
-        // if (rcError) {
-        //     finalError.roomCapacity = rcError;
-        // }
-        // if (rrError) {
-        //     finalError.roomRent = rrError;
-        // }
-        // if (Object.keys(finalError).length > 0) {
-        //     setError(finalError);
-        //     return;
-        // }
-
-
         setError({});
         try {
             setLoading(true);
@@ -168,7 +147,7 @@ function AddDueModal({ pgId, onAdd, onClose }) {
                     <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
 
                     {/* <button type="submit">Add Due</button> */}
-                    <LoadingSubmitButton 
+                    <LoadingSubmitButton
                         children="Apply Due"
                         loading={loading}
                         loadingText="Applying Due"

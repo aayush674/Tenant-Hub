@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import MaintenanceRequestViewSet, PGpropertyViewSet, PaymentViewSet, RoomViewSet, TenantViewSet,RoomTypeViewSet, DuesViewSet
+from .views import MaintenanceRequestViewSet, PGpropertyViewSet, PaymentViewSet, RoomViewSet, TenantViewSet,RoomTypeViewSet, DuesViewSet, RefundViewSet, UserViewSet
 
 router=DefaultRouter()
 router.register(r'pgs', PGpropertyViewSet)
@@ -9,5 +9,7 @@ router.register(r'payments', PaymentViewSet)
 router.register(r'maintenance-requests', MaintenanceRequestViewSet)
 router.register(r'room-types', RoomTypeViewSet)
 router.register(r'dues', DuesViewSet)
+router.register(r'refunds', RefundViewSet)
+router.register(r'users', UserViewSet)
 
 urlpatterns=router.urls

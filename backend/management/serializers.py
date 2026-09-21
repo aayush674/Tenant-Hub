@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MaintenanceRequest, PGproperty, Payment, Room, Tenant, RoomType, Dues
+from .models import MaintenanceRequest, PGproperty, Payment, Room, Tenant, RoomType, Dues, Refund
 from django.db import transaction
 from accounts.models import User
 import uuid
@@ -145,6 +145,10 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 class DueSerializer(serializers.ModelSerializer):
     tenant_name=serializers.SerializerMethodField()
+    refundable_balance = serializers.ReadOnlyField()
+    is_refundable = serializers.ReadOnlyField()
+    is_overdue = serializers.ReadOnlyField()
+    remaining_amount = serializers.SerializerMethodField()
     class Meta:
         model=Dues
         fields='__all__'
@@ -156,6 +160,39 @@ class DueSerializer(serializers.ModelSerializer):
 
     def get_remaining_amount(self, obj):
         return obj.due_amount - obj.paid_amount
+
+class RefundSerializer(serializers.ModelSerializer):
+    allocations = serializers.SerializerMethodField()
+    tenant_name = serializers.SerializerMethodField()
+    class Meta:
+        model = Refund
+        fields = '__all__'
+        read_only_fields = ['status', "processed_at", "processed_by", "requested_at"]
+
+    def get_allocations(self, obj):
+        return [
+            {"due": alloc.due_id, "amount": alloc.amount}
+            for alloc in obj.allocations.all()
+        ]
+
+    def get_tenant_name(self, obj):
+        return f"{obj.tenant.first_name} {obj.tenant.last_name}"
+
+    def validate(self, data):
+        tenant = data.get("tenant") or (self.instance.tenant if self.instance else None)
+        amount = data.get("amount")
+
+        if not tenant:
+            raise serializers.ValidationError("Tenant is required")
+
+        total_refundable = sum(
+        due.refundable_balance for due in tenant.due.all() if due.is_refundable
+    )
+
+        if amount > total_refundable:
+            raise serializers.ValidationError("Amount exceeds Refundable balance")
+
+        return data
 
 class MaintenanceRequestSerializer(serializers.ModelSerializer):
     class Meta:
