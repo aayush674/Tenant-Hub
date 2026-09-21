@@ -145,6 +145,10 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 class DueSerializer(serializers.ModelSerializer):
     tenant_name=serializers.SerializerMethodField()
+    refundable_balance = serializers.ReadOnlyField()
+    is_refundable = serializers.ReadOnlyField()
+    is_overdue = serializers.ReadOnlyField()
+    remaining_amount = serializers.SerializerMethodField()
     class Meta:
         model=Dues
         fields='__all__'
@@ -158,23 +162,33 @@ class DueSerializer(serializers.ModelSerializer):
         return obj.due_amount - obj.paid_amount
 
 class RefundSerializer(serializers.ModelSerializer):
+    allocations = serializers.SerializerMethodField()
     class Meta:
         model = Refund
         fields = '__all__'
         read_only_fields = ['status', "processed_at", "processed_by", "requested_at"]
 
+    def get_allocations(self, obj):
+        return [
+            {"due": alloc.due_id, "amount": alloc.amount}
+            for alloc in obj.allocations.all()
+        ]
+
     def validate(self, data):
-        due = data.get("due") or (self.instance.due if self.instance else None)
+        tenant = data.get("tenant") or (self.instance.tenant if self.instance else None)
         amount = data.get("amount")
 
-        if not due.is_refundable:
-            raise serializers.ValidationError(f"'{due.get_due_type_display()}' is not defundable")
+        if not tenant:
+            raise serializers.ValidationError("Tenant is required")
 
-        if amount > due.refundable_balance:
+        total_refundable = sum(
+        due.refundable_balance for due in tenant.due.all() if due.is_refundable
+    )
+
+        if amount > total_refundable:
             raise serializers.ValidationError("Amount exceeds Refundable balance")
 
         return data
-
 
 class MaintenanceRequestSerializer(serializers.ModelSerializer):
     class Meta:

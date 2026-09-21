@@ -296,7 +296,10 @@ class RefundViewSet(viewsets.ModelViewSet):
 
     @action(detail = True, methods = ["post"])
     def process(self, request, pk = None):
+
         refund = self.get_object()
+        if refund.status == "processed":
+            return Response({"detail": "Refund is already processed"}, status=status.HTTP_400_BAD_REQUEST)
         try:
             refund.process()
         except ValidationError as e:

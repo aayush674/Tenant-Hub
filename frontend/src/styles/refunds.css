@@ -1,0 +1,215 @@
+/* =========================================================
+   DUES
+   ========================================================= */
+
+.refund-list-container {
+    min-height: calc(100vh - 74px);
+    box-sizing: border-box;
+    padding: 28px 32px;
+    font-family: "Lexend", sans-serif;
+    background: var(--th-background);
+    color: var(--th-text);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.refunds-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.refunds-header h1 {
+    margin: 0;
+    color: var(--th-text);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+}
+
+
+/* =========================================================
+   HEADER BUTTONS
+   ========================================================= */
+
+.refunds-header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* =========================================================
+   PAYMENT STATUS
+   ========================================================= */
+/*
+.status-chip {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    line-height: 1;
+
+    white-space: nowrap;
+}
+ */
+
+/* =========================================================
+   PARTIAL
+   ========================================================= */
+
+/* .status-chip.partial {
+    background: #fff7d9;
+
+    color: #92751b;
+
+    border: 1px solid #eadca8;
+} */
+
+
+/* =========================================================
+   PAID
+   ========================================================= */
+
+/* .status-chip.paid {
+    background: #edf8f0;
+
+    color: #34734a;
+
+    border: 1px solid #cfe6d5;
+} */
+
+
+/* =========================================================
+   PENDING
+   ========================================================= */
+
+/* .status-chip.pending {
+    background: #eef3ff;
+
+    color: #4166b0;
+
+    border: 1px solid #d5def2;
+} */
+
+
+/* .status-chip.overdue {
+    background: #fff3ee;
+
+    color: #b06661;
+
+    border: 1px solid #d5def2;
+} */
+
+
+.process-refund-button {
+    min-width: 78px;
+    min-height: 32px;
+
+    padding: 6px 12px;
+
+    color: var(--th-navy);
+
+    background: rgba(197, 162, 74, 0.10);
+
+    border: 1px solid rgba(152, 123, 35, 0.30);
+
+    border-radius: 6px;
+
+    font-family: "Lexend", sans-serif;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+.process-refund-button:hover {
+    background: var(--th-gold);
+
+    border-color: var(--th-gold);
+
+    color: #ffffff;
+
+    transform: translateY(-1px);
+}
+
+
+.process-refund-button:active {
+    transform: translateY(0);
+}
+
+.process-refund-button:disabled {
+    background: rgba(152, 123, 35, 0.08);
+    border-color: rgba(152, 123, 35, 0.15);
+    color: rgba(20, 20, 20, 0.35);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.process-refund-button:disabled:hover {
+    background: rgba(152, 123, 35, 0.08);
+    border-color: rgba(152, 123, 35, 0.15);
+    color: rgba(20, 20, 20, 0.35);
+    transform: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .refund-list-container {
+        padding: 24px 20px;
+    }
+}
+
+
+@media (max-width: 600px) {
+    .refund-list-container {
+        padding: 20px 14px;
+    }
+
+    .refunds-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 14px;
+    }
+
+    .refunds-header h1 {
+        font-size: 24px;
+    }
+
+    .refunds-header-buttons {
+        width: 100%;
+    }
+
+    .add-btn{
+        flex: 1;
+    }
+}

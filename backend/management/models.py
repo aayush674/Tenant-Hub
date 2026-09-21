@@ -193,10 +193,7 @@ class Refund(models.Model):
         related_name = "refunds",
         on_delete = models.CASCADE
     )
-    due = models.ForeignKey(
-        Dues,
-        on_delete = models.CASCADE
-    )
+
     amount = models.DecimalField(max_digits = 20, decimal_places = 2)
     reason = models.CharField(max_length = 250, blank = True)
 
@@ -216,21 +213,57 @@ class Refund(models.Model):
     requested_at = models.DateTimeField(auto_now_add = True)
     processed_at = models.DateTimeField(null = True, blank = True)
 
-    def clean(self):
-        if not self.due.is_refundable:
-            raise ValidationError(f"'{self.due.get_due_type_display()}' is not a refundable due type.")
+    def _refundable_dues(self):
+        return Dues.objects.filter(
+            tenant=self.tenant,
+            due_type__in=REFUNDABLE_DUE_TYPES
+        ).order_by("due_date")
 
-        if self.amount > self.due.refundable_balance:
-            raise ValidationError(f"Requested refund amount exceeds the available Refundable amount.")
+    def clean(self):
+        total_refundable = sum(
+            due.refundable_balance for due in self._refundable_dues()
+        )
+        if self.amount > total_refundable:
+           raise ValidationError(
+                f"Requested refund amount ({self.amount}) exceeds this tenant's "
+                f"total refundable balance ({total_refundable})."
+            )
 
     def process(self):
         self.full_clean()
+
+        remaining = self.amount
+        dues = self._refundable_dues().select_for_update()
+
+        for due in dues:
+            if remaining <= 0:
+                break
+            available = due.refundable_balance
+            if available <= 0:
+                continue
+
+            allocate = min(available, remaining)
+            RefundAllocations.objects.create(refund = self, due = due, amount = allocate)
+            due.refunded_amount += allocate
+            due.save(update_fields=["refunded_amount"])
+
+            remaining -= allocate
+
+        if remaining > 0:
+            raise ValidationError("Could not fully allocate refund - insufficient refundable balance")
+
         self.status = "processed"
         self.processed_at = timezone.now()
         self.save(update_fields = ["status", "processed_at"])
-        self.due.refunded_amount += self.amount
-        self.due.save(update_fields = ["refunded_amount"])
 
+class RefundAllocations(models.Model):
+    refund = models.ForeignKey(Refund, related_name="allocations", on_delete=models.CASCADE)
+    due = models.ForeignKey(Dues, related_name= "refund_allocations", on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=15, decimal_places=2)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["refund", "due"], name="unique_refund_due_allocation")
+        ]
 
 class MaintenanceRequest(models.Model):
     room = models.ForeignKey(Room, related_name='maintenance_requests', on_delete=models.SET_NULL, null=True) # If a room is deleted, we set the room field to null instead of deleting the maintenance request.

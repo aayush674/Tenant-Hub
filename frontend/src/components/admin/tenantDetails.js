@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import { API_BASE_URL } from "../../config";
-import { FaEnvelope, FaPen } from "react-icons/fa";
+import { FaPen } from "react-icons/fa";
 // import { validateRoomCapacity, validateRoomRent } from "../../utils/roomValidation";
 import { validateEmail, validatePhoneNumber, validateName, validateDate, validateRoom } from "../../utils/tenantValidation";
 import { toast } from "react-toastify";
