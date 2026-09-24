@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import "../../styles/addPG.css";
-import "../../styles/common_styles/add-btn.css";
 import { authFetch } from "../../api/apiClient";
 import { API_BASE_URL } from "../../config";
 import { toast } from "react-toastify";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
-import "../../styles/common_styles/add-btn.css";
+import { FaTimes } from "react-icons/fa";
 
 function AddPG({ show, onClose, onAdd }) {
   const [name, setName] = useState("");
@@ -26,31 +25,44 @@ function AddPG({ show, onClose, onAdd }) {
     return null;
   }
 
-const handleClose = () => {
-  setClosing(true);
-  setTimeout(() => {
-    setClosing(false);
-    setOpening(false);
+  const resetForm = () => {
     setName("");
     setFloor("");
     setError(null);
-    onClose();
-  }, 300); // must match CSS transition
-};
+  };
+
+  const handleClose = () => {
+    setClosing(true);
+    setTimeout(() => {
+      setClosing(false);
+      setOpening(false);
+      resetForm();
+      onClose();
+    }, 300); // must match CSS transition
+  };
+
+  const clearFieldError = (field) => {
+    if (error?.[field]) {
+      const newError = { ...error };
+      delete newError[field];
+      setError(newError);
+    }
+  };
 
   const handleAddPG = async (e) => {
     e.preventDefault();
-    setError(null);
 
-    if (!name.trim()) {
-      setError("PG name is required.");
+    const finalError = {};
+    if (!name.trim()) finalError.name = "PG name is required.";
+    if (!floor || Number(floor) <= 0)
+      finalError.floor = "Enter a valid number of floors.";
+
+    if (Object.keys(finalError).length > 0) {
+      setError(finalError);
       return;
     }
-    if (!floor || Number(floor) <= 0) {
-      setError("Enter a valid number of floors.");
-      return;
-    }
 
+    setError({});
     setLoading(true);
     try {
       const res = await authFetch(`${API_BASE_URL}/api/pgs/`, {
@@ -68,13 +80,13 @@ const handleClose = () => {
       }
 
       const newPG = await res.json();
-      toast.success("PG created");
+      toast.success("PG created successfully.");
       onAdd(newPG);
-      setName("");
-      setFloor("");
       handleClose();
     } catch (err) {
-      setError(err.message);
+      setError({
+        detail: err.message || "Something went wrong. Please try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -86,45 +98,70 @@ const handleClose = () => {
         className={`add-pg-modal-box ${closing ? "close" : opening ? "open" : ""}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="add-pg-modal-header">Add new PG</h2>
+        <div className="modal-top">
+          <h1 className="modal-header">Add new PG</h1>
+          <button
+            type="button"
+            className="modal-close"
+            onClick={handleClose}
+            aria-label="Close"
+          >
+            <FaTimes />
+          </button>
+        </div>
 
         <form onSubmit={handleAddPG}>
-          <div className="input-area">
-            <label htmlFor="pg-name">Enter PG Name</label>
+          <div className="field">
+            <label htmlFor="pg-name">PG name</label>
             <input
               id="pg-name"
               type="text"
-              placeholder="PG Name"
+              placeholder="e.g. Sunrise PG"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                clearFieldError("name");
+              }}
             />
+            {error?.name && <div className="error-container">{error.name}</div>}
           </div>
 
-          <div className="input-area">
-            <label htmlFor="pg-floor">Enter Total Floors in PG</label>
+          <div className="field">
+            <label htmlFor="pg-floor">Total floors</label>
             <input
               id="pg-floor"
               type="number"
               min="1"
-              placeholder="PG Floor"
+              placeholder="e.g. 4"
               value={floor}
-              onChange={(e) => setFloor(e.target.value)}
+              onChange={(e) => {
+                setFloor(e.target.value);
+                clearFieldError("floor");
+              }}
             />
+            {error?.floor && (
+              <div className="error-container">{error.floor}</div>
+            )}
           </div>
 
-          {error && <div className="error-container">{error}</div>}
+          {error?.detail && (
+            <div className="error-container">{error.detail}</div>
+          )}
 
-          <div className="modal-buttons">
-            <button type="button" onClick={handleClose} className="cancel-btn">
+          <div className="modal-actions">
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={handleClose}
+            >
               Cancel
             </button>
             <LoadingSubmitButton
-              children="Add PG"
               loading={loading}
               loadingText="Adding"
+              children="Add PG"
               type="submit"
               disabled={!name.trim() || !floor}
-              className="add-btn"
             />
           </div>
         </form>
