@@ -2,6 +2,9 @@ import { useParams, Outlet, NavLink, useLocation } from "react-router-dom";
 import { FaUsers, FaCreditCard, FaReceipt, FaDoorOpen, FaBuilding, FaLayerGroup, FaUndoAlt } from "react-icons/fa";
 import "../../styles/pgLayout.css";
 import IconTooltip from "../common/iconTooltip";
+import { authFetch } from "../../api/apiClient";
+import { API_BASE_URL } from "../../config";
+import { useState, useEffect } from "react";
 
 const navItems = [
     { to: "", end: true, icon: <FaBuilding />, label: "PG Details" },
@@ -16,6 +19,18 @@ const navItems = [
 function PGLayout() {
     const { pgId } = useParams();
     const location = useLocation();
+    const [pgs, setPgs] = useState([]);
+
+    useEffect(() => {
+        authFetch(`${API_BASE_URL}/api/pgs/`)
+            .then((res) => res.json())
+            .then((data) => {
+                setPgs(data);
+            })
+            .catch((error) => {
+                console.error("Error fetching PGs:", error);
+            });
+    }, []);
 
     const collapsed =
         location.pathname.includes("/rooms/") ||
