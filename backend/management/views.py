@@ -14,6 +14,7 @@ from rest_framework import status
 from datetime import date, timedelta
 import uuid
 from accounts.utils import send_invitation_mail
+from django.db import transaction
 
 class PGpropertyViewSet(viewsets.ModelViewSet):
     queryset = PGproperty.objects.all()
@@ -174,16 +175,20 @@ class TenantViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, serializer):
         user=self.request.user
 
-        if user.role==UserRole.OWNER:
+        if user.role!=UserRole.OWNER:
+            pg_id=serializer.room.pg_property.id
+            if not has_permission(user, pg_id, "delete_tenants"):
+                raise PermissionDenied("You do not have permission to delete tenants")
+
+        with transaction.atomic():
+            linked_user = serializer.user
             serializer.delete()
-            return
 
-        pg_id=serializer.room.pg_property.id
-
-        if not has_permission(user, pg_id, "delete_tenants"):
-            raise PermissionDenied("You do not have permission to delete tenants")
-
-        serializer.delete()
+            if linked_user:
+                linked_user.is_active = False
+                linked_user.invitation_token = None
+                linked_user.invitation_expires = None
+                linked_user.save(update_fields = ["is_active", "invitation_token", "invitation_expires"])
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
