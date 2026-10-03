@@ -1,4 +1,4 @@
-import { useParams, Outlet, NavLink, useLocation } from "react-router-dom";
+import { useParams, Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { FaUsers, FaCreditCard, FaReceipt, FaDoorOpen, FaBuilding, FaLayerGroup, FaUndoAlt } from "react-icons/fa";
 import "../../styles/pgLayout.css";
 import IconTooltip from "../common/iconTooltip";
@@ -19,7 +19,9 @@ const navItems = [
 function PGLayout() {
     const { pgId } = useParams();
     const location = useLocation();
+    const navigate = useNavigate();
     const [pgs, setPgs] = useState([]);
+    const [selectedPg, setSelectedPg] = useState(null);
 
     useEffect(() => {
         authFetch(`${API_BASE_URL}/api/pgs/`)
@@ -32,38 +34,56 @@ function PGLayout() {
             });
     }, []);
 
+    const handlePgChange = async (e) => {
+      const pgId = e.target.value;
+      setSelectedPg(pgId ? Number(pgId) : null);
+      navigate(`/pg/${pgId}`)
+    };
+
     const collapsed =
         location.pathname.includes("/rooms/") ||
         location.pathname.includes("/tenants/");
 
     return (
-        <div className="pg-layout-container">
-            <div className={`pg-sidebar ${collapsed ? "collapsed" : ""}`}>
-                {navItems.map(({ to, end, icon, label }) => {
-                    const link = (
-                        <NavLink
-                            key={label}
-                            to={`/pg/${pgId}${to ? `/${to}` : ""}`}
-                            end={end}
-                        >
-                            {icon}
-                            <span>{label}</span>
-                        </NavLink>
-                    );
+      <div className="pg-layout-container">
+        <div className={`pg-sidebar ${collapsed ? "collapsed" : ""}`}>
+          <select
+            id="pg-switcher"
+            className="custom-select"
+            value={selectedPg ?? ""}
+            onChange={handlePgChange}
+          >
+            {pgs.map((pg) => (
+              <option key={pg.id} value={pg.id}>
+                {pg.name}
+              </option>
+            ))}
+          </select>
+          {navItems.map(({ to, end, icon, label }) => {
+            const link = (
+              <NavLink
+                key={label}
+                to={`/pg/${pgId}${to ? `/${to}` : ""}`}
+                end={end}
+              >
+                {icon}
+                <span>{label}</span>
+              </NavLink>
+            );
 
-                    return collapsed ? (
-                        <IconTooltip key={label} label={label}>
-                            {link}
-                        </IconTooltip>
-                    ) : (
-                        link
-                    );
-                })}
-            </div>
-            <div className="content">
-                <Outlet />
-            </div>
+            return collapsed ? (
+              <IconTooltip key={label} label={label}>
+                {link}
+              </IconTooltip>
+            ) : (
+              link
+            );
+          })}
         </div>
+        <div className="content">
+          <Outlet />
+        </div>
+      </div>
     );
 }
 
