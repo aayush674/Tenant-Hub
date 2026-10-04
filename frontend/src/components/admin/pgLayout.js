@@ -48,8 +48,7 @@ function PGLayout() {
       <div className="pg-layout-container">
         <div className={`pg-sidebar ${collapsed ? "collapsed" : ""}`}>
           <select
-            id="pg-switcher"
-            className="custom-select"
+            className="pg-switcher"
             value={selectedPg ?? ""}
             onChange={handlePgChange}
           >

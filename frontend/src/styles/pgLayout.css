@@ -42,6 +42,228 @@
         width 0.3s ease;
 }
 
+/* =========================================================
+   PG SWITCHER
+   ========================================================= */
+
+.pg-switcher {
+    width: 100%;
+    box-sizing: border-box;
+
+    margin-bottom: 14px;
+    padding: 10px 34px 10px 12px;
+
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(197, 162, 74, 0.25);
+    border-radius: 7px;
+
+    color: #f1efe8;
+    font-family: "Lexend", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+
+    cursor: pointer;
+    outline: none;
+
+    /* remove native arrow, add custom gold chevron */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c5a24a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.pg-switcher:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(197, 162, 74, 0.45);
+}
+
+.pg-switcher:focus {
+    border-color: var(--th-gold-light);
+    box-shadow: 0 0 0 3px rgba(197, 162, 74, 0.18);
+}
+
+/* Dropdown list items (styling support varies by browser) */
+.pg-switcher option {
+    background: var(--th-navy);
+    color: #f1efe8;
+}
+
+/* Hide when sidebar is collapsed (it's too narrow to be usable) */
+.pg-sidebar.collapsed .pg-switcher {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .pg-switcher {
+        display: none;
+    }
+}
+
+/* =========================================================
+   PG SWITCHER OPTIONS: fallback (all browsers)
+   ========================================================= */
+
+.pg-switcher option {
+    background: var(--th-navy);
+    color: #aab8bd;
+    padding: 10px 12px;
+    font-family: "Lexend", sans-serif;
+    font-size: 13px;
+}
+
+.pg-switcher option:checked {
+    background: #2a3a45;        /* solid color; some browsers ignore alpha here */
+    color: var(--th-gold-light);
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   PG SWITCHER OPTIONS: fully styled (Chrome / Edge)
+   ========================================================= */
+
+@supports (appearance: base-select) {
+
+    .pg-switcher,
+    .pg-switcher::picker(select) {
+        appearance: base-select;
+    }
+
+    /* Swap the background-image chevron for the native, stylable one */
+    .pg-switcher {
+        background-image: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-right: 12px;
+    }
+
+    .pg-switcher::picker-icon {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-right: 2px solid var(--th-gold-light);
+        border-bottom: 2px solid var(--th-gold-light);
+        transform: rotate(45deg) translateY(-2px);
+        transition: transform 0.2s ease;
+    }
+
+    .pg-switcher:open::picker-icon {
+        transform: rotate(225deg) translateY(-2px);
+    }
+
+    /* Dropdown panel */
+    .pg-switcher::picker(select) {
+        margin-top: 6px;
+        padding: 6px;
+
+        background: var(--th-navy);
+        border: 1px solid rgba(197, 162, 74, 0.25);
+        border-radius: 10px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+
+        max-height: 280px;
+
+        /* open animation */
+        opacity: 0;
+        transform: translateY(-6px);
+        transition:
+            opacity 0.18s ease,
+            transform 0.18s ease,
+            overlay 0.18s ease allow-discrete,
+            display 0.18s ease allow-discrete;
+    }
+
+    .pg-switcher::picker(select):popover-open {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    @starting-style {
+        .pg-switcher::picker(select):popover-open {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+    }
+
+    /* Options */
+    .pg-switcher option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        padding: 10px 12px;
+        margin-bottom: 2px;
+
+        background: transparent;
+        border-radius: 7px;
+
+        color: #aab8bd;
+        font-size: 13px;
+        font-weight: 500;
+
+        cursor: pointer;
+
+        transition:
+            background-color 0.15s ease,
+            color 0.15s ease,
+            padding-left 0.15s ease;
+    }
+
+    .pg-switcher option:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Hover and keyboard highlight */
+    .pg-switcher option:hover,
+    .pg-switcher option:focus-visible {
+        background: rgba(255, 255, 255, 0.07);
+        color: #f1efe8;
+        padding-left: 15px;
+        outline: none;
+    }
+
+    /* Selected option */
+    .pg-switcher option:checked {
+        background: rgba(197, 162, 74, 0.14);
+        color: var(--th-gold-light);
+        font-weight: 600;
+    }
+
+    .pg-switcher option:checked:hover {
+        background: rgba(197, 162, 74, 0.2);
+    }
+
+    /* Replace the default checkmark with a small gold dot on the right */
+    .pg-switcher option::checkmark {
+        order: 1;
+        margin-left: auto;
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--th-gold-light);
+        box-shadow: 0 0 6px rgba(197, 162, 74, 0.6);
+    }
+
+    /* Selected value shown in the closed button */
+    .pg-switcher selectedcontent {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
 
 /* =========================================================
    COLLAPSED SIDEBAR
