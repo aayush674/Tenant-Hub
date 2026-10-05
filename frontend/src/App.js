@@ -22,6 +22,7 @@ import PGLayout from "./components/admin/pgLayout";
 import Dues from "./components/admin/dues";
 import Payments from "./components/admin/payments";
 import Refunds from "./components/admin/refunds";
+import MaintainenceList from "./components/admin/maintainence";
 
 import { ProtectedRoute } from "./api/protectedRoute";
 import TenantRoom from "./components/tenant/tenantRoom";
@@ -70,6 +71,7 @@ function Layout() {
           <Route path="dues" element={<ProtectedRoute><Dues /></ProtectedRoute>} />
           <Route path="payments" element={<ProtectedRoute><Payments /></ProtectedRoute>} />
           <Route path="refunds" element={<ProtectedRoute><Refunds /></ProtectedRoute>} />
+          <Route path="maintainence" element={<ProtectedRoute><MaintainenceList /></ProtectedRoute>} />
         </Route>
         <Route
           path="/t"

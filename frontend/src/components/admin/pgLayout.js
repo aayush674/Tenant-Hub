@@ -1,5 +1,5 @@
 import { useParams, Outlet, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { FaUsers, FaCreditCard, FaReceipt, FaDoorOpen, FaBuilding, FaLayerGroup, FaUndoAlt } from "react-icons/fa";
+import { FaUsers, FaCreditCard, FaReceipt, FaDoorOpen, FaBuilding, FaLayerGroup, FaUndoAlt, FaTools } from "react-icons/fa";
 import "../../styles/pgLayout.css";
 import IconTooltip from "../common/iconTooltip";
 import { authFetch } from "../../api/apiClient";
@@ -7,13 +7,14 @@ import { API_BASE_URL } from "../../config";
 import { useState, useEffect } from "react";
 
 const navItems = [
-    { to: "", end: true, icon: <FaBuilding />, label: "PG Details" },
-    { to: "rooms", icon: <FaDoorOpen />, label: "Rooms List" },
-    { to: "roomtypes", icon: <FaLayerGroup />, label: "Room Templates" },
-    { to: "tenants", icon: <FaUsers />, label: "Tenants" },
-    { to: "dues", icon: <FaReceipt />, label: "Dues" },
-    { to: "payments", icon: <FaCreditCard />, label: "Payments" },
-    { to: "refunds", icon: <FaUndoAlt />, label: "Refunds"}
+  { to: "", end: true, icon: <FaBuilding />, label: "PG Details" },
+  { to: "rooms", icon: <FaDoorOpen />, label: "Rooms List" },
+  { to: "roomtypes", icon: <FaLayerGroup />, label: "Room Templates" },
+  { to: "tenants", icon: <FaUsers />, label: "Tenants" },
+  { to: "dues", icon: <FaReceipt />, label: "Dues" },
+  { to: "payments", icon: <FaCreditCard />, label: "Payments" },
+  { to: "refunds", icon: <FaUndoAlt />, label: "Refunds" },
+  { to: "maintainence", icon: <FaTools />, label: "Maintainence" },
 ];
 
 function PGLayout() {
