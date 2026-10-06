@@ -200,13 +200,8 @@ class MaintenanceRequestSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_status(self, status):
-        valid_statuses = ['pending', 'in_progress', 'resolved']
+        valid_statuses = ['pending', 'assigned', 'resolved']
         if status not in valid_statuses:
             raise serializers.ValidationError("Not a valid status.")
         return status
-
-    def validate_description(self, description):
-        if len(description) < 10:
-            raise serializers.ValidationError("Description must be at least 10 characters long.")
-        return description
 

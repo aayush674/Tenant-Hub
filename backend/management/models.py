@@ -267,9 +267,10 @@ class RefundAllocations(models.Model):
 
 class MaintenanceRequest(models.Model):
     room = models.ForeignKey(Room, related_name='maintenance_requests', on_delete=models.SET_NULL, null=True) # If a room is deleted, we set the room field to null instead of deleting the maintenance request.
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     request_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices = [('pending', 'Pending'), ('in_progress', 'In Progress'), ('resolved', 'Resolved')], default='pending')
+    # resolution_date = models.DateTimeField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices = [('pending', 'Pending'), ('assigned', 'Assigned'), ('resolved', 'Resolved')], default='pending')
 
     def __str__(self):
         room_number = self.room.room_number if self.room else "Deleted Room"
