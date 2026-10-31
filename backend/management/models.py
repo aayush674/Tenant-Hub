@@ -272,10 +272,15 @@ class MaintenanceRequest(models.Model):
     raised_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="maintenance_requests"
     )
-    # resolution_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=20, choices = [('pending', 'Pending'), ('assigned', 'Assigned'), ('resolved', 'Resolved')], default='pending')
     category = models.CharField(max_length=20, choices= [("room_furniture", "Room Furniture"), ("electricity", "Electricity"), ("plumbing", "Plumbing"), ("internet", "Internet"), ("other", "Other Issue")])
 
+    # OTP handling fields
+    resolve_otp_hash = models.CharField(max_length=128, null=True, blank=True)
+    resolve_otp_expires = models.DateTimeField(null = True, blank = True)
+    resolve_otp_sent_at = models.DateTimeField(null = True, blank = True)
+    resolve_otp_attempts = models.PositiveSmallIntegerField(default=0)
+    resolved_at = models.DateTimeField(null = True, blank = True)
     def __str__(self):
         room_number = self.room.room_number if self.room else "Deleted Room"
         return f"Room {room_number} - {self.status}"
