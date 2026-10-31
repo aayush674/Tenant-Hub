@@ -269,8 +269,12 @@ class MaintenanceRequest(models.Model):
     room = models.ForeignKey(Room, related_name='maintenance_requests', on_delete=models.SET_NULL, null=True) # If a room is deleted, we set the room field to null instead of deleting the maintenance request.
     description = models.TextField(blank=True, null=True)
     request_date = models.DateTimeField(auto_now_add=True)
+    raised_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="maintenance_requests"
+    )
     # resolution_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=20, choices = [('pending', 'Pending'), ('assigned', 'Assigned'), ('resolved', 'Resolved')], default='pending')
+    category = models.CharField(max_length=20, choices= [("room_furniture", "Room Furniture"), ("electricity", "Electricity"), ("plumbing", "Plumbing"), ("internet", "Internet"), ("other", "Other Issue")])
 
     def __str__(self):
         room_number = self.room.room_number if self.room else "Deleted Room"

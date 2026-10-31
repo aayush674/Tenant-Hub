@@ -94,7 +94,6 @@ function Payments(){
               onAdd={(payment) => {
                 setShowAddPayment(false);
                 fetchPayments();
-                // fetchFloorCounts();
               }}
               onClose={() => setShowAddPayment(false)}
             />

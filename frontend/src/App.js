@@ -28,7 +28,6 @@ import { ProtectedRoute } from "./api/protectedRoute";
 import TenantRoom from "./components/tenant/tenantRoom";
 import TenantDashboard from "./components/tenant/tenantDashboard";
 import TenantDues from "./components/tenant/tenantDues";
-import TenantMaintainence from "./components/tenant/tenantMaintainence";
 import TenantLayout from "./components/tenant/tenantLayout";
 import TenantHeader from "./components/tenant/tenantHeader";
 
@@ -38,40 +37,165 @@ function Layout() {
   // useLocation(), useNavigate() and useParams() must be used within router components else these wouldn't be identified if initialized before browser router. So we created this Layout component to render useLocation() inside the BrowserRouter.
   return (
     <>
-      {location.pathname !== "/login" && location.pathname !== "/signup" && !location.pathname.startsWith("/activate") && !isTenantRoute && (
-        <ProtectedRoute>
-          <Header />
-        </ProtectedRoute>
-      )}
-      {location.pathname !== "/login" && location.pathname !== "/signup" && !location.pathname.startsWith("/activate") &&  isTenantRoute && (
-        <ProtectedRoute>
-          <TenantHeader />
-        </ProtectedRoute>
-      )}
+      {location.pathname !== "/login" &&
+        location.pathname !== "/signup" &&
+        !location.pathname.startsWith("/activate") &&
+        !isTenantRoute && (
+          <ProtectedRoute>
+            <Header />
+          </ProtectedRoute>
+        )}
+      {location.pathname !== "/login" &&
+        location.pathname !== "/signup" &&
+        !location.pathname.startsWith("/activate") &&
+        isTenantRoute && (
+          <ProtectedRoute>
+            <TenantHeader />
+          </ProtectedRoute>
+        )}
 
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element = {<SignUp />} />
-        <Route path="/activate/:token" element = {<AccountActivate />} />
-        <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/pg-list" element={<ProtectedRoute><PGList /></ProtectedRoute>} />
-        <Route path="/pg/:pgId" element={<ProtectedRoute><PGLayout /></ProtectedRoute>}>
-          <Route index element={<ProtectedRoute><PGDetails /></ProtectedRoute>}></Route>
-          <Route path="rooms" element={<ProtectedRoute><RoomsList /></ProtectedRoute>} />
-          <Route path="rooms/:roomId" element={<ProtectedRoute><RoomLayout /></ProtectedRoute>}>
-            <Route index element={<ProtectedRoute><RoomDetails /></ProtectedRoute>}></Route>
-            <Route path="maintainence" element={<ProtectedRoute><RoomMaintainence /></ProtectedRoute>}></Route>
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/activate/:token" element={<AccountActivate />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pg-list"
+          element={
+            <ProtectedRoute>
+              <PGList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pg/:pgId"
+          element={
+            <ProtectedRoute>
+              <PGLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route
+            index
+            element={
+              <ProtectedRoute>
+                <PGDetails />
+              </ProtectedRoute>
+            }
+          ></Route>
+          <Route
+            path="rooms"
+            element={
+              <ProtectedRoute>
+                <RoomsList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="rooms/:roomId"
+            element={
+              <ProtectedRoute>
+                <RoomLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              index
+              element={
+                <ProtectedRoute>
+                  <RoomDetails />
+                </ProtectedRoute>
+              }
+            ></Route>
+            <Route
+              path="maintainence"
+              element={
+                <ProtectedRoute>
+                  <RoomMaintainence />
+                </ProtectedRoute>
+              }
+            ></Route>
           </Route>
-          <Route path="roomtypes" element={<ProtectedRoute><RoomTypes /></ProtectedRoute>} />
-          <Route path="tenants" element={<ProtectedRoute><TenantList /></ProtectedRoute>} />
-          <Route path="tenants/:tenantId" element={<ProtectedRoute><TenantPageLayout /></ProtectedRoute>}>
-            <Route index element={<ProtectedRoute><TenantDetails /></ProtectedRoute>}></Route>
-            <Route path="dues" element={<ProtectedRoute><TenantWiseDues /></ProtectedRoute>}></Route>
+          <Route
+            path="roomtypes"
+            element={
+              <ProtectedRoute>
+                <RoomTypes />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="tenants"
+            element={
+              <ProtectedRoute>
+                <TenantList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="tenants/:tenantId"
+            element={
+              <ProtectedRoute>
+                <TenantPageLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              index
+              element={
+                <ProtectedRoute>
+                  <TenantDetails />
+                </ProtectedRoute>
+              }
+            ></Route>
+            <Route
+              path="dues"
+              element={
+                <ProtectedRoute>
+                  <TenantWiseDues />
+                </ProtectedRoute>
+              }
+            ></Route>
           </Route>
-          <Route path="dues" element={<ProtectedRoute><Dues /></ProtectedRoute>} />
-          <Route path="payments" element={<ProtectedRoute><Payments /></ProtectedRoute>} />
-          <Route path="refunds" element={<ProtectedRoute><Refunds /></ProtectedRoute>} />
-          <Route path="maintainence" element={<ProtectedRoute><MaintainenceList /></ProtectedRoute>} />
+          <Route
+            path="dues"
+            element={
+              <ProtectedRoute>
+                <Dues />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="payments"
+            element={
+              <ProtectedRoute>
+                <Payments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="refunds"
+            element={
+              <ProtectedRoute>
+                <Refunds />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="maintainence"
+            element={
+              <ProtectedRoute>
+                <MaintainenceList />
+              </ProtectedRoute>
+            }
+          />
         </Route>
         <Route
           path="/t"
@@ -84,7 +208,7 @@ function Layout() {
           <Route index element={<TenantDashboard />} />
           <Route path="room" element={<TenantRoom />} />
           <Route path="dues" element={<TenantDues />} />
-          <Route path="maintenance" element={<TenantMaintainence />} />
+          <Route path="maintenance" element={<MaintainenceList />} />
         </Route>
       </Routes>
       <ToastContainer

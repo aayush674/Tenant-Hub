@@ -324,4 +324,79 @@ class RefundViewSet(viewsets.ModelViewSet):
 class MaintenanceRequestViewSet(viewsets.ModelViewSet):
     queryset = MaintenanceRequest.objects.all()
     serializer_class = MaintenanceRequestSerializer
-        
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = MaintenanceRequest.objects.select_related("room")
+
+        if user.role == UserRole.OWNER:
+            queryset = queryset.filter(room__pg_property__owner=user)
+
+        # elif user.role == UserRole.EMPLOYEE:
+        #     pg_ids = [
+        #         a.pg_id for a in user.pg_assignments.all()
+        #         if has_permission(user, a.pg_id, "view_maintenance")
+        #     ]
+        #     queryset = queryset.filter(room__pg_property__id__in=pg_ids)
+
+        elif user.role == UserRole.TENANT:
+            queryset = queryset.filter(
+                room__tenants__user=user,
+                room__tenants__is_active=True
+            ).distinct()
+
+        else:
+            return queryset.none()
+
+        pg_property = self.request.query_params.get("pg_property")
+        if pg_property:
+            queryset = queryset.filter(room__pg_property__id=pg_property)
+
+        return queryset.order_by("-id")
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        room = serializer.validated_data["room"]
+
+        if user.role == UserRole.TENANT:
+            if not Tenant.objects.filter(user=user, room=room, is_active=True).exists():
+                raise PermissionDenied("You can only raise requests for your own room.")
+        elif user.role == UserRole.OWNER:
+            if room.pg_property.owner != user:
+                raise PermissionDenied("This room is not in your property.")
+        # elif user.role == UserRole.EMPLOYEE:
+        #     if not has_permission(user, room.pg_property_id, "add_maintenance"):
+        #         raise PermissionDenied("You do not have permission to raise requests.")
+        else:
+            raise PermissionDenied()
+
+        serializer.save(raised_by=user)
+
+    @action(detail = True, methods = ["post"])
+    def assign(self, request, pk= None):
+        if request.user.role == UserRole.TENANT:
+            raise PermissionDenied("Only staff can assign requests.")
+        maintenance_request = self.get_object()
+        if maintenance_request.status == "assigned":
+            return Response({"detail": "Request is already assigned"}, status=status.HTTP_400_BAD_REQUEST)
+        if maintenance_request.status != "pending":
+            return Response({"detail": "Only pending requests can be assigned."}, status=400)
+
+        maintenance_request.status = "assigned"
+        maintenance_request.save(update_fields = ["status"])
+        return Response({"detail": "Request assigned successfully"}, status=status.HTTP_200_OK)
+
+    @action(detail = True, methods = ["post"])
+    def resolve(self, request, pk= None):
+        if request.user.role == UserRole.TENANT:
+            raise PermissionDenied("Only staff can assign requests.")
+        maintenance_request = self.get_object()
+        if maintenance_request.status == "resolved":
+            return Response({"detail": "Request is already resolved"}, status=status.HTTP_400_BAD_REQUEST)
+        if maintenance_request.status != "assigned":
+            return Response({"detail": "Only assigned requests can be resolved."}, status=400)
+
+
+        maintenance_request.status = "resolved"
+        maintenance_request.save(update_fields = ["status"])
+        return Response({"detail": "Request resolved successfully"}, status=status.HTTP_200_OK)
