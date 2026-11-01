@@ -11,6 +11,7 @@ import "../../styles/maintainence.css";
 import { toast } from "react-toastify";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
 import { useAuth } from "../../context/authContext";
+import ResolveMaintainenceOTP from "./resolveMaintainenceOTP";
 
 const requestStatusLabels = {
   pending: "Pending",
@@ -45,6 +46,7 @@ function MaintainenceList() {
   const [loading, setLoading] = useState(false);
   const [assignId, setAssignId] = useState(null);
   const [resolveId, setResolveId] = useState(null);
+  const [resolveTargetId, setResolveTargetId] = useState(null);
 
   const { user } = useAuth();
   const isTenant = user?.role === "TENANT";
@@ -99,8 +101,33 @@ function MaintainenceList() {
     [fetchRequests],
   );
 
-  const handleResolve = useCallback(
+  const verifyOTP = useCallback(
     async (reqId) => {
+      setLoading(true);
+      try {
+        const res = await authFetch(
+          `${API_BASE_URL}/api/maintainence-requests/${reqId}/send_resolve_otp/`,
+          {
+            method: "POST",
+          },
+        );
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.detail || "Failed to send OTP");
+        }
+        toast.success("OTP sent to tenant's registered Email ID");
+        setResolveTargetId(reqId);
+      } catch (err) {
+        toast.error(err.message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchRequests],
+  );
+
+  const handleResolve = useCallback(
+    async (reqId, otp) => {
       setLoading(true);
       setResolveId(reqId);
       try {
@@ -108,6 +135,8 @@ function MaintainenceList() {
           `${API_BASE_URL}/api/maintainence-requests/${reqId}/resolve/`,
           {
             method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({otp}),
           },
         );
         if (!res.ok) {
@@ -185,7 +214,9 @@ function MaintainenceList() {
                 loading={loading && req.id === resolveId}
                 loadingText="Resolving request"
                 className="resolve-request-btn"
-                onClick={() => handleResolve(req.id)}
+                onClick={() => {
+                  verifyOTP(req.id);
+                }}
                 disabled={loading}
               />
             )}
@@ -240,7 +271,11 @@ function MaintainenceList() {
       )}
 
       <div className="dues-header">
-        {isAdmin ? (<h1>{pgData && pgData?.name} - Maintainence</h1>) : (<h1>Maintainence</h1>)}
+        {isAdmin ? (
+          <h1>{pgData && pgData?.name} - Maintainence</h1>
+        ) : (
+          <h1>Maintainence</h1>
+        )}
         <div className="due-header-buttons">
           <button className="add-btn" onClick={() => setShowAddRequest(true)}>
             <span className="icon">
@@ -259,6 +294,16 @@ function MaintainenceList() {
             fetchRequests();
           }}
           onClose={() => setShowAddRequest(false)}
+        />
+      )}
+      {resolveTargetId && (
+        <ResolveMaintainenceOTP
+          onResolved={(otp) => {
+            setResolveTargetId(null);
+            handleResolve(resolveTargetId, otp);
+            fetchRequests();
+          }}
+          onClose={() => setResolveTargetId(null)}
         />
       )}
 
