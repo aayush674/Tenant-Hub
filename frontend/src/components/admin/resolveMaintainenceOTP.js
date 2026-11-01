@@ -93,6 +93,7 @@ function ResolveMaintainenceOTP({ onResolved, onClose }) {
               loadingText="Submitting"
               children="Submit"
               type="submit"
+              class="otp-verify-submit-button"
             />
           </div>
         </form>

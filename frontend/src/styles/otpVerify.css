@@ -205,7 +205,7 @@
    CREATE PAYMENT BUTTON
    ========================================================= */
 
-.otp-verify-actions > button:first-child {
+.otp-verify-submit-button{
     width: 100%;
     min-height: 46px;
 

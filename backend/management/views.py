@@ -20,7 +20,7 @@ from django.contrib.auth.hashers import make_password, check_password
 import logging
 logger = logging.getLogger(__name__)
 
-OTP_TTL = timedelta(minutes=10)
+OTP_TTL = timedelta(minutes=1)
 RESEND_COOLDOWN = timedelta(seconds=60)
 MAX_OTP_ATTEMPTS = 5
 
