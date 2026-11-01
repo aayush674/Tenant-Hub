@@ -14,7 +14,6 @@ function ResolveMaintainenceOTP({ onResolved, onClose }) {
   // Fetch the selected due
   const handleClose = () => {
     setClosing(true);
-
     setTimeout(() => {
       onClose();
     }, 300);
