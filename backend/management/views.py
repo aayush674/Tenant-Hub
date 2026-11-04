@@ -357,8 +357,11 @@ class MaintenanceRequestViewSet(viewsets.ModelViewSet):
             return queryset.none()
 
         pg_property = self.request.query_params.get("pg_property")
+        room = self.request.query_params.get("room")
         if pg_property:
             queryset = queryset.filter(room__pg_property__id=pg_property)
+        if room:
+            queryset = queryset.filter(room__id = room)
 
         return queryset.order_by("-id")
 

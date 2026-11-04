@@ -5,7 +5,7 @@ import "../../styles/common_styles/navigator.css";
 import "../../styles/common_styles/add-btn.css";
 import { authFetch } from "../../api/apiClient";
 import { API_BASE_URL } from "../../config";
-import { FaPlus } from "react-icons/fa";
+import { FaEye, FaPlus, FaPen, FaCheckCircle, FaUserPlus, FaExchangeAlt } from "react-icons/fa";
 import TableComponent from "../common/tableComponent";
 import "../../styles/maintainence.css";
 import { toast } from "react-toastify";
@@ -31,23 +31,23 @@ const REQUEST_ACTIONS_BY_STATUS = {
   admin: {
     pending: ["edit", "assign"],
     assigned: ["edit", "edit_assignment", "resolve"],
-    resolved: [],
+    resolved: ["view"],
   },
-  tenant: { pending: ["edit"], assigned: ["edit"], resolved: [] },
+  tenant: { pending: ["edit"], assigned: ["view"], resolved: ["view"] },
 };
 
 function MaintainenceList() {
   const [showAddRequest, setShowAddRequest] = useState(false);
-  const { pgId } = useParams();
+  const { pgId, roomId } = useParams();
 
   const navigate = useNavigate();
   const [pgData, setPgData] = useState(null);
   const [requests, setRequests] = useState(null);
   const [loading, setLoading] = useState(false);
   const [assignId, setAssignId] = useState(null);
-  const [resolveId, setResolveId] = useState(null);
   const [resolveTargetId, setResolveTargetId] = useState(null);
   const [sendingId, setSendingId] = useState(null);
+  const [roomData, setRoomData] = useState({});
 
   const { user } = useAuth();
   const isTenant = user?.role === "TENANT";
@@ -65,7 +65,9 @@ function MaintainenceList() {
   const fetchRequests = useCallback(async () => {
     if (isAdmin && !effectivePgId) return;
     const url = isAdmin
-      ? `${API_BASE_URL}/api/maintainence-requests/?pg_property=${effectivePgId}`
+      ? roomId
+        ? `${API_BASE_URL}/api/maintainence-requests/?pg_property=${effectivePgId}&room=${roomId}`
+        : `${API_BASE_URL}/api/maintainence-requests/?pg_property=${effectivePgId}`
       : `${API_BASE_URL}/api/maintainence-requests/`;
     const res = await authFetch(url);
     if (!res.ok) {
@@ -74,7 +76,15 @@ function MaintainenceList() {
     }
     const data = await res.json();
     setRequests(data.results ?? data);
-  }, [effectivePgId, isAdmin]);
+  }, [effectivePgId, isAdmin, roomId]);
+
+  const fetchCurrentRoom = useCallback(async () => {
+    setRoomData({});
+    if (!roomId) return;
+    const res = await authFetch(`${API_BASE_URL}/api/rooms/${roomId}`);
+    if (!res.ok) return;
+    setRoomData(await res.json());
+  }, [roomId]);
 
   const handleAssign = useCallback(
     async (reqId) => {
@@ -148,14 +158,15 @@ function MaintainenceList() {
   useEffect(() => {
     fetchPg();
     fetchRequests();
-  }, [fetchPg, fetchRequests]);
+    fetchCurrentRoom();
+  }, [fetchPg, fetchRequests, fetchCurrentRoom]);
 
   const columns = [
     {
       header: "Request ID",
       render: (req) => <b>{req.id}</b>,
     },
-    ...(isAdmin
+    ...(isAdmin && !roomId
       ? [{ header: "Room No.", render: (req) => req.room_number }]
       : []),
     {
@@ -185,24 +196,27 @@ function MaintainenceList() {
           <div className="request-list-actions">
             {allowedActions.includes("assign") && (
               <LoadingSubmitButton
-                children="Assign"
+                // children="Assign"
                 loading={loading && req.id === assignId}
                 loadingText="Assigning request"
                 className="assign-request-btn"
                 onClick={() => handleAssign(req.id)}
                 disabled={loading}
-              />
+              >
+                <FaUserPlus/>
+              </LoadingSubmitButton>
             )}
 
             {allowedActions.includes("resolve") && (
               <LoadingSubmitButton
-                children="Resolve"
                 loading={req.id === sendingId}
                 loadingText="Sending OTP"
                 className="resolve-request-btn"
                 onClick={() => verifyOTP(req.id)}
                 disabled={sendingId !== null}
-              />
+              >
+                <FaCheckCircle/>
+              </LoadingSubmitButton>
             )}
 
             {allowedActions.includes("edit") && (
@@ -210,7 +224,16 @@ function MaintainenceList() {
                 className="edit-request-btn"
                 // onClick={() => handleComplete(req.id)}
               >
-                View / Edit
+                <FaPen/>
+              </button>
+            )}
+
+            {allowedActions.includes("view") && (
+              <button
+                className="view-request-btn"
+                // onClick={() => handleComplete(req.id)}
+              >
+                <FaEye />
               </button>
             )}
 
@@ -219,7 +242,7 @@ function MaintainenceList() {
                 className="edit-request-btn"
                 // onClick={() => handleView(req.id)}
               >
-                Edit Assignment
+                <FaExchangeAlt/>
               </button>
             )}
           </div>
@@ -242,9 +265,22 @@ function MaintainenceList() {
           <span className="seperator"> / </span>
           {pgData && <span>{pgData.name}</span>}
           <span className="seperator"> / </span>
+
+          {/* Extra room nav path for room wise maintainence requests */}
+          {roomId && (
+            <span>
+              <span onClick={() => navigate("/rooms")} className="navigator">
+                Rooms
+              </span>
+              <span className="seperator"> / </span>
+              <span>{roomData.room_number}</span>
+              <span className="seperator"> / </span>
+            </span>
+          )}
           <span>Maintenance</span>
         </div>
       ) : (
+        // Nav path for tenant maintainence list
         <div className="nav-path">
           <span onClick={() => navigate("/")} className="navigator">
             Home
@@ -261,12 +297,14 @@ function MaintainenceList() {
           <h1>Maintainence</h1>
         )}
         <div className="due-header-buttons">
-          <button className="add-btn" onClick={() => setShowAddRequest(true)}>
-            <span className="icon">
-              <FaPlus />
-            </span>
-            <span>Raise Request</span>
-          </button>
+          {!roomId && (
+            <button className="add-btn" onClick={() => setShowAddRequest(true)}>
+              <span className="icon">
+                <FaPlus />
+              </span>
+              <span>Raise Request</span>
+            </button>
+          )}
         </div>
       </div>
 

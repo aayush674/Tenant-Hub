@@ -82,8 +82,8 @@
 }
 
 .request-list-actions button {
-    min-width: 78px;
-    min-height: 32px;
+    min-width: 28px;
+    min-height: 28px;
     padding: 6px 12px;
     color: var(--th-navy);
     background: rgba(197, 162, 74, 0.10);

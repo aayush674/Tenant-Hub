@@ -11,7 +11,6 @@ import AccountActivate from "./components/tenant/accountActivate";
 import RoomsList from "./components/admin/roomsList";
 import RoomLayout from "./components/admin/roomLayout";
 import RoomDetails from "./components/admin/roomDetails";
-import RoomMaintainence from "./components/admin/roomMaintainence";
 import RoomTypes from "./components/admin/roomTypes";
 import TenantList from "./components/admin/tenantList";
 import TenantPageLayout from "./components/admin/tenantPageLayout";
@@ -118,7 +117,8 @@ function Layout() {
               path="maintainence"
               element={
                 <ProtectedRoute>
-                  <RoomMaintainence />
+                  {/* <RoomMaintainence /> */}
+                  <MaintainenceList/>
                 </ProtectedRoute>
               }
             ></Route>
