@@ -47,6 +47,7 @@ function MaintainenceList() {
   const [assignId, setAssignId] = useState(null);
   const [resolveId, setResolveId] = useState(null);
   const [resolveTargetId, setResolveTargetId] = useState(null);
+  const [sendingId, setSendingId] = useState(null);
 
   const { user } = useAuth();
   const isTenant = user?.role === "TENANT";
@@ -62,17 +63,18 @@ function MaintainenceList() {
   }, [effectivePgId]);
 
   const fetchRequests = useCallback(async () => {
+    if (isAdmin && !effectivePgId) return;
     const url = isAdmin
       ? `${API_BASE_URL}/api/maintainence-requests/?pg_property=${effectivePgId}`
-      : `${API_BASE_URL}/api/maintainence-requests/`; // backend filters by the tenant's room from the token
-
+      : `${API_BASE_URL}/api/maintainence-requests/`;
     const res = await authFetch(url);
     if (!res.ok) {
       setRequests([]);
       return;
     }
-    setRequests(await res.json());
-  }, [pgId, isAdmin]);
+    const data = await res.json();
+    setRequests(data.results ?? data);
+  }, [effectivePgId, isAdmin]);
 
   const handleAssign = useCallback(
     async (reqId) => {
@@ -101,56 +103,40 @@ function MaintainenceList() {
     [fetchRequests],
   );
 
-  const verifyOTP = useCallback(
-    async (reqId) => {
-      setLoading(true);
-      try {
-        const res = await authFetch(
-          `${API_BASE_URL}/api/maintainence-requests/${reqId}/send_resolve_otp/`,
-          {
-            method: "POST",
-          },
-        );
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.detail || "Failed to send OTP");
-        }
-        toast.success("OTP sent to tenant's registered Email ID");
-        setResolveTargetId(reqId);
-      } catch (err) {
-        toast.error(err.message);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [fetchRequests],
-  );
+  const verifyOTP = useCallback(async (reqId) => {
+    setSendingId(reqId);
+    try {
+      const res = await authFetch(
+        `${API_BASE_URL}/api/maintainence-requests/${reqId}/send_resolve_otp/`,
+        { method: "POST" },
+      );
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.detail || "Failed to send OTP");
+      toast.success("OTP sent to tenant's registered Email ID");
+      setResolveTargetId(reqId);
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setSendingId(null);
+    }
+  }, []);
 
   const handleResolve = useCallback(
     async (reqId, otp) => {
-      setLoading(true);
-      setResolveId(reqId);
-      try {
-        const res = await authFetch(
-          `${API_BASE_URL}/api/maintainence-requests/${reqId}/resolve/`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({otp}),
-          },
-        );
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.detail || "Failed to Resolve request");
-        }
-        toast.success("Request resolved successfully");
-        fetchRequests();
-      } catch (err) {
-        toast.error(err.message);
-      } finally {
-        setLoading(false);
-        setResolveId(null);
-      }
+      const res = await authFetch(
+        `${API_BASE_URL}/api/maintainence-requests/${reqId}/resolve/`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ otp }),
+        },
+      );
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.detail || "Failed to resolve request");
+
+      toast.success("Request resolved successfully");
+      setResolveTargetId(null); // close only on success
+      fetchRequests();
     },
     [fetchRequests],
   );
@@ -211,13 +197,11 @@ function MaintainenceList() {
             {allowedActions.includes("resolve") && (
               <LoadingSubmitButton
                 children="Resolve"
-                loading={loading && req.id === resolveId}
-                loadingText="Resolving request"
+                loading={req.id === sendingId}
+                loadingText="Sending OTP"
                 className="resolve-request-btn"
-                onClick={() => {
-                  verifyOTP(req.id);
-                }}
-                disabled={loading}
+                onClick={() => verifyOTP(req.id)}
+                disabled={sendingId !== null}
               />
             )}
 
@@ -298,11 +282,7 @@ function MaintainenceList() {
       )}
       {resolveTargetId && (
         <ResolveMaintainenceOTP
-          onResolved={(otp) => {
-            setResolveTargetId(null);
-            handleResolve(resolveTargetId, otp);
-            fetchRequests();
-          }}
+          onResolved={(otp) => handleResolve(resolveTargetId, otp)}
           onClose={() => setResolveTargetId(null)}
         />
       )}

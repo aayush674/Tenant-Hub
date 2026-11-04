@@ -21,18 +21,16 @@ function ResolveMaintainenceOTP({ onResolved, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setError({});
-
+    setLoading(true);
     try {
-      setLoading(true);
-      onResolved(otp);
+      await onResolved(otp.trim());
     } catch (err) {
       setError({
-        detail: "Something went wrong. Please try again.",
+        detail: err.message,
       });
-    } finally {
-      setLoading(false);
+        setLoading(false);
+
     }
   };
 
@@ -59,17 +57,14 @@ function ResolveMaintainenceOTP({ onResolved, onClose }) {
             <input
               className="otp-verify-input"
               type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={6}
               placeholder="Enter OTP"
+              value={otp}
               onChange={(e) => {
-                setotp(e.target.value);
-                if (error?.amount) {
-                  const newError = {
-                    ...error,
-                  };
-
-                  delete newError.amount;
-                  setError(newError);
-                }
+                setotp(e.target.value.replace(/\D/g, ""));
+                if (error.detail) setError({});
               }}
             />
 
@@ -91,10 +86,12 @@ function ResolveMaintainenceOTP({ onResolved, onClose }) {
             <LoadingSubmitButton
               loading={loading}
               loadingText="Submitting"
-              children="Submit"
               type="submit"
-              class="otp-verify-submit-button"
-            />
+              className="otp-verify-submit-button"
+              disabled={otp.length !== 6}
+            >
+              Submit
+            </LoadingSubmitButton>
           </div>
         </form>
         {/* )} */}
