@@ -397,6 +397,27 @@ class MaintenanceRequestViewSet(viewsets.ModelViewSet):
         maintenance_request.save(update_fields = ["status"])
         return Response({"detail": "Request assigned successfully"}, status=status.HTTP_200_OK)
 
+
+    def _get_tenant_emails(self, maintenance_request):
+        if maintenance_request.raised_by and maintenance_request.raised_by.role == UserRole.TENANT:
+            emails = [maintenance_request.raised_by.email]
+        else:
+            emails = list(
+                Tenant.objects.filter(room=maintenance_request.room, is_active=True)
+                .exclude(user__email="")
+                .values_list("user__email", flat=True)
+            )
+        return [e for e in emails if e]
+
+    def mark_resolved(self, maintenance_request):
+        maintenance_request.status = "resolved"
+        maintenance_request.resolved_at = timezone.now()
+        maintenance_request.resolve_otp_hash = None
+        maintenance_request.resolve_otp_expires = None
+        maintenance_request.resolve_otp_attempts = 0
+        maintenance_request.save(update_fields = ["status", "resolve_otp_hash", "resolve_otp_expires",
+                            "resolve_otp_attempts","resolved_at"])
+
     @action(detail = True, methods = ["post"])
     def send_resolve_otp(self, request, pk= None):
         if request.user.role == UserRole.TENANT:
@@ -407,22 +428,17 @@ class MaintenanceRequestViewSet(viewsets.ModelViewSet):
         if maintenance_request.status != "assigned":
             return Response({"detail": "Only assigned requests can be resolved."}, status=400)
 
+        emails = self._get_tenant_emails(maintenance_request)
+        if not emails:
+            return Response(
+                {"detail": "No tenant email found. You can resolve without OTP.", "otp_required": False},
+                    status=200,
+            )
+
         now = timezone.now()
         if maintenance_request.resolve_otp_sent_at and now - maintenance_request.resolve_otp_sent_at < RESEND_COOLDOWN:
             wait = int((RESEND_COOLDOWN - (now - maintenance_request.resolve_otp_sent_at)).total_seconds())
             return Response({"detail": f"Please wait {wait}s before resending OTP"}, status=429)
-
-        if maintenance_request.raised_by and maintenance_request.raised_by.role == UserRole.TENANT:
-            emails = [maintenance_request.raised_by.email]
-        else:
-            emails = list(
-                Tenant.objects.filter(room = maintenance_request.room, is_active = True)
-                .exclude(user__email = "")
-                .values_list("user__email", flat=True)
-            )
-        emails = [e for e in emails if e]
-        if not emails:
-            return Response({"detail": "No tenant email found for this room."}, status=400)
 
         otp = f"{secrets.randbelow(10**6):06d}"
         maintenance_request.resolve_otp_hash = make_password(otp)
@@ -440,23 +456,27 @@ class MaintenanceRequestViewSet(viewsets.ModelViewSet):
             logger.exception("Failed to send resolve OTP email")
             return Response({"detail": "Could not send OTP email."}, status=500)
 
-        return Response({"detail": "OTP sent to the tenant's email."})
+        return Response({"detail": "OTP sent to the tenant's email.", "otp_required": True},)
 
     @action(detail = True, methods = ["post"])
     def resolve(self, request, pk= None):
         if request.user.role == UserRole.TENANT:
             raise PermissionDenied("Only staff can resolve requests.")
-        maintenance_request = self.get_object()
-        if maintenance_request.status == "resolved":
-            return Response({"detail": "Request is already resolved"}, status=status.HTTP_400_BAD_REQUEST)
-        if maintenance_request.status != "assigned":
-            return Response({"detail": "Only assigned requests can be resolved."}, status=400)
-
-        otp = str(request.data.get("otp")).strip()
-        if not otp:
-            return Response({"otp": "Please enter a valid OTP"}, status=400)
 
         with transaction.atomic():
+            maintenance_request = self.get_object()
+            if maintenance_request.status == "resolved":
+                return Response({"detail": "Request is already resolved"}, status=status.HTTP_400_BAD_REQUEST)
+            if maintenance_request.status != "assigned":
+                return Response({"detail": "Only assigned requests can be resolved."}, status=400)
+
+            if not self._get_tenant_emails(maintenance_request):
+                self.mark_resolved(maintenance_request)
+                return Response({"detail": "Request resolved successfully"}, status=200)
+
+            otp = str(request.data.get("otp")).strip()
+            if not otp:
+                return Response({"otp": "Please enter a valid OTP"}, status=400)
             if not maintenance_request.resolve_otp_hash or not maintenance_request.resolve_otp_expires:
                 return Response({"detail": "No OTP requested."}, status=400)
             if timezone.now() > maintenance_request.resolve_otp_expires:
@@ -468,11 +488,5 @@ class MaintenanceRequestViewSet(viewsets.ModelViewSet):
                 maintenance_request.save(update_fields=["resolve_otp_attempts"])
                 return Response({"detail": "Incorrect OTP."}, status=400)
 
-        maintenance_request.status = "resolved"
-        maintenance_request.resolved_at = timezone.now()
-        maintenance_request.resolve_otp_hash = None
-        maintenance_request.resolve_otp_expires = None
-        maintenance_request.resolve_otp_attempts = 0
-        maintenance_request.save(update_fields = ["status", "resolve_otp_hash", "resolve_otp_expires",
-                    "resolve_otp_attempts",])
+        self.mark_resolved(maintenance_request)
         return Response({"detail": "Request resolved successfully"}, status=status.HTTP_200_OK)

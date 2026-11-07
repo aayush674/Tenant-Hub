@@ -5,7 +5,7 @@ import LoadingSubmitButton from "../common/loadingSubmitButton";
 // import { toast } from "react-toastify";
 // import { API_BASE_URL } from "../../config";
 
-function ResolveMaintainenceOTP({ onResolved, onClose }) {
+function ResolveMaintainenceOTP({ onResolved, onClose, otpRequired }) {
   const [closing, setClosing] = useState(false);
   const [otp, setotp] = useState("");
   const [error, setError] = useState({});
@@ -24,13 +24,20 @@ function ResolveMaintainenceOTP({ onResolved, onClose }) {
     setError({});
     setLoading(true);
     try {
-      await onResolved(otp.trim());
+      if(otpRequired){
+        await onResolved(otp.trim());
+      }
+      else{
+        await onResolved();
+      }
     } catch (err) {
       setError({
         detail: err.message,
       });
         setLoading(false);
-
+    }
+    finally{
+      setLoading(false);
     }
   };
 
@@ -52,24 +59,32 @@ function ResolveMaintainenceOTP({ onResolved, onClose }) {
           </div>
         ) : ( */}
         <form className="otp-verify-form" onSubmit={handleSubmit}>
-          <div className="otp-verify-form-group">
-            <label className="otp-verify-label">Enter OTP</label>
-            <input
-              className="otp-verify-input"
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              maxLength={6}
-              placeholder="Enter OTP"
-              value={otp}
-              onChange={(e) => {
-                setotp(e.target.value.replace(/\D/g, ""));
-                if (error.detail) setError({});
-              }}
-            />
+          {otpRequired ? (
+            <div className="otp-verify-form-group">
+              <label className="otp-verify-label">Enter OTP</label>
+              <input
+                className="otp-verify-input"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={6}
+                placeholder="Enter OTP"
+                value={otp}
+                onChange={(e) => {
+                  setotp(e.target.value.replace(/\D/g, ""));
+                  if (error.detail) setError({});
+                }}
+              />
 
-            {error?.otp && <div className="otp-verify-error">{error.otp}</div>}
-          </div>
+              {error?.otp && (
+                <div className="otp-verify-error">{error.otp}</div>
+              )}
+            </div>
+          ) : (
+            <div className="otp-verify-form-group">
+              <label className="otp-verify-label">No tenant is present for request of this room. Are you sure you want to resolve this request without tenant OTP verification?</label>
+            </div>
+          )}
 
           {error?.detail && (
             <div className="otp-verify-error">{error.detail}</div>
@@ -81,16 +96,16 @@ function ResolveMaintainenceOTP({ onResolved, onClose }) {
               className="otp-verify-cancel-btn"
               onClick={handleCancel}
             >
-              Cancel
+              {otpRequired? "Cancel" : "No, Cancel"}
             </button>
             <LoadingSubmitButton
               loading={loading}
               loadingText="Submitting"
               type="submit"
               className="otp-verify-submit-button"
-              disabled={otp.length !== 6}
+              disabled={loading || (otpRequired && otp.length !== 6)}
             >
-              Submit
+              {otpRequired? "Submit" : "Yes"}
             </LoadingSubmitButton>
           </div>
         </form>

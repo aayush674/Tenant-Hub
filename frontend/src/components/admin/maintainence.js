@@ -48,6 +48,7 @@ function MaintainenceList() {
   const [resolveTargetId, setResolveTargetId] = useState(null);
   const [sendingId, setSendingId] = useState(null);
   const [roomData, setRoomData] = useState({});
+  const [otpRequired, setOtpRequired] = useState(true);
 
   const { user } = useAuth();
   const isTenant = user?.role === "TENANT";
@@ -122,7 +123,10 @@ function MaintainenceList() {
       );
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.detail || "Failed to send OTP");
-      toast.success("OTP sent to tenant's registered Email ID");
+      if(data.otp_required){
+        toast.success("OTP sent to tenant's registered Email ID");
+      }
+      setOtpRequired(data.otp_required);
       setResolveTargetId(reqId);
     } catch (err) {
       toast.error(err.message);
@@ -320,6 +324,7 @@ function MaintainenceList() {
       )}
       {resolveTargetId && (
         <ResolveMaintainenceOTP
+        otpRequired={otpRequired}
           onResolved={(otp) => handleResolve(resolveTargetId, otp)}
           onClose={() => setResolveTargetId(null)}
         />
