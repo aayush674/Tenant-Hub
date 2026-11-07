@@ -199,10 +199,19 @@ class MaintenanceRequestSerializer(serializers.ModelSerializer):
             source="room.room_number",
             read_only=True
         )
+    raised_by_name = serializers.SerializerMethodField()
     class Meta:
         model = MaintenanceRequest
         fields = '__all__'
         read_only_fields = ["raised_by", "status", "request_date"]
+
+    def get_raised_by_name(self, obj):
+        user = obj.raised_by
+        if not user:
+            return None
+        tenant = Tenant.objects.filter(email = user.email).first()
+        return tenant.first_name if tenant else None
+
     def validate_status(self, status):
         valid_statuses = ['pending', 'assigned', 'resolved']
         if status not in valid_statuses:

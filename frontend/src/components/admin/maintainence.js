@@ -56,6 +56,20 @@ function MaintainenceList() {
 
   const effectivePgId = isAdmin ? pgId : user?.pgId;
 
+  const formatDateTime = (value) => {
+    if (!value) return "-";
+    const d = new Date(value);
+    if (isNaN(d)) return value;
+    return d.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
   const fetchPg = useCallback(async () => {
     if (!effectivePgId) return;
     const res = await authFetch(`${API_BASE_URL}/api/pgs/${effectivePgId}`);
@@ -179,7 +193,11 @@ function MaintainenceList() {
     },
     {
       header: "Request Date",
-      render: (req) => req.request_date,
+      render: (req) => formatDateTime(req.request_date),
+    },
+    {
+      header: "Raised by",
+      render: (req) => req.raised_by_name,
     },
     {
       header: "Request Status",
@@ -207,7 +225,7 @@ function MaintainenceList() {
                 onClick={() => handleAssign(req.id)}
                 disabled={loading}
               >
-                <FaUserPlus/>
+                <FaUserPlus />
               </LoadingSubmitButton>
             )}
 
@@ -219,7 +237,7 @@ function MaintainenceList() {
                 onClick={() => verifyOTP(req.id)}
                 disabled={sendingId !== null}
               >
-                <FaCheckCircle/>
+                <FaCheckCircle />
               </LoadingSubmitButton>
             )}
 
@@ -228,7 +246,7 @@ function MaintainenceList() {
                 className="edit-request-btn"
                 // onClick={() => handleComplete(req.id)}
               >
-                <FaPen/>
+                <FaPen />
               </button>
             )}
 
@@ -246,7 +264,7 @@ function MaintainenceList() {
                 className="edit-request-btn"
                 // onClick={() => handleView(req.id)}
               >
-                <FaExchangeAlt/>
+                <FaExchangeAlt />
               </button>
             )}
           </div>
