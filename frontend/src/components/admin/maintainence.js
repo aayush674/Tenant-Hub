@@ -169,10 +169,6 @@ function MaintainenceList() {
     [fetchRequests],
   );
 
-  // const sortedRequests = [...requests].sort((a, b) => {
-  //   return Number(b.id) - Number(a.id);
-  // });
-
   useEffect(() => {
     fetchPg();
     fetchRequests();
@@ -195,10 +191,10 @@ function MaintainenceList() {
       header: "Request Date",
       render: (req) => formatDateTime(req.request_date),
     },
-    {
+    (!isAdmin ? [{
       header: "Raised by",
       render: (req) => req.raised_by_name,
-    },
+    }] : []),
     {
       header: "Request Status",
       render: (req) => (

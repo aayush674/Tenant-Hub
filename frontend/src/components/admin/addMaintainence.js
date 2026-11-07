@@ -6,6 +6,7 @@
   import LoadingSubmitButton from "../common/loadingSubmitButton";
   import { toast } from "react-toastify";
   import { useAuth } from "../../context/authContext";
+  import { validateCategory, validateRoomNumber } from "../../utils/requestValidation";
 
   const REQUEST_CATEGORY_LABELS = {
     room_furniture: "Room Furniture",
@@ -29,7 +30,6 @@
       const { user } = useAuth();
       const isTenant = user?.role === "TENANT";
       const isAdmin = !isTenant;
-      console.log(user);
 
     useEffect(() => {
       requestAnimationFrame(() => {
@@ -97,6 +97,17 @@
     const handleSubmit = async (e) => {
       e.preventDefault();
       setError({});
+      const rnError = validateRoomNumber(selectedRoom);
+      const catError = validateCategory(selectedCategory);
+      const finalError = {};
+
+      if(rnError) finalError.rooms = rnError;
+      if(catError) finalError.category = catError;
+      if (Object.keys(finalError).length > 0) {
+        setError(finalError);
+        return;
+      }
+      setError({})
       try {
         setLoading(true);
         const roomId = isTenant ? tenantRoom : selectedRoom;
@@ -152,25 +163,27 @@
             </button>
           </div>
           <form onSubmit={handleSubmit}>
-            {isAdmin && (<div className="field">
-              <label htmlFor="request-room">Room</label>
-              <select
-                id="request-room"
-                className="custom-select"
-                value={selectedRoom ?? ""}
-                onChange={handleRoomChange}
-              >
-                <option value="">Select Room</option>
-                {rooms.map((room) => (
-                  <option key={room.id} value={room.id}>
-                    {room.room_number}
-                  </option>
-                ))}
-              </select>
-              {error?.rooms && (
-                <div className="error-container">{error.rooms}</div>
-              )}
-            </div>) }
+            {isAdmin && (
+              <div className="field">
+                <label htmlFor="request-room">Room</label>
+                <select
+                  id="request-room"
+                  className="custom-select"
+                  value={selectedRoom ?? ""}
+                  onChange={handleRoomChange}
+                >
+                  <option value="">Select Room</option>
+                  {rooms.map((room) => (
+                    <option key={room.id} value={room.id}>
+                      {room.room_number}
+                    </option>
+                  ))}
+                </select>
+                {error?.rooms && (
+                  <div className="error-container">{error.rooms}</div>
+                )}
+              </div>
+            )}
 
             <div className="field">
               <label htmlFor="request-category">Category</label>
@@ -183,12 +196,17 @@
                 }}
               >
                 <option value="">Select Category</option>
-                {Object.entries(REQUEST_CATEGORY_LABELS).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
+                {Object.entries(REQUEST_CATEGORY_LABELS).map(
+                  ([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ),
+                )}
               </select>
+              {error?.category && (
+                <div className="error-container">{error.category}</div>
+              )}
             </div>
 
             <div className="field">
@@ -203,7 +221,9 @@
                   clearFieldError("desc");
                 }}
               ></textarea>
-              {error?.desc && <div className="error-container">{error.desc}</div>}
+              {error?.desc && (
+                <div className="error-container">{error.desc}</div>
+              )}
             </div>
 
             {error?.detail && (
