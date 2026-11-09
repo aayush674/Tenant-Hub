@@ -332,10 +332,20 @@ class RefundViewSet(viewsets.ModelViewSet):
 class MaintenanceRequestViewSet(viewsets.ModelViewSet):
     queryset = MaintenanceRequest.objects.all()
     serializer_class = MaintenanceRequestSerializer
+    http_method_names = ["get", "post", "patch", "head", "options"]
+
+    def _int_param(self, name):
+        value = self.request.query_params.get(name)
+        if value in (None, ""):
+            return None
+        try:
+            return int(value)
+        except ValueError:
+            raise ValidationError({name: "Must be a number."})
 
     def get_queryset(self):
         user = self.request.user
-        queryset = MaintenanceRequest.objects.select_related("room")
+        queryset = MaintenanceRequest.objects.select_related("room", "raised_by")
 
         if user.role == UserRole.OWNER:
             queryset = queryset.filter(room__pg_property__owner=user)
@@ -356,12 +366,18 @@ class MaintenanceRequestViewSet(viewsets.ModelViewSet):
         else:
             return queryset.none()
 
-        pg_property = self.request.query_params.get("pg_property")
-        room = self.request.query_params.get("room")
+        pg_property = self._int_param("pg_property")
+        room = self._int_param("room")
+        status_param = self.request.query_params.get("status")
+        category_param = self.request.query_params.get("category")
         if pg_property:
             queryset = queryset.filter(room__pg_property__id=pg_property)
         if room:
             queryset = queryset.filter(room__id = room)
+        if status_param in dict(MaintenanceRequest._meta.get_field("status").choices):
+            queryset = queryset.filter(status=status_param)
+        if category_param in dict(MaintenanceRequest._meta.get_field("category").choices):
+            queryset = queryset.filter(category=category_param)
 
         return queryset.order_by("-id")
 
@@ -433,7 +449,7 @@ class MaintenanceRequestViewSet(viewsets.ModelViewSet):
             )
         return [e for e in emails if e]
 
-    def mark_resolved(self, maintenance_request):
+    def _mark_resolved(self, maintenance_request):
         maintenance_request.status = "resolved"
         maintenance_request.resolved_at = timezone.now()
         maintenance_request.resolve_otp_hash = None
@@ -462,6 +478,12 @@ class MaintenanceRequestViewSet(viewsets.ModelViewSet):
         now = timezone.now()
         if maintenance_request.resolve_otp_sent_at and now - maintenance_request.resolve_otp_sent_at < RESEND_COOLDOWN:
             wait = int((RESEND_COOLDOWN - (now - maintenance_request.resolve_otp_sent_at)).total_seconds())
+            if maintenance_request.resolve_otp_expires and maintenance_request.resolve_otp_expires > now:
+                return Response(
+                {"detail": "OTP already sent.", "otp_required": True,
+                 "already_sent": True, "retry_after": wait},
+                status=200,
+            )
             return Response({"detail": f"Please wait {wait}s before resending OTP"}, status=429)
 
         otp = f"{secrets.randbelow(10**6):06d}"
@@ -478,6 +500,8 @@ class MaintenanceRequestViewSet(viewsets.ModelViewSet):
             send_resolve_otp_mail(emails, otp, maintenance_request.category)
         except Exception:
             logger.exception("Failed to send resolve OTP email")
+            maintenance_request.resolve_otp_sent_at = None
+            maintenance_request.save(update_fields=["resolve_otp_sent_at"])
             return Response({"detail": "Could not send OTP email."}, status=500)
 
         return Response({"detail": "OTP sent to the tenant's email.", "otp_required": True},)
@@ -495,10 +519,10 @@ class MaintenanceRequestViewSet(viewsets.ModelViewSet):
                 return Response({"detail": "Only assigned requests can be resolved."}, status=400)
 
             if not self._get_tenant_emails(maintenance_request):
-                self.mark_resolved(maintenance_request)
+                self._mark_resolved(maintenance_request)
                 return Response({"detail": "Request resolved successfully"}, status=200)
 
-            otp = str(request.data.get("otp")).strip()
+            otp = str(request.data.get("otp") or "").strip()
             if not otp:
                 return Response({"otp": "Please enter a valid OTP"}, status=400)
             if not maintenance_request.resolve_otp_hash or not maintenance_request.resolve_otp_expires:
@@ -512,5 +536,5 @@ class MaintenanceRequestViewSet(viewsets.ModelViewSet):
                 maintenance_request.save(update_fields=["resolve_otp_attempts"])
                 return Response({"detail": "Incorrect OTP."}, status=400)
 
-        self.mark_resolved(maintenance_request)
+        self._mark_resolved(maintenance_request)
         return Response({"detail": "Request resolved successfully"}, status=status.HTTP_200_OK)

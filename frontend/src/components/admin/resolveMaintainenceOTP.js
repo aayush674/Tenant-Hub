@@ -5,7 +5,7 @@ import LoadingSubmitButton from "../common/loadingSubmitButton";
 // import { toast } from "react-toastify";
 // import { API_BASE_URL } from "../../config";
 
-function ResolveMaintainenceOTP({ onResolved, onClose, otpRequired }) {
+function ResolveMaintainenceOTP({ onResolved, onClose, otpRequired, onResend }) {
   const [closing, setClosing] = useState(false);
   const [otp, setotp] = useState("");
   const [error, setError] = useState({});
@@ -13,6 +13,7 @@ function ResolveMaintainenceOTP({ onResolved, onClose, otpRequired }) {
 
   // Fetch the selected due
   const handleClose = () => {
+    if (loading) return;
     setClosing(true);
     setTimeout(() => {
       onClose();
@@ -51,7 +52,9 @@ function ResolveMaintainenceOTP({ onResolved, onClose, otpRequired }) {
         className={`otp-verify-modal-box ${closing ? "close" : "open"}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <h1 className="otp-verify-modal-header">Verify resolution</h1>
+        <h1 className="otp-verify-modal-header">
+          {otpRequired ? "Verify resolution" : "Confirm resolution"}
+        </h1>
 
         {/* {dueLoading ? (
           <div className="otp-verify-modal-loading">
@@ -82,7 +85,10 @@ function ResolveMaintainenceOTP({ onResolved, onClose, otpRequired }) {
             </div>
           ) : (
             <div className="otp-verify-form-group">
-              <label className="otp-verify-label">No tenant is present for request of this room. Are you sure you want to resolve this request without tenant OTP verification?</label>
+              <p className="otp-verify-label">
+                No tenant is present for request of this room. Are you sure you
+                want to resolve this request without tenant OTP verification?
+              </p>
             </div>
           )}
 
@@ -91,12 +97,22 @@ function ResolveMaintainenceOTP({ onResolved, onClose, otpRequired }) {
           )}
 
           <div className="otp-verify-actions">
+            {otpRequired && (
+              <button
+                type="button"
+                className="otp-verify-resend-btn"
+                onClick={onResend}
+                disabled={loading}
+              >
+                Resend OTP
+              </button>
+            )}
             <button
               type="button"
               className="otp-verify-cancel-btn"
               onClick={handleCancel}
             >
-              {otpRequired? "Cancel" : "No, Cancel"}
+              {otpRequired ? "Cancel" : "No, Cancel"}
             </button>
             <LoadingSubmitButton
               loading={loading}
@@ -105,7 +121,7 @@ function ResolveMaintainenceOTP({ onResolved, onClose, otpRequired }) {
               className="otp-verify-submit-button"
               disabled={loading || (otpRequired && otp.length !== 6)}
             >
-              {otpRequired? "Submit" : "Yes"}
+              {otpRequired ? "Submit" : "Yes"}
             </LoadingSubmitButton>
           </div>
         </form>

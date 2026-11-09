@@ -317,3 +317,42 @@
         min-height: 44px;
     }
 }
+
+/* =========================================================
+   RESEND OTP BUTTON
+   ========================================================= */
+
+.otp-verify-resend-btn {
+    align-self: flex-end;
+
+    padding: 4px 2px;
+
+    border: none;
+    background: transparent;
+
+    color: #b59b5b;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: color 0.2s ease;
+}
+
+.otp-verify-resend-btn:hover:not(:disabled) {
+    color: #8f7a44;
+    text-decoration: underline;
+}
+
+.otp-verify-resend-btn:focus-visible {
+    outline: 2px solid rgba(181, 155, 91, 0.5);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.otp-verify-resend-btn:disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+}

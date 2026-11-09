@@ -7,14 +7,8 @@
   import { toast } from "react-toastify";
   import { useAuth } from "../../context/authContext";
   import { validateCategory, validateRoomNumber } from "../../utils/requestValidation";
-
-  const REQUEST_CATEGORY_LABELS = {
-    room_furniture: "Room Furniture",
-    electricity: "Electricity",
-    plumbing: "Plumbing",
-    internet: "Internet",
-    other: "Other Issue",
-  };
+  import { MODE, REQUEST_CATEGORY_LABELS } from "../../constants/maintainence";
+  import { extractError } from "../../utils/format";
 
   function AddMaintainenceRequest({ pgId, onAdd, onClose, reqOb, mode }) {
     const [closing, setClosing] = useState(false);
@@ -26,8 +20,9 @@
     const [loading, setLoading] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState("");
     const [tenantRoom, setTenantRoom] = useState(null);
-    const isReqAvail = !!reqOb
-
+    const isCreate = mode === MODE.CREATE;
+    const isView = mode === MODE.VIEW;
+    const isEdit = mode === MODE.EDIT;
       const { user } = useAuth();
       const isTenant = user?.role === "TENANT";
       const isAdmin = !isTenant;
@@ -36,7 +31,7 @@
       requestAnimationFrame(() => {
         setOpening(true);
       });
-      if(isReqAvail){
+      if(reqOb){
         setSelectedRoom(reqOb.room);
         setSelectedCategory(reqOb.category);
         setRequestDesc(reqOb.description);
@@ -88,6 +83,7 @@
     };
 
     const handleClose = () => {
+      if(loading) return;
       setClosing(true);
       setTimeout(() => {
         resetForm();
@@ -103,11 +99,11 @@
     const handleSubmit = async (e) => {
       e.preventDefault();
       setError({});
-      const rnError = isAdmin ? validateRoomNumber(selectedRoom) : null;
+      const rnError = isCreate && isAdmin ? validateRoomNumber(selectedRoom) : null;
       const catError = validateCategory(selectedCategory);
       const finalError = {};
 
-      if(rnError) finalError.rooms = rnError;
+      if(rnError) finalError.room = rnError;
       if(catError) finalError.category = catError;
       if (Object.keys(finalError).length > 0) {
         setError(finalError);
@@ -117,7 +113,7 @@
       try {
         setLoading(true);
         const roomId = isTenant ? tenantRoom : selectedRoom;
-        const res = mode
+        const res = isEdit
           ? await authFetch(`${API_BASE_URL}/api/maintainence-requests/${reqOb.id}/`, {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },
@@ -137,13 +133,23 @@
             });
 
         if (!res.ok) {
-          const errData = await res.json();
-          setError(errData);
+          const errData = await res.json().catch(() => ({}));
+          setError(
+            errData.detail
+              ? errData
+              : {
+                  ...errData,
+                  detail: extractError(errData, "Request failed."),
+                },
+          );
           return;
         }
+        toast.success(
+          isEdit
+            ? "Request updated successfully."
+            : "Request raised successfully.",
+        );
         onAdd();
-        mode ? toast.success("Request Updated successfully.") :
-        toast.success("Request Raised successfully.");
       } catch (err) {
         setError({ detail: "Something went wrong. Please try again." });
       } finally {
@@ -164,11 +170,12 @@
           onClick={(e) => e.stopPropagation()}
         >
           <div className="modal-top">
-            {isReqAvail ? (
-              <h1 className="modal-header">Request No. {reqOb.id}</h1>
-            ) : (
-              <h1 className="modal-header">Raise Maintainence Request</h1>
-            )}
+            <h1 className="modal-header">
+              {isCreate
+                ? "Raise Maintainence Request"
+                : `Request No. ${reqOb.id}`}
+            </h1>
+
             <button
               type="button"
               className="modal-close"
@@ -187,7 +194,7 @@
                   className="custom-select"
                   value={selectedRoom ?? ""}
                   onChange={handleRoomChange}
-                  disabled={isReqAvail}
+                  disabled={!isCreate}
                 >
                   <option value="">Select Room</option>
                   {rooms.map((room) => (
@@ -196,8 +203,8 @@
                     </option>
                   ))}
                 </select>
-                {error?.rooms && (
-                  <div className="error-container">{error.rooms}</div>
+                {error?.room && (
+                  <div className="error-container">{error.room}</div>
                 )}
               </div>
             )}
@@ -211,7 +218,7 @@
                 onChange={(e) => {
                   setSelectedCategory(e.target.value);
                 }}
-                disabled={isReqAvail && !mode}
+                disabled={isView}
               >
                 <option value="">Select Category</option>
                 {Object.entries(REQUEST_CATEGORY_LABELS).map(
@@ -230,18 +237,19 @@
             <div className="field">
               <label htmlFor="request-desc">Description</label>
               <textarea
+                id="request-desc"
                 className="request-desc"
                 rows={4}
                 placeholder="Enter the issue to be raised here..."
                 value={requestDesc}
                 onChange={(e) => {
                   setRequestDesc(e.target.value);
-                  clearFieldError("desc");
+                  clearFieldError("description");
                 }}
-                disabled={isReqAvail && !mode}
+                disabled={isView}
               ></textarea>
-              {error?.desc && (
-                <div className="error-container">{error.desc}</div>
+              {error?.description && (
+                <div className="error-container">{error.description}</div>
               )}
             </div>
 
@@ -254,15 +262,18 @@
                 type="button"
                 className="btn-secondary"
                 onClick={handleClose}
+                disabled = {loading}
               >
-                {isReqAvail ^ mode ? "Close" : "Cancel"}
+                {isView ? "Close" : "Cancel"}
               </button>
-              {!(isReqAvail ^ mode) && (
+              {!isView && (
                 <LoadingSubmitButton
                   loading={loading}
-                  loadingText="Raising request"
+                  loadingText={isEdit ? "Saving" : "Raising request"}
                   type="submit"
-                >{mode ? "Save" : "Raise request"}</LoadingSubmitButton>
+                >
+                  {isEdit ? "Save" : "Raise request"}
+                </LoadingSubmitButton>
               )}
             </div>
           </form>

@@ -281,6 +281,11 @@ class MaintenanceRequest(models.Model):
     resolve_otp_sent_at = models.DateTimeField(null = True, blank = True)
     resolve_otp_attempts = models.PositiveSmallIntegerField(default=0)
     resolved_at = models.DateTimeField(null = True, blank = True)
+    resolved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name="+",
+    )
+    resolved_without_otp = models.BooleanField(default=False)
     def __str__(self):
         room_number = self.room.room_number if self.room else "Deleted Room"
         return f"Room {room_number} - {self.status}"

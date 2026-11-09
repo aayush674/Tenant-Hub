@@ -202,8 +202,17 @@ class MaintenanceRequestSerializer(serializers.ModelSerializer):
     raised_by_name = serializers.SerializerMethodField()
     class Meta:
         model = MaintenanceRequest
-        fields = '__all__'
-        read_only_fields = ["raised_by", "status", "request_date"]
+        fields = [
+            "id", "room", "room_number", "category", "description",
+                  "status", "request_date", "resolved_at", "raised_by",
+                  "raised_by_name",
+        ]
+        read_only_fields = [
+            "status", "resolved_at", "raised_by", "request_date",
+            "resolved_by", "resolved_without_otp",
+            "resolve_otp_hash", "resolve_otp_expires",
+            "resolve_otp_sent_at", "resolve_otp_attempts", "resolved_at"
+        ]
 
     def get_raised_by_name(self, obj):
         user = obj.raised_by

@@ -5,39 +5,29 @@ import "../../styles/common_styles/navigator.css";
 import "../../styles/common_styles/add-btn.css";
 import { authFetch } from "../../api/apiClient";
 import { API_BASE_URL } from "../../config";
-import { FaEye, FaPlus, FaPen, FaCheckCircle, FaUserPlus, FaExchangeAlt } from "react-icons/fa";
+import {
+  FaEye,
+  FaPlus,
+  FaPen,
+  FaCheckCircle,
+  FaUserPlus,
+  FaExchangeAlt,
+} from "react-icons/fa";
 import TableComponent from "../common/tableComponent";
 import "../../styles/maintainence.css";
 import { toast } from "react-toastify";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
 import { useAuth } from "../../context/authContext";
 import ResolveMaintainenceOTP from "./resolveMaintainenceOTP";
-
-const requestStatusLabels = {
-  pending: "Pending",
-  assigned: "Assigned",
-  resolved: "Resolved",
-};
-
-const REQUEST_CATEGORY_LABELS = {
-  room_furniture: "Room Furniture",
-  electricity: "Electricity",
-  plumbing: "Plumbing",
-  internet: "Internet",
-  other: "Other Issue",
-};
-
-const REQUEST_ACTIONS_BY_STATUS = {
-  admin: {
-    pending: ["edit", "assign"],
-    assigned: ["edit", "edit_assignment", "resolve"],
-    resolved: ["view"],
-  },
-  tenant: { pending: ["edit"], assigned: ["view"], resolved: ["view"] },
-};
+import {
+  MODE,
+  REQUEST_CATEGORY_LABELS,
+  REQUEST_STATUS_LABELS,
+  REQUEST_ACTIONS_BY_STATUS,
+} from "../../constants/maintainence";
+import { formatDateTime, extractError } from "../../utils/format";
 
 function MaintainenceList() {
-  const [showAddRequest, setShowAddRequest] = useState(false);
   const { pgId, roomId } = useParams();
 
   const navigate = useNavigate();
@@ -50,27 +40,13 @@ function MaintainenceList() {
   const [roomData, setRoomData] = useState({});
   const [otpRequired, setOtpRequired] = useState(true);
   const [mode, setMode] = useState(null);
-  const [reqOb, setReqQb] = useState(null);
+  const [reqOb, setReqOb] = useState(null);
 
   const { user } = useAuth();
   const isTenant = user?.role === "TENANT";
   const isAdmin = !isTenant;
 
   const effectivePgId = isAdmin ? pgId : user?.pgId;
-
-  const formatDateTime = (value) => {
-    if (!value) return "-";
-    const d = new Date(value);
-    if (isNaN(d)) return value;
-    return d.toLocaleString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-  };
 
   const fetchPg = useCallback(async () => {
     if (!effectivePgId) return;
@@ -82,17 +58,21 @@ function MaintainenceList() {
   const fetchRequests = useCallback(async () => {
     if (isAdmin && !effectivePgId) return;
     const url = isAdmin
-      ? roomId
-        ? `${API_BASE_URL}/api/maintainence-requests/?pg_property=${effectivePgId}&room=${roomId}`
-        : `${API_BASE_URL}/api/maintainence-requests/?pg_property=${effectivePgId}`
+      ? `${API_BASE_URL}/api/maintainence-requests/?pg_property=${effectivePgId}${roomId ? `&room=${roomId}` : ""}`
       : `${API_BASE_URL}/api/maintainence-requests/`;
-    const res = await authFetch(url);
-    if (!res.ok) {
+    try {
+      const res = await authFetch(url);
+      if (!res.ok) {
+        setRequests([]);
+        return;
+      }
+      const data = await res.json();
+      setRequests(data.results ?? data);
+    } catch (err) {
+      if (err.name === "AbortError") return;
       setRequests([]);
-      return;
+      toast.error("Could not load requests");
     }
-    const data = await res.json();
-    setRequests(data.results ?? data);
   }, [effectivePgId, isAdmin, roomId]);
 
   const fetchCurrentRoom = useCallback(async () => {
@@ -116,7 +96,7 @@ function MaintainenceList() {
         );
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.detail || "Failed to assign request");
+          throw new Error(data, "Failed to assign request");
         }
         toast.success("Request assigned successfully");
         fetchRequests();
@@ -138,11 +118,18 @@ function MaintainenceList() {
         { method: "POST" },
       );
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.detail || "Failed to send OTP");
-      if(data.otp_required){
-        toast.success("OTP sent to tenant's registered Email ID");
+      if (!res.ok)
+        throw new Error(extractError(data, "Failed to send OTP"));
+      if (data.otp_required) {
+        if (data.already_sent) {
+          toast.info(
+            `OTP already sent. You can resend in ${data.retry_after}s.`,
+          );
+        } else {
+          toast.success("OTP sent to tenant's registered Email ID");
+        }
       }
-      setOtpRequired(data.otp_required);
+      setOtpRequired(!!data.otp_required);
       setResolveTargetId(reqId);
     } catch (err) {
       toast.error(err.message);
@@ -151,15 +138,20 @@ function MaintainenceList() {
     }
   }, []);
 
-  const handleView = (req) =>{
-    setMode(0);
-    setReqQb(req);
-  }
+  const handleView = (req) => {
+    setMode(MODE.VIEW);
+    setReqOb(req);
+  };
 
-  const handleEdit = (req) =>{
-    setMode(1);
-    setReqQb(req);
-  }
+  const handleEdit = (req) => {
+    setMode(MODE.EDIT);
+    setReqOb(req);
+  };
+
+  const handleClose = () => {
+    setMode(null);
+    setReqOb(null);
+  };
 
   const handleResolve = useCallback(
     async (reqId, otp) => {
@@ -172,7 +164,10 @@ function MaintainenceList() {
         },
       );
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.detail || "Failed to resolve request");
+      if (!res.ok)
+        throw new Error(
+          extractError(data, "Failed to resolve request"),
+        );
 
       toast.success("Request resolved successfully");
       setResolveTargetId(null); // close only on success
@@ -182,9 +177,11 @@ function MaintainenceList() {
   );
 
   useEffect(() => {
+    const controller = new AbortController();
     fetchPg();
-    fetchRequests();
+    fetchRequests(controller.signal);
     fetchCurrentRoom();
+    return () => controller.abort();
   }, [fetchPg, fetchRequests, fetchCurrentRoom]);
 
   const columns = [
@@ -203,17 +200,25 @@ function MaintainenceList() {
       header: "Request Date",
       render: (req) => formatDateTime(req.request_date),
     },
-    ...(isAdmin ? [{
-      header: "Raised by",
-      render: (req) => req.raised_by_name,
-    }] : []),
+    ...(isAdmin
+      ? [
+          {
+            header: "Raised by",
+            render: (req) => req.raised_by_name,
+          },
+        ]
+      : []),
     {
       header: "Request Status",
       render: (req) => (
         <span className={`status-chip ${req.status}`}>
-          {requestStatusLabels[req.status] ?? req.status}
+          {REQUEST_STATUS_LABELS[req.status] ?? req.status}
         </span>
       ),
+    },
+    {
+      header: "Resolved On",
+      render: (req) => formatDateTime(req.resolved_at)
     },
     {
       header: "Action",
@@ -232,6 +237,8 @@ function MaintainenceList() {
                 className="assign-request-btn"
                 onClick={() => handleAssign(req.id)}
                 disabled={loading}
+                title="Assign request"
+                aria-label="Assign request"
               >
                 <FaUserPlus />
               </LoadingSubmitButton>
@@ -240,10 +247,12 @@ function MaintainenceList() {
             {allowedActions.includes("resolve") && (
               <LoadingSubmitButton
                 loading={req.id === sendingId}
-                loadingText="Sending OTP"
+                loadingText="Checking"
                 className="resolve-request-btn"
                 onClick={() => verifyOTP(req.id)}
                 disabled={sendingId !== null}
+                title="Resolve request"
+                aria-label="Resolve request"
               >
                 <FaCheckCircle />
               </LoadingSubmitButton>
@@ -253,6 +262,8 @@ function MaintainenceList() {
               <button
                 className="edit-request-btn"
                 onClick={() => handleEdit(req)}
+                title="Edit request"
+                aria-label="Edit request"
               >
                 <FaPen />
               </button>
@@ -262,6 +273,8 @@ function MaintainenceList() {
               <button
                 className="view-request-btn"
                 onClick={() => handleView(req)}
+                title="View request"
+                aria-label="View request"
               >
                 <FaEye />
               </button>
@@ -271,6 +284,8 @@ function MaintainenceList() {
               <button
                 className="edit-request-btn"
                 // onClick={() => handleView(req.id)}
+                title="Change Assignment"
+                aria-label="Change Assignment"
               >
                 <FaExchangeAlt />
               </button>
@@ -323,7 +338,10 @@ function MaintainenceList() {
       <div className="dues-header">
         {isAdmin ? (
           roomId ? (
-            <h1>{pgData && pgData?.name} - Room {roomData && roomData?.room_number} - Maintainence</h1>
+            <h1>
+              {pgData && pgData?.name} - Room{" "}
+              {roomData && roomData?.room_number} - Maintainence
+            </h1>
           ) : (
             <h1>{pgData && pgData?.name} - Maintainence</h1>
           )
@@ -332,7 +350,7 @@ function MaintainenceList() {
         )}
         <div className="due-header-buttons">
           {!roomId && (
-            <button className="add-btn" onClick={() => setShowAddRequest(true)}>
+            <button className="add-btn" onClick={() => setMode(MODE.CREATE)}>
               <span className="icon">
                 <FaPlus />
               </span>
@@ -342,27 +360,24 @@ function MaintainenceList() {
         </div>
       </div>
 
-      {(showAddRequest || reqOb) && (
+      {mode && (
         <AddMaintainenceRequest
           reqOb={reqOb}
           mode={mode}
           pgId={effectivePgId}
           onAdd={() => {
-            setShowAddRequest(false);
-            setMode(null);
-            setReqQb(null);
+            handleClose();
             fetchRequests();
           }}
           onClose={() => {
-            setShowAddRequest(false);
-            setMode(null);
-            setReqQb(null);
+            handleClose();
           }}
         />
       )}
       {resolveTargetId && (
         <ResolveMaintainenceOTP
           otpRequired={otpRequired}
+          onResend={() => verifyOTP(resolveTargetId)}
           onResolved={(otp) => handleResolve(resolveTargetId, otp)}
           onClose={() => setResolveTargetId(null)}
         />
