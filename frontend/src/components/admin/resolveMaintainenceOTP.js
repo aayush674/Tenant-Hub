@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // import { authFetch } from "../../api/apiClient";
 import "../../styles/otpVerify.css";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
 // import { toast } from "react-toastify";
 // import { API_BASE_URL } from "../../config";
 
-function ResolveMaintainenceOTP({ onResolved, onClose, otpRequired, onResend }) {
+function ResolveMaintainenceOTP({ onResolved, onClose, otpRequired, onResend, cooldownUntil }) {
   const [closing, setClosing] = useState(false);
   const [otp, setotp] = useState("");
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(0);
 
   // Fetch the selected due
   const handleClose = () => {
@@ -19,6 +20,15 @@ function ResolveMaintainenceOTP({ onResolved, onClose, otpRequired, onResend }) 
       onClose();
     }, 300);
   };
+  useEffect(() => {
+    const tick = () =>
+      setSecondsLeft(
+        Math.max(0, Math.ceil((cooldownUntil - Date.now()) / 1000)),
+      );
+    tick(); // set immediately, don't wait 1s
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id); // cleanup on unmount or new cooldown
+  }, [cooldownUntil]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -101,10 +111,16 @@ function ResolveMaintainenceOTP({ onResolved, onClose, otpRequired, onResend }) 
               <button
                 type="button"
                 className="otp-verify-resend-btn"
-                onClick={onResend}
-                disabled={loading}
+                onClick={() => {
+                  setotp("");
+                  setError({});
+                  onResend();
+                }}
+                disabled={loading || secondsLeft > 0}
               >
-                Resend OTP
+                {secondsLeft > 0
+                  ? `Resend OTP in ${secondsLeft}s`
+                  : "Resend OTP"}
               </button>
             )}
             <button

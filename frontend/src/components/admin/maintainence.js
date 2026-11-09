@@ -41,6 +41,7 @@ function MaintainenceList() {
   const [otpRequired, setOtpRequired] = useState(true);
   const [mode, setMode] = useState(null);
   const [reqOb, setReqOb] = useState(null);
+  const [cooldownUntil, setCooldownUntil] = useState(0);
 
   const { user } = useAuth();
   const isTenant = user?.role === "TENANT";
@@ -120,6 +121,7 @@ function MaintainenceList() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok)
         throw new Error(extractError(data, "Failed to send OTP"));
+      setCooldownUntil(Date.now() + (data.retry_after ?? 0) * 1000);
       if (data.otp_required) {
         if (data.already_sent) {
           toast.info(
@@ -376,6 +378,7 @@ function MaintainenceList() {
       )}
       {resolveTargetId && (
         <ResolveMaintainenceOTP
+          cooldownUntil={cooldownUntil}
           otpRequired={otpRequired}
           onResend={() => verifyOTP(resolveTargetId)}
           onResolved={(otp) => handleResolve(resolveTargetId, otp)}

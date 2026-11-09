@@ -20,7 +20,7 @@ from django.contrib.auth.hashers import make_password, check_password
 import logging
 logger = logging.getLogger(__name__)
 
-OTP_TTL = timedelta(minutes=1)
+OTP_TTL = timedelta(minutes=5)
 RESEND_COOLDOWN = timedelta(seconds=60)
 MAX_OTP_ATTEMPTS = 5
 
@@ -504,7 +504,11 @@ class MaintenanceRequestViewSet(viewsets.ModelViewSet):
             maintenance_request.save(update_fields=["resolve_otp_sent_at"])
             return Response({"detail": "Could not send OTP email."}, status=500)
 
-        return Response({"detail": "OTP sent to the tenant's email.", "otp_required": True},)
+        return Response({
+            "detail": "OTP sent to the tenant's email.",
+            "otp_required": True,
+            "retry_after": int(RESEND_COOLDOWN.total_seconds()),
+        })
 
     @action(detail = True, methods = ["post"])
     def resolve(self, request, pk= None):
