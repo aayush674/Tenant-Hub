@@ -1,0 +1,225 @@
+/* =========================================================
+   MAINTAINENCE LIST
+   ========================================================= */
+.maintainence-list-container {
+  min-height: calc(100vh - 74px);
+  box-sizing: border-box;
+  padding: 28px 32px;
+  font-family: "Lexend", sans-serif;
+  background: var(--th-background);
+  color: var(--th-text);
+}
+
+/* ---------- Header ---------- */
+
+.maintainence-list-container .dues-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.maintainence-list-container .dues-header h1 {
+  margin: 0;
+  color: var(--th-text);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.maintainence-list-container .due-header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---------- Table wrapper ---------- */
+
+.maintainence-list-container .request-list-table {
+  overflow-x: auto;
+}
+
+/* ---------- Status chips ---------- */
+
+.maintainence-list-container .status-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-family: "Lexend", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Raised, waiting for someone to pick it up */
+.maintainence-list-container .status-chip.pending {
+  background: #eef3ff;
+  color: #4166b0;
+  border: 1px solid #d5def2;
+}
+
+/* Someone is working on it */
+.maintainence-list-container .status-chip.assigned {
+  background: #fff7d9;
+  color: #92751b;
+  border: 1px solid #eadca8;
+}
+
+/* Done */
+.maintainence-list-container .status-chip.resolved {
+  background: #edf8f0;
+  color: #34734a;
+  border: 1px solid #cfe6d5;
+}
+
+.request-list-actions{
+  display: flex;
+  gap: 12px;
+}
+
+.request-list-actions button {
+    min-width: 28px;
+    min-height: 28px;
+    padding: 6px 12px;
+    color: var(--th-navy);
+    background: rgba(197, 162, 74, 0.10);
+    border: 1px solid rgba(152, 123, 35, 0.30);
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+.request-list-actions button:hover {
+    background: var(--th-gold);
+
+    border-color: var(--th-gold);
+
+    color: #ffffff;
+
+    transform: translateY(-1px);
+}
+
+
+.request-list-actions button:active {
+    transform: translateY(0);
+}
+
+.request-list-actions button:disabled {
+    background: rgba(152, 123, 35, 0.08);
+    border-color: rgba(152, 123, 35, 0.15);
+    color: rgba(20, 20, 20, 0.35);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.request-list-actions button:disabled:hover {
+    background: rgba(152, 123, 35, 0.08);
+    border-color: rgba(152, 123, 35, 0.15);
+    color: rgba(20, 20, 20, 0.35);
+    transform: none;
+}
+
+
+/* ---------- Empty message (if you use it) ---------- */
+
+.maintainence-list-container .no-requests-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  padding: 25px;
+  box-sizing: border-box;
+  color: var(--th-text-muted);
+  background: var(--th-surface);
+  border: 1px dashed var(--th-border);
+  border-radius: var(--th-card-radius);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .maintainence-list-container {
+    padding: 24px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .maintainence-list-container {
+    padding: 20px 14px;
+  }
+
+  .maintainence-list-container .dues-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .maintainence-list-container .dues-header h1 {
+    font-size: 24px;
+  }
+
+  .maintainence-list-container .due-header-buttons {
+    width: 100%;
+  }
+
+  .maintainence-list-container .add-btn {
+    flex: 1;
+  }
+}
+
+.request-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.request-filters select {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 9px;
+  background: #fff;
+  color: #1f2937;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.request-filters select:focus {
+  outline: none;
+  border-color: #b59b5b;
+  box-shadow: 0 0 0 3px rgba(181, 155, 91, 0.14);
+}
+
+.clear-filters-btn {
+  height: 40px;
+  padding: 0 14px;
+  border: none;
+  background: transparent;
+  color: #b59b5b;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.clear-filters-btn:hover { text-decoration: underline; }
+
+

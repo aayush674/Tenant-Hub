@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .utils import has_permission
 from django.utils import timezone
 from accounts.models import User
+from management.models import Tenant
 
 
 class SignupView(APIView):
@@ -27,7 +28,7 @@ class SignupView(APIView):
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
 class MeView(APIView):
     permission_classes = [IsAuthenticated] # This ensures that only authenticated users can access this view.
@@ -35,11 +36,21 @@ class MeView(APIView):
         user = request.user # This gets the currently authenticated user from the request.
         serializer = UserSerializer(user) # This serializes the user data using the SignupSerializer.
         return Response(serializer.data) # This returns the data of the authenticated user in the response.
-    
 
+class TenantMeView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        try:
+            tenant = Tenant.objects.select_related("room").get(user=request.user)
+        except Tenant.DoesNotExist:
+            return Response({"detail": "Tenant profile not found."}, status=404)
+        return Response({
+            "id": tenant.id,
+            "room": tenant.room_id,
+        })
 class LoginView(TokenObtainPairView):
     serializer_class = EmailTokenObtainPairSerializer # This tells the view to use our custom EmailTokenObtainPairSerializer for handling login.
-    
+
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -68,7 +79,7 @@ class PermissionView(APIView):
             "edit_tenants",
             "delete_tenants",
         ]
-        
+
         data = {}
         for permission in permissions:
             data[permission] = has_permission(
@@ -76,9 +87,9 @@ class PermissionView(APIView):
                 pg_id,
                 permission
             )
-            
+
         return Response(data)
-    
+
 class ActivateAccountView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
@@ -90,10 +101,10 @@ class ActivateAccountView(APIView):
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         token=serializer.validated_data["token"]
         password=serializer.validated_data["password"]
-        
+
         try:
             user=User.objects.get(invitation_token=token)
         except User.DoesNotExist:
@@ -102,14 +113,14 @@ class ActivateAccountView(APIView):
                 {"detail": "Invalid Invitation link."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         if user.invitation_expires<timezone.now():
             print("inside expire check")
             return Response(
                 {"detail": "Invitation has expired."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         user.set_password(password)
         user.is_active=True
         user.invitation_token=None

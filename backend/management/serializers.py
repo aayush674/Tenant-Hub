@@ -195,18 +195,35 @@ class RefundSerializer(serializers.ModelSerializer):
         return data
 
 class MaintenanceRequestSerializer(serializers.ModelSerializer):
+    room_number = serializers.CharField(
+            source="room.room_number",
+            read_only=True
+        )
+    raised_by_name = serializers.SerializerMethodField()
     class Meta:
         model = MaintenanceRequest
-        fields = '__all__'
+        fields = [
+            "id", "room", "room_number", "category", "description",
+                  "status", "request_date", "resolved_at", "raised_by",
+                  "raised_by_name",
+        ]
+        read_only_fields = [
+            "status", "resolved_at", "raised_by", "request_date",
+            "resolved_by", "resolved_without_otp",
+            "resolve_otp_hash", "resolve_otp_expires",
+            "resolve_otp_sent_at", "resolve_otp_attempts", "resolved_at"
+        ]
+
+    def get_raised_by_name(self, obj):
+        user = obj.raised_by
+        if not user:
+            return None
+        tenant = Tenant.objects.filter(email = user.email).first()
+        return tenant.first_name + " " + tenant.last_name if tenant else None
 
     def validate_status(self, status):
-        valid_statuses = ['pending', 'in_progress', 'resolved']
+        valid_statuses = ['pending', 'assigned', 'resolved']
         if status not in valid_statuses:
             raise serializers.ValidationError("Not a valid status.")
         return status
-
-    def validate_description(self, description):
-        if len(description) < 10:
-            raise serializers.ValidationError("Description must be at least 10 characters long.")
-        return description
 

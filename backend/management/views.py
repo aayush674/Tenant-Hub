@@ -13,8 +13,16 @@ from rest_framework.response import Response
 from rest_framework import status
 from datetime import date, timedelta
 import uuid
-from accounts.utils import send_invitation_mail
+from accounts.utils import send_invitation_mail, send_resolve_otp_mail
 from django.db import transaction
+import secrets
+from django.contrib.auth.hashers import make_password, check_password
+import logging
+logger = logging.getLogger(__name__)
+
+OTP_TTL = timedelta(minutes=5)
+RESEND_COOLDOWN = timedelta(seconds=60)
+MAX_OTP_ATTEMPTS = 5
 
 class PGpropertyViewSet(viewsets.ModelViewSet):
     queryset = PGproperty.objects.all()
@@ -324,3 +332,213 @@ class RefundViewSet(viewsets.ModelViewSet):
 class MaintenanceRequestViewSet(viewsets.ModelViewSet):
     queryset = MaintenanceRequest.objects.all()
     serializer_class = MaintenanceRequestSerializer
+    http_method_names = ["get", "post", "patch", "head", "options"]
+
+    def _int_param(self, name):
+        value = self.request.query_params.get(name)
+        if value in (None, ""):
+            return None
+        try:
+            return int(value)
+        except ValueError:
+            raise ValidationError({name: "Must be a number."})
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = MaintenanceRequest.objects.select_related("room", "raised_by")
+
+        if user.role == UserRole.OWNER:
+            queryset = queryset.filter(room__pg_property__owner=user)
+
+        # elif user.role == UserRole.EMPLOYEE:
+        #     pg_ids = [
+        #         a.pg_id for a in user.pg_assignments.all()
+        #         if has_permission(user, a.pg_id, "view_maintenance")
+        #     ]
+        #     queryset = queryset.filter(room__pg_property__id__in=pg_ids)
+
+        elif user.role == UserRole.TENANT:
+            queryset = queryset.filter(
+                room__tenants__user=user,
+                room__tenants__is_active=True
+            ).distinct()
+
+        else:
+            return queryset.none()
+
+        pg_property = self._int_param("pg_property")
+        room = self._int_param("room")
+        status_param = self.request.query_params.get("status")
+        category_param = self.request.query_params.get("category")
+        if pg_property:
+            queryset = queryset.filter(room__pg_property__id=pg_property)
+        if room:
+            queryset = queryset.filter(room__id = room)
+        if status_param in dict(MaintenanceRequest._meta.get_field("status").choices):
+            queryset = queryset.filter(status=status_param)
+        if category_param in dict(MaintenanceRequest._meta.get_field("category").choices):
+            queryset = queryset.filter(category=category_param)
+
+        return queryset.order_by("-id")
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        room = serializer.validated_data["room"]
+
+        if user.role == UserRole.TENANT:
+            if not Tenant.objects.filter(user=user, room=room, is_active=True).exists():
+                raise PermissionDenied("You can only raise requests for your own room.")
+        elif user.role == UserRole.OWNER:
+            if room.pg_property.owner != user:
+                raise PermissionDenied("This room is not in your property.")
+        # elif user.role == UserRole.EMPLOYEE:
+        #     if not has_permission(user, room.pg_property_id, "add_maintenance"):
+        #         raise PermissionDenied("You do not have permission to raise requests.")
+        else:
+            raise PermissionDenied()
+
+        serializer.save(raised_by=user)
+
+    def perform_update(self, serializer):
+            user = self.request.user
+            instance = serializer.instance
+            room = serializer.validated_data.get("room", instance.room)
+
+            if instance.status == "resolved":
+                raise PermissionDenied("Resolved requests cannot be edited.")
+
+            if user.role == UserRole.TENANT:
+                if instance.status != "pending":
+                    raise PermissionDenied("You can only edit pending requests.")
+                if not Tenant.objects.filter(user=user, room=room, is_active=True).exists():
+                    raise PermissionDenied("You can only update requests for your own room.")
+            elif user.role == UserRole.OWNER:
+                if room.pg_property.owner != user:
+                    raise PermissionDenied("This room is not in your property.")
+            # elif user.role == UserRole.EMPLOYEE:
+            #     if not has_permission(user, room.pg_property_id, "add_maintenance"):
+            #         raise PermissionDenied("You do not have permission to raise requests.")
+            else:
+                raise PermissionDenied()
+
+            serializer.save()
+
+    @action(detail = True, methods = ["post"])
+    def assign(self, request, pk= None):
+        if request.user.role == UserRole.TENANT:
+            raise PermissionDenied("Only staff can assign requests.")
+        maintenance_request = self.get_object()
+        if maintenance_request.status == "assigned":
+            return Response({"detail": "Request is already assigned"}, status=status.HTTP_400_BAD_REQUEST)
+        if maintenance_request.status != "pending":
+            return Response({"detail": "Only pending requests can be assigned."}, status=400)
+
+        maintenance_request.status = "assigned"
+        maintenance_request.save(update_fields = ["status"])
+        return Response({"detail": "Request assigned successfully"}, status=status.HTTP_200_OK)
+
+
+    def _get_tenant_emails(self, maintenance_request):
+        if maintenance_request.raised_by and maintenance_request.raised_by.role == UserRole.TENANT:
+            emails = [maintenance_request.raised_by.email]
+        else:
+            emails = list(
+                Tenant.objects.filter(room=maintenance_request.room, is_active=True)
+                .exclude(user__email="")
+                .values_list("user__email", flat=True)
+            )
+        return [e for e in emails if e]
+
+    def _mark_resolved(self, maintenance_request):
+        maintenance_request.status = "resolved"
+        maintenance_request.resolved_at = timezone.now()
+        maintenance_request.resolve_otp_hash = None
+        maintenance_request.resolve_otp_expires = None
+        maintenance_request.resolve_otp_attempts = 0
+        maintenance_request.save(update_fields = ["status", "resolve_otp_hash", "resolve_otp_expires",
+                            "resolve_otp_attempts","resolved_at"])
+
+    @action(detail = True, methods = ["post"])
+    def send_resolve_otp(self, request, pk= None):
+        if request.user.role == UserRole.TENANT:
+            raise PermissionDenied("Only staff can resolve requests.")
+        maintenance_request = self.get_object()
+        if maintenance_request.status == "resolved":
+            return Response({"detail": "Request is already resolved"}, status=status.HTTP_400_BAD_REQUEST)
+        if maintenance_request.status != "assigned":
+            return Response({"detail": "Only assigned requests can be resolved."}, status=400)
+
+        emails = self._get_tenant_emails(maintenance_request)
+        if not emails:
+            return Response(
+                {"detail": "No tenant email found. You can resolve without OTP.", "otp_required": False},
+                    status=200,
+            )
+
+        now = timezone.now()
+        if maintenance_request.resolve_otp_sent_at and now - maintenance_request.resolve_otp_sent_at < RESEND_COOLDOWN:
+            wait = int((RESEND_COOLDOWN - (now - maintenance_request.resolve_otp_sent_at)).total_seconds())
+            if maintenance_request.resolve_otp_expires and maintenance_request.resolve_otp_expires > now:
+                return Response(
+                {"detail": "OTP already sent.", "otp_required": True,
+                 "already_sent": True, "retry_after": wait},
+                status=200,
+            )
+            return Response({"detail": f"Please wait {wait}s before resending OTP"}, status=429)
+
+        otp = f"{secrets.randbelow(10**6):06d}"
+        maintenance_request.resolve_otp_hash = make_password(otp)
+        maintenance_request.resolve_otp_expires = now + OTP_TTL
+        maintenance_request.resolve_otp_sent_at = now
+        maintenance_request.resolve_otp_attempts = 0
+        maintenance_request.save(update_fields=[
+            "resolve_otp_hash", "resolve_otp_expires",
+            "resolve_otp_sent_at", "resolve_otp_attempts",
+        ])
+
+        try:
+            send_resolve_otp_mail(emails, otp, maintenance_request.category)
+        except Exception:
+            logger.exception("Failed to send resolve OTP email")
+            maintenance_request.resolve_otp_sent_at = None
+            maintenance_request.save(update_fields=["resolve_otp_sent_at"])
+            return Response({"detail": "Could not send OTP email."}, status=500)
+
+        return Response({
+            "detail": "OTP sent to the tenant's email.",
+            "otp_required": True,
+            "retry_after": int(RESEND_COOLDOWN.total_seconds()),
+        })
+
+    @action(detail = True, methods = ["post"])
+    def resolve(self, request, pk= None):
+        if request.user.role == UserRole.TENANT:
+            raise PermissionDenied("Only staff can resolve requests.")
+
+        with transaction.atomic():
+            maintenance_request = self.get_object()
+            if maintenance_request.status == "resolved":
+                return Response({"detail": "Request is already resolved"}, status=status.HTTP_400_BAD_REQUEST)
+            if maintenance_request.status != "assigned":
+                return Response({"detail": "Only assigned requests can be resolved."}, status=400)
+
+            if not self._get_tenant_emails(maintenance_request):
+                self._mark_resolved(maintenance_request)
+                return Response({"detail": "Request resolved successfully"}, status=200)
+
+            otp = str(request.data.get("otp") or "").strip()
+            if not otp:
+                return Response({"otp": "Please enter a valid OTP"}, status=400)
+            if not maintenance_request.resolve_otp_hash or not maintenance_request.resolve_otp_expires:
+                return Response({"detail": "No OTP requested."}, status=400)
+            if timezone.now() > maintenance_request.resolve_otp_expires:
+                return Response({"detail": "OTP expired. Please resend."}, status=400)
+            if maintenance_request.resolve_otp_attempts >= MAX_OTP_ATTEMPTS:
+                return Response({"detail": "Too many attempts. Please resend a new OTP."}, status=429)
+            if not check_password(otp, maintenance_request.resolve_otp_hash):
+                maintenance_request.resolve_otp_attempts += 1
+                maintenance_request.save(update_fields=["resolve_otp_attempts"])
+                return Response({"detail": "Incorrect OTP."}, status=400)
+
+        self._mark_resolved(maintenance_request)
+        return Response({"detail": "Request resolved successfully"}, status=status.HTTP_200_OK)

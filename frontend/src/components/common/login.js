@@ -1,8 +1,9 @@
-import { login } from "../../api/auth.js";
+import { login as loginApi } from "../../api/auth.js";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/login.css";
 import complogo from "../../assets/Tenant-Hub-Logo.png";
+import { useAuth } from "../../context/authContext.js";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -12,6 +13,7 @@ function Login() {
   const [showError, setShowError] = useState(false);
 
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   function triggerError(message) {
     setError(message);
@@ -42,17 +44,14 @@ function Login() {
     setLoading(true);
 
     try {
-      const data = await login(email.trim(), password);
+      const data = await loginApi(email.trim(), password);
 
       if (data?.access && data?.refresh) {
         localStorage.setItem("access_token", data.access);
         localStorage.setItem("refresh_token", data.refresh);
+        login(data.user);
 
-        if (data.user?.role === "TENANT") {
-          navigate("/t");
-        } else {
-          navigate("/");
-        }
+        navigate(data.user?.role === "TENANT" ? "/t" : "/");
       } else {
         triggerError("Invalid email or password.");
       }
@@ -68,14 +67,12 @@ function Login() {
 
   // Redirect users who are already logged in.
   useEffect(() => {
-    const accessToken = localStorage.getItem("access_token");
-    const refreshToken = localStorage.getItem("refresh_token");
+    const access = localStorage.getItem("access_token");
+    const refresh = localStorage.getItem("refresh_token");
 
-    if (accessToken && refreshToken) {
-      // Keep existing behavior for now.
-      // If role information is stored separately later,
-      // this can be made fully role-aware here.
-      navigate("/");
+    if (access && refresh) {
+      const user = JSON.parse(localStorage.getItem("user") || "null");
+      navigate(user?.role === "TENANT" ? "/t" : "/");
     }
   }, [navigate]);
 

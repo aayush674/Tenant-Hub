@@ -267,10 +267,25 @@ class RefundAllocations(models.Model):
 
 class MaintenanceRequest(models.Model):
     room = models.ForeignKey(Room, related_name='maintenance_requests', on_delete=models.SET_NULL, null=True) # If a room is deleted, we set the room field to null instead of deleting the maintenance request.
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     request_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices = [('pending', 'Pending'), ('in_progress', 'In Progress'), ('resolved', 'Resolved')], default='pending')
+    raised_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="maintenance_requests"
+    )
+    status = models.CharField(max_length=20, choices = [('pending', 'Pending'), ('assigned', 'Assigned'), ('resolved', 'Resolved')], default='pending')
+    category = models.CharField(max_length=20, choices= [("room_furniture", "Room Furniture"), ("electricity", "Electricity"), ("plumbing", "Plumbing"), ("internet", "Internet"), ("other", "Other Issue")])
 
+    # OTP handling fields
+    resolve_otp_hash = models.CharField(max_length=128, null=True, blank=True)
+    resolve_otp_expires = models.DateTimeField(null = True, blank = True)
+    resolve_otp_sent_at = models.DateTimeField(null = True, blank = True)
+    resolve_otp_attempts = models.PositiveSmallIntegerField(default=0)
+    resolved_at = models.DateTimeField(null = True, blank = True)
+    resolved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name="+",
+    )
+    resolved_without_otp = models.BooleanField(default=False)
     def __str__(self):
         room_number = self.room.room_number if self.room else "Deleted Room"
         return f"Room {room_number} - {self.status}"
