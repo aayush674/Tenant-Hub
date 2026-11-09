@@ -182,3 +182,44 @@
     flex: 1;
   }
 }
+
+.request-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.request-filters select {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 9px;
+  background: #fff;
+  color: #1f2937;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.request-filters select:focus {
+  outline: none;
+  border-color: #b59b5b;
+  box-shadow: 0 0 0 3px rgba(181, 155, 91, 0.14);
+}
+
+.clear-filters-btn {
+  height: 40px;
+  padding: 0 14px;
+  border: none;
+  background: transparent;
+  color: #b59b5b;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.clear-filters-btn:hover { text-decoration: underline; }
+
+
