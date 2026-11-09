@@ -49,6 +49,7 @@ function MaintainenceList() {
   const [sendingId, setSendingId] = useState(null);
   const [roomData, setRoomData] = useState({});
   const [otpRequired, setOtpRequired] = useState(true);
+  const [viewMode, setViewMode] = useState(null);
 
   const { user } = useAuth();
   const isTenant = user?.role === "TENANT";
@@ -149,6 +150,10 @@ function MaintainenceList() {
     }
   }, []);
 
+  const handleView = (req) =>{
+    setViewMode(req);
+  }
+
   const handleResolve = useCallback(
     async (reqId, otp) => {
       const res = await authFetch(
@@ -177,7 +182,7 @@ function MaintainenceList() {
 
   const columns = [
     {
-      header: "Request ID",
+      header: "Request No.",
       render: (req) => <b>{req.id}</b>,
     },
     ...(isAdmin && !roomId
@@ -191,7 +196,7 @@ function MaintainenceList() {
       header: "Request Date",
       render: (req) => formatDateTime(req.request_date),
     },
-    (!isAdmin ? [{
+    ...(isAdmin ? [{
       header: "Raised by",
       render: (req) => req.raised_by_name,
     }] : []),
@@ -249,7 +254,7 @@ function MaintainenceList() {
             {allowedActions.includes("view") && (
               <button
                 className="view-request-btn"
-                // onClick={() => handleComplete(req.id)}
+                onClick={() => handleView(req)}
               >
                 <FaEye />
               </button>
@@ -310,7 +315,11 @@ function MaintainenceList() {
 
       <div className="dues-header">
         {isAdmin ? (
-          <h1>{pgData && pgData?.name} - Maintainence</h1>
+          roomId ? (
+            <h1>{pgData && pgData?.name} - Room {roomData && roomData?.room_number} - Maintainence</h1>
+          ) : (
+            <h1>{pgData && pgData?.name} - Maintainence</h1>
+          )
         ) : (
           <h1>Maintainence</h1>
         )}
@@ -326,19 +335,23 @@ function MaintainenceList() {
         </div>
       </div>
 
-      {showAddRequest && (
+      {(showAddRequest || viewMode) && (
         <AddMaintainenceRequest
+          viewMode={viewMode}
           pgId={effectivePgId}
           onAdd={() => {
             setShowAddRequest(false);
             fetchRequests();
           }}
-          onClose={() => setShowAddRequest(false)}
+          onClose={() => {
+            setShowAddRequest(false);
+            setViewMode(null);
+          }}
         />
       )}
       {resolveTargetId && (
         <ResolveMaintainenceOTP
-        otpRequired={otpRequired}
+          otpRequired={otpRequired}
           onResolved={(otp) => handleResolve(resolveTargetId, otp)}
           onClose={() => setResolveTargetId(null)}
         />

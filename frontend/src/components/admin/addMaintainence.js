@@ -16,7 +16,7 @@
     other: "Other Issue",
   };
 
-  function AddMaintainenceRequest({ pgId, onAdd, onClose }) {
+  function AddMaintainenceRequest({ pgId, onAdd, onClose, viewMode }) {
     const [closing, setClosing] = useState(false);
     const [opening, setOpening] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState(null);
@@ -26,6 +26,7 @@
     const [loading, setLoading] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState("");
     const [tenantRoom, setTenantRoom] = useState(null);
+    const isView = !!viewMode;
 
       const { user } = useAuth();
       const isTenant = user?.role === "TENANT";
@@ -35,7 +36,12 @@
       requestAnimationFrame(() => {
         setOpening(true);
       });
-    }, []);
+      if(viewMode){
+        setSelectedRoom(viewMode.room);
+        setSelectedCategory(viewMode.category);
+        setRequestDesc(viewMode.description);
+      }
+    }, [viewMode]);
 
     useEffect(() => {
     if (!isTenant) return;
@@ -152,7 +158,11 @@
           onClick={(e) => e.stopPropagation()}
         >
           <div className="modal-top">
-            <h1 className="modal-header">Raise Maintainence Request</h1>
+            {viewMode ? (
+              <h1 className="modal-header">Request No. {viewMode.id}</h1>
+            ) : (
+              <h1 className="modal-header">Raise Maintainence Request</h1>
+            )}
             <button
               type="button"
               className="modal-close"
@@ -171,6 +181,7 @@
                   className="custom-select"
                   value={selectedRoom ?? ""}
                   onChange={handleRoomChange}
+                  disabled={isView}
                 >
                   <option value="">Select Room</option>
                   {rooms.map((room) => (
@@ -194,6 +205,7 @@
                 onChange={(e) => {
                   setSelectedCategory(e.target.value);
                 }}
+                disabled={isView}
               >
                 <option value="">Select Category</option>
                 {Object.entries(REQUEST_CATEGORY_LABELS).map(
@@ -220,6 +232,7 @@
                   setRequestDesc(e.target.value);
                   clearFieldError("desc");
                 }}
+                disabled={isView}
               ></textarea>
               {error?.desc && (
                 <div className="error-container">{error.desc}</div>
@@ -236,14 +249,16 @@
                 className="btn-secondary"
                 onClick={handleClose}
               >
-                Cancel
+                {viewMode ? "Close" : "Cancel"}
               </button>
-              <LoadingSubmitButton
-                loading={loading}
-                loadingText="Raising request"
-                children="Raise request"
-                type="submit"
-              />
+              {!viewMode && (
+                <LoadingSubmitButton
+                  loading={loading}
+                  loadingText="Raising request"
+                  children="Raise request"
+                  type="submit"
+                />
+              )}
             </div>
           </form>
         </div>

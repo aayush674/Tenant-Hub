@@ -210,7 +210,7 @@ class MaintenanceRequestSerializer(serializers.ModelSerializer):
         if not user:
             return None
         tenant = Tenant.objects.filter(email = user.email).first()
-        return tenant.first_name if tenant else None
+        return tenant.first_name + " " + tenant.last_name if tenant else None
 
     def validate_status(self, status):
         valid_statuses = ['pending', 'assigned', 'resolved']
