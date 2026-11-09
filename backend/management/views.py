@@ -383,6 +383,30 @@ class MaintenanceRequestViewSet(viewsets.ModelViewSet):
 
         serializer.save(raised_by=user)
 
+    def perform_update(self, serializer):
+            user = self.request.user
+            instance = serializer.instance
+            room = serializer.validated_data.get("room", instance.room)
+
+            if instance.status == "resolved":
+                raise PermissionDenied("Resolved requests cannot be edited.")
+
+            if user.role == UserRole.TENANT:
+                if instance.status != "pending":
+                    raise PermissionDenied("You can only edit pending requests.")
+                if not Tenant.objects.filter(user=user, room=room, is_active=True).exists():
+                    raise PermissionDenied("You can only update requests for your own room.")
+            elif user.role == UserRole.OWNER:
+                if room.pg_property.owner != user:
+                    raise PermissionDenied("This room is not in your property.")
+            # elif user.role == UserRole.EMPLOYEE:
+            #     if not has_permission(user, room.pg_property_id, "add_maintenance"):
+            #         raise PermissionDenied("You do not have permission to raise requests.")
+            else:
+                raise PermissionDenied()
+
+            serializer.save()
+
     @action(detail = True, methods = ["post"])
     def assign(self, request, pk= None):
         if request.user.role == UserRole.TENANT:

@@ -49,7 +49,8 @@ function MaintainenceList() {
   const [sendingId, setSendingId] = useState(null);
   const [roomData, setRoomData] = useState({});
   const [otpRequired, setOtpRequired] = useState(true);
-  const [viewMode, setViewMode] = useState(null);
+  const [mode, setMode] = useState(null);
+  const [reqOb, setReqQb] = useState(null);
 
   const { user } = useAuth();
   const isTenant = user?.role === "TENANT";
@@ -151,7 +152,13 @@ function MaintainenceList() {
   }, []);
 
   const handleView = (req) =>{
-    setViewMode(req);
+    setMode(0);
+    setReqQb(req);
+  }
+
+  const handleEdit = (req) =>{
+    setMode(1);
+    setReqQb(req);
   }
 
   const handleResolve = useCallback(
@@ -245,7 +252,7 @@ function MaintainenceList() {
             {allowedActions.includes("edit") && (
               <button
                 className="edit-request-btn"
-                // onClick={() => handleComplete(req.id)}
+                onClick={() => handleEdit(req)}
               >
                 <FaPen />
               </button>
@@ -335,17 +342,21 @@ function MaintainenceList() {
         </div>
       </div>
 
-      {(showAddRequest || viewMode) && (
+      {(showAddRequest || reqOb) && (
         <AddMaintainenceRequest
-          viewMode={viewMode}
+          reqOb={reqOb}
+          mode={mode}
           pgId={effectivePgId}
           onAdd={() => {
             setShowAddRequest(false);
+            setMode(null);
+            setReqQb(null);
             fetchRequests();
           }}
           onClose={() => {
             setShowAddRequest(false);
-            setViewMode(null);
+            setMode(null);
+            setReqQb(null);
           }}
         />
       )}

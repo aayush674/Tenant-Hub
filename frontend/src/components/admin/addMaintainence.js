@@ -16,7 +16,7 @@
     other: "Other Issue",
   };
 
-  function AddMaintainenceRequest({ pgId, onAdd, onClose, viewMode }) {
+  function AddMaintainenceRequest({ pgId, onAdd, onClose, reqOb, mode }) {
     const [closing, setClosing] = useState(false);
     const [opening, setOpening] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState(null);
@@ -26,7 +26,7 @@
     const [loading, setLoading] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState("");
     const [tenantRoom, setTenantRoom] = useState(null);
-    const isView = !!viewMode;
+    const isReqAvail = !!reqOb
 
       const { user } = useAuth();
       const isTenant = user?.role === "TENANT";
@@ -36,12 +36,12 @@
       requestAnimationFrame(() => {
         setOpening(true);
       });
-      if(viewMode){
-        setSelectedRoom(viewMode.room);
-        setSelectedCategory(viewMode.category);
-        setRequestDesc(viewMode.description);
+      if(isReqAvail){
+        setSelectedRoom(reqOb.room);
+        setSelectedCategory(reqOb.category);
+        setRequestDesc(reqOb.description);
       }
-    }, [viewMode]);
+    }, [reqOb]);
 
     useEffect(() => {
     if (!isTenant) return;
@@ -103,7 +103,7 @@
     const handleSubmit = async (e) => {
       e.preventDefault();
       setError({});
-      const rnError = validateRoomNumber(selectedRoom);
+      const rnError = isAdmin ? validateRoomNumber(selectedRoom) : null;
       const catError = validateCategory(selectedCategory);
       const finalError = {};
 
@@ -117,26 +117,32 @@
       try {
         setLoading(true);
         const roomId = isTenant ? tenantRoom : selectedRoom;
-        const res = await authFetch(
-          `${API_BASE_URL}/api/maintainence-requests/`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              room: roomId,
-              category: selectedCategory,
-              description: requestDesc,
-            }),
-          },
-        );
+        const res = mode
+          ? await authFetch(`${API_BASE_URL}/api/maintainence-requests/${reqOb.id}/`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                category: selectedCategory,
+                description: requestDesc,
+              }),
+            })
+          : await authFetch(`${API_BASE_URL}/api/maintainence-requests/`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                room: roomId,
+                category: selectedCategory,
+                description: requestDesc,
+              }),
+            });
 
         if (!res.ok) {
           const errData = await res.json();
           setError(errData);
           return;
         }
-        const data = await res.json();
-        onAdd(data);
+        onAdd();
+        mode ? toast.success("Request Updated successfully.") :
         toast.success("Request Raised successfully.");
       } catch (err) {
         setError({ detail: "Something went wrong. Please try again." });
@@ -158,8 +164,8 @@
           onClick={(e) => e.stopPropagation()}
         >
           <div className="modal-top">
-            {viewMode ? (
-              <h1 className="modal-header">Request No. {viewMode.id}</h1>
+            {isReqAvail ? (
+              <h1 className="modal-header">Request No. {reqOb.id}</h1>
             ) : (
               <h1 className="modal-header">Raise Maintainence Request</h1>
             )}
@@ -181,7 +187,7 @@
                   className="custom-select"
                   value={selectedRoom ?? ""}
                   onChange={handleRoomChange}
-                  disabled={isView}
+                  disabled={isReqAvail}
                 >
                   <option value="">Select Room</option>
                   {rooms.map((room) => (
@@ -205,7 +211,7 @@
                 onChange={(e) => {
                   setSelectedCategory(e.target.value);
                 }}
-                disabled={isView}
+                disabled={isReqAvail && !mode}
               >
                 <option value="">Select Category</option>
                 {Object.entries(REQUEST_CATEGORY_LABELS).map(
@@ -232,7 +238,7 @@
                   setRequestDesc(e.target.value);
                   clearFieldError("desc");
                 }}
-                disabled={isView}
+                disabled={isReqAvail && !mode}
               ></textarea>
               {error?.desc && (
                 <div className="error-container">{error.desc}</div>
@@ -249,15 +255,14 @@
                 className="btn-secondary"
                 onClick={handleClose}
               >
-                {viewMode ? "Close" : "Cancel"}
+                {isReqAvail ^ mode ? "Close" : "Cancel"}
               </button>
-              {!viewMode && (
+              {!(isReqAvail ^ mode) && (
                 <LoadingSubmitButton
                   loading={loading}
                   loadingText="Raising request"
-                  children="Raise request"
                   type="submit"
-                />
+                >{mode ? "Save" : "Raise request"}</LoadingSubmitButton>
               )}
             </div>
           </form>
