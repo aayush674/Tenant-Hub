@@ -22,7 +22,6 @@ function PGLayout() {
     const location = useLocation();
     const navigate = useNavigate();
     const [pgs, setPgs] = useState([]);
-    const [selectedPg, setSelectedPg] = useState(null);
 
     useEffect(() => {
         authFetch(`${API_BASE_URL}/api/pgs/`)
@@ -35,10 +34,9 @@ function PGLayout() {
             });
     }, []);
 
-    const handlePgChange = async (e) => {
-      const pgId = e.target.value;
-      setSelectedPg(pgId ? Number(pgId) : null);
-      navigate(`/pg/${pgId}`)
+    const handlePgChange = (e) => {
+      const rest = location.pathname.split("/").slice(3).join("/");
+      navigate(`/pg/${e.target.value}${rest ? `/${rest}` : ""}`);
     };
 
     const collapsed =
@@ -50,9 +48,10 @@ function PGLayout() {
         <div className={`pg-sidebar ${collapsed ? "collapsed" : ""}`}>
           <select
             className="pg-switcher"
-            value={selectedPg ?? ""}
+            value={pgId ?? ""}
             onChange={handlePgChange}
           >
+            {pgs.length === 0 && <option value="">Loading...</option>}
             {pgs.map((pg) => (
               <option key={pg.id} value={pg.id}>
                 {pg.name}
