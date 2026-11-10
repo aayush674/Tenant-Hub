@@ -5,7 +5,6 @@ import AddRoomModal from "./addRoomModal";
 import "../../styles/roomsList.css";
 import "../../styles/common_styles/navigator.css";
 import { useNavigate } from "react-router-dom";
-// import EditRoomModal from "./editRoomModal";
 import RoomListFilterModal from "./roomListFilterModal";
 import { useSearchParams } from "react-router-dom";
 import ConfirmModal from "../common/confirmationModal";
@@ -289,7 +288,7 @@ function RoomsList() {
         {showAddRoom && (
           <AddRoomModal
             pgId={pgId}
-            onAdd={(room) => {
+            onAdd={() => {
               setShowAddRoom(false);
               fetchRooms();
               fetchFloorCounts();
@@ -297,17 +296,6 @@ function RoomsList() {
             onClose={() => setShowAddRoom(false)}
           />
         )}
-
-        {/* {showEditModal && (
-                    <EditRoomModal
-                        room={editRoomData}
-                        onUpdate={(updatedRoom) => {
-                            updateRoom(updatedRoom);
-                            setShowEditModal(false);
-                        }}
-                        onClose={() => setShowEditModal(false)}
-                    />
-                )} */}
       </div>
       <div>
         <button
