@@ -42,8 +42,12 @@ function RoomTypes() {
     setRoomTypes(data);
   }, [pgId]);
 
+  const handleView = (roomType) => {
+    setMode(MODE.VIEW);
+    setRoom(roomType);
+  }
+
   const handleEdit = (roomType) => {
-    console.log(roomType);
     setMode(MODE.EDIT);
     setRoom(roomType);
   };
@@ -91,6 +95,12 @@ function RoomTypes() {
           >
             <FaPen /> Edit
           </button>
+          {/* <button
+            className="edit-room-type-button"
+            onClick={() => handleView(roomType)}
+          >
+            <FaPen /> View
+          </button> */}
         </div>
       ),
     },

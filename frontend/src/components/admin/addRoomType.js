@@ -24,7 +24,7 @@ function AddRoomTypeModal({ pgId, onAdd, onClose, roomType, mode }) {
         setClosing(true);
         setTimeout(() => {
             onClose();
-        }, 300); // must match CSS transition
+        }, 300);
     };
 
     useEffect(() => {
@@ -101,7 +101,6 @@ function AddRoomTypeModal({ pgId, onAdd, onClose, roomType, mode }) {
               onChange={(e) => setRoomTypeTitle(e.target.value)}
               disabled={isView}
             />
-
             <br />
 
             <div>Room Occupancy Type: </div>
