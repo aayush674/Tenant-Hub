@@ -42,10 +42,10 @@ function RoomTypes() {
     setRoomTypes(data);
   }, [pgId]);
 
-  const handleView = (roomType) => {
-    setMode(MODE.VIEW);
-    setRoom(roomType);
-  }
+  // const handleView = (roomType) => {
+  //   setMode(MODE.VIEW);
+  //   setRoom(roomType);
+  // }
 
   const handleEdit = (roomType) => {
     setMode(MODE.EDIT);
@@ -55,7 +55,6 @@ function RoomTypes() {
   useEffect(() => {
     fetchPg();
     fetchRoomTypes();
-    console.log(mode);
   }, [pgId, fetchPg, fetchRoomTypes]);
 
   const columns = [
