@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import { API_BASE_URL } from "../../config";
 import { FaPen } from "react-icons/fa";
@@ -10,10 +10,10 @@ import LoadingSubmitButton from "../common/loadingSubmitButton";
 import "../../styles/tenantDetails.css"
 import "../../styles/common_styles/navigator.css";
 import { Country } from "country-state-city";
-
+import { DEFAULT_PATH } from "../../constants/common_constants";
+import Navigator from "../common/navigator";
 
 function TenantDetails() {
-    const navigate = useNavigate();
     const { pgId, tenantId } = useParams();
     const [pgData, setPgData] = useState({});
     const [tenantData, setTenantData] = useState({});
@@ -153,29 +153,19 @@ function TenantDetails() {
     console.log(countries);
     console.log(Array.isArray(countries));
 
+    const path = [
+      ...DEFAULT_PATH,
+      { name: pgData?.name },
+      { name: "Tenants", loc: `/pg/${pgId}/tenants` },
+      { name: tenantData?.first_name + " " + tenantData?.last_name }
+    ];
+
     return (
       <div className="tenant-details-container">
         <div className="nav-path">
-          <span onClick={() => navigate("/")} className="navigator">
-            Home
-          </span>
-          <span className="seperator"> / </span>
-          <span onClick={() => navigate("/pg-list")} className="navigator">
-            PG List
-          </span>
-          <span className="seperator"> / </span>
-          {pgData && <span>{pgData.name}</span>}
-          <span className="seperator"> / </span>
-          <span
-            onClick={() => navigate(`/pg/${pgId}/tenants`)}
-            className="navigator"
-          >
-            Tenants
-          </span>
-          <span className="seperator"> / </span>
-          {tenantData && (
-            <span>{tenantData.first_name + " " + tenantData.last_name}</span>
-          )}
+          <Navigator
+          path = {path}
+          />
         </div>
         <div className="tenant-details-header">
           <h1>

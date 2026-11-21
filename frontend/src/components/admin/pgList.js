@@ -10,6 +10,8 @@ import { FaEye, FaTrash, FaPlus } from "react-icons/fa";
 import { API_BASE_URL } from "../../config";
 import TableComponent from "../common/tableComponent";
 import "../../styles/common_styles/add-btn.css";
+import { DEFAULT_PATH } from "../../constants/common_constants";
+import Navigator from "../common/navigator";
 
 function PGList() {
     const navigate = useNavigate();
@@ -105,6 +107,8 @@ function PGList() {
       },
     ];
 
+    const path = [...DEFAULT_PATH];
+
     return (
       <div
         className={`pg-list-container ${
@@ -112,11 +116,9 @@ function PGList() {
         }`}
       >
         <div className="nav-path">
-          <span onClick={() => navigate("/")} className="navigator">
-            Home
-          </span>
-          <span className="seperator"> / </span>
-          <span>PG List</span>
+          <Navigator
+            path = {path}
+          />
         </div>
         {showSuccessMessage && (
           <div className="success-message">PG added successfully!</div>

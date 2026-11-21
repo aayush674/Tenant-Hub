@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import { API_BASE_URL } from "../../config";
 import { useParams } from "react-router-dom";
@@ -7,6 +6,8 @@ import { useParams } from "react-router-dom";
 import "../../styles/common_styles/navigator.css";
 import "../../styles/tenantDues.css";
 import TableComponent from "../common/tableComponent";
+import { DEFAULT_PATH } from "../../constants/common_constants";
+import Navigator from "../common/navigator";
 
 const dueTypeLabels = {
     rent: "Rent",
@@ -24,7 +25,6 @@ const dueStatusLabels = {
 
 function TenantWiseDues() {
 
-    const navigate = useNavigate();
     const { pgId, tenantId } = useParams();
     const [pgData, setPgData] = useState();
     const [tenantDues, setTenantDues] = useState([]);
@@ -98,21 +98,20 @@ function TenantWiseDues() {
       },
     ];
 
+    const path = [
+      ...DEFAULT_PATH,
+      { name: pgData?.name },
+      { name: "Tenants", loc: `/pg/${pgId}/tenants` },
+      { name: tenantData?.first_name + " " + tenantData?.last_name },
+      { name: "Dues" }
+    ];
+
     return (
         <div className="tenant-dues-container">
             <div className="nav-path">
-                <span onClick={() => navigate("/")} className="navigator">Home</span>
-                <span className="seperator"> / </span>
-                <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>
-                <span className="seperator"> / </span>
-                {pgData && <span>{pgData.name}</span>}
-                <span className="seperator"> / </span>
-                <span onClick={() => navigate(`/pg/${pgId}/tenants`)} className="navigator">Tenants</span>
-                <span className="seperator"> / </span>
-                {tenantData && <span>{tenantData.first_name + " " + tenantData.last_name}</span>}
-                <span className="seperator"> / </span>
-                <span>Dues</span>
-
+                <Navigator
+                    path = {path}
+                />
             </div>
             <div className="tenant-dues-header">
                 <h1>Tenant {tenantData && tenantData.first_name + " " + tenantData.last_name + " - Dues"}</h1>

@@ -11,6 +11,8 @@ import { API_BASE_URL } from "../../config";
 import TableComponent from "../common/tableComponent";
 import "../../styles/tableComponent.css"
 import "../../styles/common_styles/add-btn.css";
+import Navigator from "../common/navigator";
+import { DEFAULT_PATH } from "../../constants/common_constants";
 
 function TenantList(){
     const { pgId } = useParams()
@@ -121,20 +123,14 @@ function TenantList(){
       });
     }
 
+    const path = [...DEFAULT_PATH, {name: pgData?.name}, {name: "Tenants"}]
+
     return (
       <div className="tenant-list-container">
         <div className="nav-path">
-          <span onClick={() => navigate("/")} className="navigator">
-            Home
-          </span>
-          <span className="seperator"> / </span>
-          <span onClick={() => navigate("/pg-list")} className="navigator">
-            PG List
-          </span>
-          <span className="seperator"> / </span>
-          {pgData && <span>{pgData.name}</span>}
-          <span className="seperator"> / </span>
-          <span>Tenants</span>
+          <Navigator
+            path={path}
+          />
         </div>
         <div className="tenant-list-header">
           <h1>{pgData && pgData.name} - Tenant List</h1>

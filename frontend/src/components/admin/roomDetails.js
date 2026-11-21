@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import { API_BASE_URL } from "../../config";
 import { FaPen } from "react-icons/fa";
@@ -9,9 +9,10 @@ import LoadingSubmitButton from "../common/loadingSubmitButton";
 import "../../styles/roomDetails.css"
 import "../../styles/common_styles/navigator.css";
 import { FaUpRightFromSquare } from "react-icons/fa6";
+import Navigator from "../common/navigator";
+import { DEFAULT_PATH } from "../../constants/common_constants";
 
 function RoomDetails() {
-    const navigate = useNavigate();
     const { pgId, roomId } = useParams();
     const [pgData, setPgData] = useState({});
     const [roomData, setRoomData] = useState({});
@@ -98,19 +99,19 @@ function RoomDetails() {
         fetchRoomTenants();
     }, [fetchCurrentRoom, fetchPg, fetchRoomTenants])
 
+    const path = [
+      ...DEFAULT_PATH,
+      { name: pgData?.name },
+      { name: "Rooms", loc: `/pg/${pgId}/rooms` },
+      {name: roomData?.room_number}
+    ];
+
     return (
         <div className="room-details-container">
             <div className="nav-path">
-                <span onClick={() => navigate("/")} className="navigator">Home</span>
-                <span className="seperator"> / </span>
-                <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>
-                <span className="seperator"> / </span>
-                {pgData && <span>{pgData.name}</span>}
-                <span className="seperator"> / </span>
-                <span onClick={() => navigate(`/pg/${pgId}/rooms`)} className="navigator">Rooms</span>
-                <span className="seperator"> / </span>
-                {roomData && <span>{roomData.room_number}</span>}
-
+                <Navigator
+                    path={path}
+                />
             </div>
             <div className="room-details-header">
                 <h1>Room No. {roomData && roomData.room_number}</h1>

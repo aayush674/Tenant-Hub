@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { authFetch } from "../../api/apiClient";
 import { API_BASE_URL } from "../../config";
@@ -10,9 +10,10 @@ import AddRefundModal from "./addRefund";
 import TableComponent from "../common/tableComponent";
 import { toast } from "react-toastify";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
+import { DEFAULT_PATH } from "../../constants/common_constants";
+import Navigator from "../common/navigator";
 
 function Refunds() {
-    const navigate = useNavigate();
     const [pgData, setPgData] = useState(null);
     const {pgId} = useParams();
     const [refunds, setRefunds] = useState([]);
@@ -102,21 +103,15 @@ function Refunds() {
       },
     ];
 
+    const path = [...DEFAULT_PATH, {name: pgData?.name}, {name: "Refunds"}]
+
 
   return (
     <div className="refund-list-container">
       <div className="nav-path">
-        <span onClick={() => navigate("/")} className="navigator">
-          Home
-        </span>
-        <span className="seperator"> / </span>
-        <span onClick={() => navigate("/pg-list")} className="navigator">
-          PG List
-        </span>
-        <span className="seperator"> / </span>
-        {pgData && <span>{pgData.name}</span>}
-        <span className="seperator"> / </span>
-        <span>Refunds</span>
+        <Navigator
+          path = {path}
+        />
       </div>
       <div className="refunds-header">
         <h1>{pgData && pgData.name} - Refunds</h1>
