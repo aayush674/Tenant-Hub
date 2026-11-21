@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import { useParams } from "react-router-dom";
 import "../../styles/roomTypes.css";
@@ -12,11 +11,12 @@ import "../../styles/tableComponent.css";
 import "../../styles/common_styles/add-btn.css";
 import TableComponent from "../common/tableComponent";
 import { MODE } from "../../constants/roomType";
+import Navigator from "../common/navigator";
+import { DEFAULT_PATH } from "../../constants/common_constants";
 
 function RoomTypes() {
   const [roomTypes, setRoomTypes] = useState([]);
   const [pgData, setPgData] = useState(null);
-  const navigate = useNavigate();
   const { pgId } = useParams();
   const [mode, setMode] = useState(null);
   const [room, setRoom] = useState(null);
@@ -105,20 +105,14 @@ function RoomTypes() {
     },
   ];
 
+  const path = [...DEFAULT_PATH, {name: pgData?.name}, {name: "Room Templates"}]
+
   return (
     <div className="room-type-container">
       <div className="nav-path">
-        <span onClick={() => navigate("/")} className="navigator">
-          Home
-        </span>
-        <span className="seperator"> / </span>
-        <span onClick={() => navigate("/pg-list")} className="navigator">
-          PG List
-        </span>
-        <span className="seperator"> / </span>
-        {pgData && <span>{pgData.name}</span>}
-        <span className="seperator"> / </span>
-        <span>Room Templates</span>
+        <Navigator
+          path={path}
+        />
       </div>
       <div className="room-type-header">
         <h1>{pgData && pgData.name} - Room Templates</h1>

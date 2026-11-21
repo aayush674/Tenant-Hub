@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import AddDueModal from "./addDue";
 import "../../styles/dues.css";
@@ -10,6 +10,8 @@ import TableComponent from "../common/tableComponent";
 import { FaPlus, FaTasks } from "react-icons/fa";
 import "../../styles/tableComponent.css";
 import "../../styles/common_styles/add-btn.css";
+import Navigator from "../common/navigator";
+import { DEFAULT_PATH } from "../../constants/common_constants";
 
 
 const dueTypeLabels = {
@@ -27,7 +29,6 @@ const dueStatusLabels = {
 };
 
 function Dues() {
-    const navigate = useNavigate();
     const [pgData, setPgData] = useState(null);
     const { pgId } = useParams();
     const [dues, setDues] = useState([]);
@@ -89,20 +90,18 @@ function Dues() {
       },
     ];
 
+    const path = [
+    ...DEFAULT_PATH,
+    { name: pgData?.name },
+    { name: "Dues" },
+  ];
+
     return (
       <div className="dues-container">
         <div className="nav-path">
-          <span onClick={() => navigate("/")} className="navigator">
-            Home
-          </span>
-          <span className="seperator"> / </span>
-          <span onClick={() => navigate("/pg-list")} className="navigator">
-            PG List
-          </span>
-          <span className="seperator"> / </span>
-          {pgData && <span>{pgData.name}</span>}
-          <span className="seperator"> / </span>
-          <span>Dues</span>
+          <Navigator
+            path={path}
+          />
         </div>
         <div className="dues-header">
           <h1>{pgData && pgData.name} - Dues</h1>

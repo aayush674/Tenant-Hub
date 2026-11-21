@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { authFetch } from "../../api/apiClient";
 import "../../styles/pgDetails.css";
 import "../../styles/common_styles/navigator.css";
@@ -7,9 +7,10 @@ import { FaPen } from "react-icons/fa";
 import { State, City } from "country-state-city";
 import { API_BASE_URL } from "../../config";
 import { toast } from "react-toastify";
+import Navigator from "../common/navigator";
+import {DEFAULT_PATH} from "../../constants/common_constants"
 
 function PGDetails() {
-    const navigate = useNavigate();
     const { pgId } = useParams();
     const [pgData, setPgData] = useState();
     // const [pgName, setPgName] = useState(pgData?pgData.name:"");
@@ -79,16 +80,14 @@ function PGDetails() {
         fetchPg();
     }, [pgId, fetchPg]);
 
+    const path = [...DEFAULT_PATH, { name: pgData?.name }, { name: "Details" }];
+
     return (
         <div className="pg-details-container">
             <div className="nav-path">
-                <span onClick={() => navigate("/")} className="navigator">Home</span>
-                <span className="seperator"> / </span>
-                <span onClick={() => navigate("/pg-list")} className="navigator">PG List</span>
-                <span className="seperator"> / </span>
-                {pgData && <span>{pgData.name}</span>}
-                <span className="seperator"> / </span>
-                <span>Details</span>
+                <Navigator
+                    path= {path}
+                />
 
             </div>
             <div className="pg-details-header">

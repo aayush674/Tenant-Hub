@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import AddMaintainenceRequest from "./addMaintainence";
 import "../../styles/common_styles/navigator.css";
 import "../../styles/common_styles/add-btn.css";
@@ -17,6 +17,7 @@ import TableComponent from "../common/tableComponent";
 import "../../styles/maintainence.css";
 import { toast } from "react-toastify";
 import LoadingSubmitButton from "../common/loadingSubmitButton";
+import Navigator from "../common/navigator";
 import { useAuth } from "../../context/authContext";
 import ResolveMaintainenceOTP from "./resolveMaintainenceOTP";
 import {
@@ -26,11 +27,11 @@ import {
   REQUEST_ACTIONS_BY_STATUS,
 } from "../../constants/maintainence";
 import { formatDateTime, extractError } from "../../utils/format";
+import { DEFAULT_PATH } from "../../constants/common_constants";
 
 function MaintainenceList() {
   const { pgId, roomId } = useParams();
 
-  const navigate = useNavigate();
   const [pgData, setPgData] = useState(null);
   const [requests, setRequests] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -324,42 +325,31 @@ function MaintainenceList() {
     },
   ];
 
+  const adminPath = [
+    ...DEFAULT_PATH,
+    { name: pgData?.name },
+    ...(roomId
+      ? [{ name: "Rooms", loc: "/rooms" }, { name: roomData?.room_number }]
+      : []),
+    { name: "Maintenance" },
+  ];
+
+  const tenantPath = [{ name: "Home", loc: "/" }, { name: "Maintenance" }];
+
   return (
     <div className="maintainence-list-container">
       {isAdmin ? (
         <div className="nav-path">
-          <span onClick={() => navigate("/")} className="navigator">
-            Home
-          </span>
-          <span className="seperator"> / </span>
-          <span onClick={() => navigate("/pg-list")} className="navigator">
-            PG List
-          </span>
-          <span className="seperator"> / </span>
-          {pgData && <span>{pgData.name}</span>}
-          <span className="seperator"> / </span>
-
-          {/* Extra room nav path for room wise maintainence requests */}
-          {roomId && (
-            <span>
-              <span onClick={() => navigate("/rooms")} className="navigator">
-                Rooms
-              </span>
-              <span className="seperator"> / </span>
-              <span>{roomData.room_number}</span>
-              <span className="seperator"> / </span>
-            </span>
-          )}
-          <span>Maintenance</span>
+          <Navigator
+            path={adminPath}
+          />
         </div>
       ) : (
         // Nav path for tenant maintainence list
         <div className="nav-path">
-          <span onClick={() => navigate("/")} className="navigator">
-            Home
-          </span>
-          <span className="seperator"> / </span>
-          <span>Maintenance</span>
+          <Navigator
+            path={tenantPath}
+          />
         </div>
       )}
 
